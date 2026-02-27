@@ -377,7 +377,7 @@ body[data-theme=dark] canvas { filter: none; }
     </div>
 </div>
 
-<div id="zoom-wrapper"><div class="container">
+<div id="zoom-wrapper" style="display:none"><div class="container">
 <div class="header">
 <h1>Suivi Financier</h1>
 <div class="header-controls">
@@ -1480,6 +1480,9 @@ const app = {
     },
 
     _initApp() {
+        // Révèle l'app seulement maintenant que l'auth est confirmée
+        const wrapper = document.getElementById('zoom-wrapper');
+        if (wrapper) wrapper.style.display = '';
         this.initDates();
         this.applyTheme();
         if (this.data.parametres.zoom) this.setZoom(this.data.parametres.zoom);
