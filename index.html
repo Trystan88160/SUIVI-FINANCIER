@@ -14,6 +14,89 @@
 body[data-theme=dark] {
     background: linear-gradient(135deg, #1e2a3a 0%, #131f2d 60%, #1a2535 100%) !important;
 }
+
+/* ── Auth Screen ─────────────────────────────────────────────────────────── */
+#auth-screen {
+    position: fixed; inset: 0; z-index: 10000;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+}
+#auth-screen .auth-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    width: 100%; max-width: 420px;
+    box-shadow: 20px 20px 40px rgba(174,195,217,0.5), -20px -20px 40px rgba(255,255,255,0.9);
+    animation: fadeIn .4s ease;
+}
+#auth-screen h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem; font-weight: 700; margin-bottom: .5rem;
+    background: linear-gradient(135deg, #3f51b5, #7c4dff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+#auth-screen .auth-subtitle {
+    color: #4a6785; font-size: .9rem; margin-bottom: 2rem;
+}
+#auth-screen .auth-input {
+    width: 100%; padding: .85rem 1rem;
+    background: #f5f9fc; border: 1.5px solid #d4e2ed;
+    border-radius: 12px; color: #1e3a5f;
+    font-family: 'Inter', sans-serif; font-size: 1rem;
+    margin-bottom: 1rem; transition: border-color .2s;
+    box-sizing: border-box;
+}
+#auth-screen .auth-input:focus {
+    outline: none; border-color: #3f51b5; background: #fff;
+}
+#auth-screen .auth-btn {
+    width: 100%; padding: .9rem;
+    background: linear-gradient(135deg, #3f51b5, #7c4dff);
+    color: #fff; border: none; border-radius: 12px;
+    font-family: 'DM Mono', monospace; font-size: .9rem;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+    cursor: pointer; transition: all .3s; margin-top: .5rem;
+    box-shadow: 8px 8px 16px rgba(63,81,181,0.3);
+}
+#auth-screen .auth-btn:hover { transform: translateY(-2px); box-shadow: 12px 12px 24px rgba(63,81,181,0.4); }
+#auth-screen .auth-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+#auth-screen .auth-switch {
+    text-align: center; margin-top: 1.5rem;
+    color: #4a6785; font-size: .875rem;
+}
+#auth-screen .auth-switch a {
+    color: #3f51b5; cursor: pointer; font-weight: 600; text-decoration: none;
+}
+#auth-screen .auth-switch a:hover { text-decoration: underline; }
+#auth-screen .auth-error {
+    background: #ffebee; color: #c62828; border-radius: 8px;
+    padding: .75rem 1rem; font-size: .85rem; margin-bottom: 1rem; display: none;
+}
+#auth-screen .auth-success {
+    background: #e8f5e9; color: #2e7d32; border-radius: 8px;
+    padding: .75rem 1rem; font-size: .85rem; margin-bottom: 1rem; display: none;
+}
+#auth-screen .auth-logo { font-size: 2.5rem; margin-bottom: 1rem; }
+#user-badge {
+    display: flex; align-items: center; gap: .5rem;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    color: var(--text-tertiary); background: var(--bg-secondary);
+    padding: .4rem .75rem; border-radius: 10px;
+    box-shadow: 4px 4px 8px var(--shadow-light), -4px -4px 8px var(--shadow-dark);
+}
+#user-badge .user-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, #3f51b5, #7c4dff);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; font-weight: 700; flex-shrink: 0;
+}
+#btn-logout {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--danger); font-size: .75rem; padding: 0;
+    font-family: 'DM Mono', monospace; opacity: .7; transition: opacity .2s;
+}
+#btn-logout:hover { opacity: 1; }
 body[data-theme=dark] .stat-card {
     background: #2a3f55;
     border: 1px solid rgba(56, 189, 248, 0.25);
@@ -134,6 +217,32 @@ body[data-theme=dark] canvas { filter: none; }
 </style>
 </head>
 <body>
+
+<!-- ═══ ÉCRAN DE CONNEXION ═══════════════════════════════════════════════ -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">💰</div>
+    <h2>Suivi Financier</h2>
+    <p class="auth-subtitle" id="auth-subtitle">Connectez-vous pour accéder à vos données</p>
+
+    <div id="auth-error" class="auth-error"></div>
+    <div id="auth-success" class="auth-success"></div>
+
+    <input type="email" class="auth-input" id="auth-email" placeholder="Email" autocomplete="email" onkeydown="if(event.key==='Enter')app.authSubmit()">
+    <input type="password" class="auth-input" id="auth-password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
+    <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none" autocomplete="new-password">
+
+    <button class="auth-btn" id="auth-submit" onclick="app.authSubmit()">Se connecter</button>
+
+    <div class="auth-switch" id="auth-switch-login">
+      Pas encore de compte ? <a onclick="app.showSignup()">Créer un compte</a>
+    </div>
+    <div class="auth-switch" id="auth-switch-signup" style="display:none">
+      Déjà un compte ? <a onclick="app.showLogin()">Se connecter</a>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay"></div>
 
 <!-- Modal de confirmation -->
@@ -189,6 +298,11 @@ body[data-theme=dark] canvas { filter: none; }
 <div id="sync-indicator" title="Synchronisation cloud" style="display:flex;align-items:center;gap:0.35rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-tertiary);padding:0.4rem 0.75rem;background:var(--bg-secondary);border-radius:10px;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
   <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-tertiary);transition:background .3s"></span>
   <span id="sync-label">cloud</span>
+</div>
+<div id="user-badge">
+  <div class="user-avatar" id="user-avatar">?</div>
+  <span id="user-email">—</span>
+  <button id="btn-logout" onclick="app.signOut()" title="Se déconnecter">⏻</button>
 </div>
 <button class="btn btn-secondary btn-icon" onclick="app.toggleSettings()">⚙</button>
 </div>
@@ -1063,16 +1177,209 @@ const app = {
     },
     
     async init() {
-        // Affiche un écran de chargement pendant que Supabase répond
+        // Vérifie si l'utilisateur est déjà connecté
         this._showLoader();
-
-        // Charge les données (Supabase en priorité, localStorage en fallback)
-        await this.load();
-
-        // Cache l'écran de chargement
+        const isAuth = await this._checkAuth();
         this._hideLoader();
 
-        // Initialise l'UI avec les vraies données
+        if (!isAuth) {
+            this._showAuthScreen();
+            return;
+        }
+
+        // Met à jour le badge utilisateur dans le header
+        this._updateUserBadge();
+
+        // Charge les données puis initialise l'app
+        this._showLoader();
+        await this.load();
+        this._hideLoader();
+        this._initApp();
+    },
+
+    // ── Auth methods ─────────────────────────────────────────────────────────
+
+    _showAuthScreen() {
+        const s = document.getElementById('auth-screen');
+        if (s) s.style.display = 'flex';
+    },
+
+    _hideAuthScreen() {
+        const s = document.getElementById('auth-screen');
+        if (s) s.style.display = 'none';
+    },
+
+    showLogin() {
+        this._auth.mode = 'login';
+        document.getElementById('auth-subtitle').textContent = 'Connectez-vous pour accéder à vos données';
+        document.getElementById('auth-submit').textContent = 'Se connecter';
+        document.getElementById('auth-password2').style.display = 'none';
+        document.getElementById('auth-switch-login').style.display = 'block';
+        document.getElementById('auth-switch-signup').style.display = 'none';
+        document.getElementById('auth-error').style.display = 'none';
+        document.getElementById('auth-success').style.display = 'none';
+    },
+
+    showSignup() {
+        this._auth.mode = 'signup';
+        document.getElementById('auth-subtitle').textContent = 'Créez votre compte gratuitement';
+        document.getElementById('auth-submit').textContent = "S'inscrire";
+        document.getElementById('auth-password2').style.display = 'block';
+        document.getElementById('auth-switch-login').style.display = 'none';
+        document.getElementById('auth-switch-signup').style.display = 'block';
+        document.getElementById('auth-error').style.display = 'none';
+        document.getElementById('auth-success').style.display = 'none';
+    },
+
+    _setAuthError(msg) {
+        const el = document.getElementById('auth-error');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('auth-success').style.display = 'none';
+    },
+
+    _setAuthSuccess(msg) {
+        const el = document.getElementById('auth-success');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('auth-error').style.display = 'none';
+    },
+
+    async authSubmit() {
+        const btn = document.getElementById('auth-submit');
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value;
+        const password2 = document.getElementById('auth-password2').value;
+
+        if (!email || !password) { this._setAuthError('Veuillez remplir tous les champs.'); return; }
+
+        btn.disabled = true;
+        btn.textContent = '⏳ Chargement…';
+
+        try {
+            if (this._auth.mode === 'signup') {
+                if (password !== password2) { this._setAuthError('Les mots de passe ne correspondent pas.'); btn.disabled = false; btn.textContent = "S'inscrire"; return; }
+                if (password.length < 6) { this._setAuthError('Le mot de passe doit faire au moins 6 caractères.'); btn.disabled = false; btn.textContent = "S'inscrire"; return; }
+                await this._signUp(email, password);
+            } else {
+                await this._signIn(email, password);
+                this._hideAuthScreen();
+                this._updateUserBadge();
+                this._showLoader();
+                await this.load();
+                this._hideLoader();
+                this._initApp();
+            }
+        } catch(e) {
+            this._setAuthError(e.message);
+            btn.disabled = false;
+            btn.textContent = this._auth.mode === 'signup' ? "S'inscrire" : 'Se connecter';
+        }
+    },
+
+    async _signIn(email, password) {
+        const { url, key } = this._sb;
+        const r = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+            method: 'POST',
+            headers: { 'apikey': key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error_description || data.msg || 'Email ou mot de passe incorrect');
+        this._auth.user = data.user;
+        this._auth.token = data.access_token;
+        this._auth.refreshToken = data.refresh_token;
+        localStorage.setItem('sb_session', JSON.stringify({ access_token: data.access_token, refresh_token: data.refresh_token }));
+    },
+
+    async _signUp(email, password) {
+        const { url, key } = this._sb;
+        const r = await fetch(`${url}/auth/v1/signup`, {
+            method: 'POST',
+            headers: { 'apikey': key, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error_description || data.msg || "Inscription échouée");
+        // Si confirmation email désactivée → connexion directe
+        if (data.access_token) {
+            this._auth.user = data.user;
+            this._auth.token = data.access_token;
+            this._auth.refreshToken = data.refresh_token;
+            localStorage.setItem('sb_session', JSON.stringify({ access_token: data.access_token, refresh_token: data.refresh_token }));
+            this._hideAuthScreen();
+            this._updateUserBadge();
+            this._showLoader();
+            await this.load();
+            this._hideLoader();
+            this._initApp();
+        } else {
+            this._setAuthSuccess('✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.');
+            document.getElementById('auth-submit').disabled = false;
+            document.getElementById('auth-submit').textContent = "S'inscrire";
+        }
+    },
+
+    async _checkAuth() {
+        const stored = localStorage.getItem('sb_session');
+        if (!stored) return false;
+        try {
+            const session = JSON.parse(stored);
+            const { url, key } = this._sb;
+            // Vérifie si le token est encore valide
+            const r = await fetch(`${url}/auth/v1/user`, {
+                headers: { 'apikey': key, 'Authorization': `Bearer ${session.access_token}` }
+            });
+            if (r.ok) {
+                const user = await r.json();
+                this._auth.user = user;
+                this._auth.token = session.access_token;
+                this._auth.refreshToken = session.refresh_token;
+                return true;
+            }
+            // Token expiré → essai de refresh
+            if (session.refresh_token) {
+                const rr = await fetch(`${url}/auth/v1/token?grant_type=refresh_token`, {
+                    method: 'POST',
+                    headers: { 'apikey': key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh_token: session.refresh_token })
+                });
+                if (rr.ok) {
+                    const data = await rr.json();
+                    this._auth.user = data.user;
+                    this._auth.token = data.access_token;
+                    this._auth.refreshToken = data.refresh_token;
+                    localStorage.setItem('sb_session', JSON.stringify({ access_token: data.access_token, refresh_token: data.refresh_token }));
+                    return true;
+                }
+            }
+        } catch(e) { console.warn('Auth check failed:', e); }
+        localStorage.removeItem('sb_session');
+        return false;
+    },
+
+    async signOut() {
+        try {
+            const { url, key } = this._sb;
+            await fetch(`${url}/auth/v1/logout`, {
+                method: 'POST',
+                headers: { 'apikey': key, 'Authorization': `Bearer ${this._auth.token}` }
+            });
+        } catch(e) {}
+        this._auth = { user: null, token: null, refreshToken: null, mode: 'login' };
+        localStorage.removeItem('sb_session');
+        localStorage.removeItem('suiviFinancier');
+        localStorage.removeItem('suiviFinancierTime');
+        location.reload();
+    },
+
+    _updateUserBadge() {
+        const email = this._auth.user?.email || '';
+        const emailEl = document.getElementById('user-email');
+        const avatarEl = document.getElementById('user-avatar');
+        if (emailEl) emailEl.textContent = email;
+        if (avatarEl) avatarEl.textContent = email ? email[0].toUpperCase() : '?';
+    },
+
+    _initApp() {
         this.initDates();
         this.applyTheme();
         if (this.data.parametres.zoom) this.setZoom(this.data.parametres.zoom);
@@ -1100,7 +1407,6 @@ const app = {
         this.refreshRecurrences();
         this.refreshLignesPEA();
         this.refreshHeatmap();
-        // Ne charge les données exemple QUE si Supabase ET localStorage sont vides
         if (this.data.objectifs.length === 0 && !localStorage.getItem('suiviFinancier')) {
             this.chargerDonneesExemple();
         }
@@ -1165,28 +1471,36 @@ const app = {
         url: 'https://qtjpckemaqxhiavmzmfj.supabase.co',
         key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0anBja2VtYXF4aGlhdm16bWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDQyNDQsImV4cCI6MjA4NzY4MDI0NH0.LfG_FEuQ2n05WzA_qPjI1_IKBEiY6USzkuo-7HK2D9U',
         table: 'suivi_data',
-        id: 1
     },
+
+    // ── Auth state ───────────────────────────────────────────────────────────
+    _auth: { user: null, token: null, refreshToken: null, mode: 'login' },
 
     async _sbFetch(method, body) {
         const { url, key, table } = this._sb;
-        // UPSERT via POST avec Prefer: resolution=merge-duplicates — plus fiable que PATCH
+        const token = this._auth.token || key;
+        const userId = this._auth.user?.id;
         const isUpsert = method === 'UPSERT';
-        const actualMethod = isUpsert ? 'POST' : method;
-        const endpoint = isUpsert
-            ? `${url}/rest/v1/${table}`
-            : `${url}/rest/v1/${table}?id=eq.1`;
+
+        let endpoint;
+        if (isUpsert) {
+            endpoint = `${url}/rest/v1/${table}?on_conflict=user_id`;
+        } else {
+            endpoint = userId
+                ? `${url}/rest/v1/${table}?user_id=eq.${userId}`
+                : `${url}/rest/v1/${table}?user_id=eq.null`;
+        }
 
         const headers = {
             'apikey': key,
-            'Authorization': `Bearer ${key}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
         };
         if (isUpsert)        headers['Prefer'] = 'resolution=merge-duplicates,return=minimal';
         if (method === 'GET') headers['Prefer'] = 'return=representation';
 
         const r = await fetch(endpoint, {
-            method: actualMethod,
+            method: isUpsert ? 'POST' : method,
             headers,
             body: body ? JSON.stringify(body) : undefined
         });
@@ -1274,9 +1588,10 @@ const app = {
         if (dot)   dot.style.background = 'var(--warning)';
         if (label) label.textContent    = 'sync…';
         try {
-            // UPSERT : crée ou met à jour la ligne id=1
+            // UPSERT : crée ou met à jour la ligne de l'utilisateur courant
+            if (!this._auth.user?.id) return;
             await this._sbFetch('UPSERT', {
-                id: 1,
+                user_id: this._auth.user.id,
                 data: this.data,
                 updated_at: new Date().toISOString()
             });
