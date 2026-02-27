@@ -24,7 +24,9 @@
   .header-controls{gap:.35rem;flex-wrap:nowrap;justify-content:flex-end;width:100%}
   #backup-alert{display:none}
   #user-badge{padding:.3rem .5rem;gap:.3rem}
-  #user-email{display:none}
+  #user-badge {
+    cursor: pointer;
+}
   #user-avatar{width:24px;height:24px;font-size:.7rem}
   .btn.btn-small[onclick*="backupData"]{display:none}
 
@@ -188,12 +190,7 @@
     color: #fff; display: flex; align-items: center; justify-content: center;
     font-size: .7rem; font-weight: 700; flex-shrink: 0;
 }
-#btn-logout {
-    background: transparent; border: none; cursor: pointer;
-    color: var(--danger); font-size: .75rem; padding: 0;
-    font-family: 'DM Mono', monospace; opacity: .7; transition: opacity .2s;
-}
-#btn-logout:hover { opacity: 1; }
+
 body[data-theme=dark] .stat-card {
     background: #2a3f55;
     border: 1px solid rgba(56, 189, 248, 0.25);
@@ -382,24 +379,18 @@ body[data-theme=dark] canvas { filter: none; }
 <h1>Suivi Financier</h1>
 <div class="header-controls">
 <div id="backup-alert"></div>
-<div style="display:flex;align-items:center;gap:0.75rem">
-    <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-tertiary)">Taille</span>
-    <div class="zoom-controls" style="display:flex;gap:0.25rem;align-items:center;background:var(--bg-secondary);border-radius:12px;padding:0.25rem;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)">
-        <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80" title="Très compact">XS</button>
-        <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90" title="Compact">S</button>
-        <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100" title="Normal" style="background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:white">M</button>
-        <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110" title="Confortable">L</button>
-    </div>
+<div class="zoom-controls" style="display:flex;gap:0.25rem;align-items:center;background:var(--bg-secondary);border-radius:12px;padding:0.25rem;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)">
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80" title="Très compact">XS</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90" title="Compact">S</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100" title="Normal" style="background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:white">M</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110" title="Confortable">L</button>
 </div>
-<button class="btn btn-small" onclick="app.backupData()">💾 Sauvegarder</button>
 <div id="sync-indicator" title="Synchronisation cloud" style="display:flex;align-items:center;gap:0.35rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-tertiary);padding:0.4rem 0.75rem;background:var(--bg-secondary);border-radius:10px;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
   <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-tertiary);transition:background .3s"></span>
   <span id="sync-label">cloud</span>
 </div>
-<div id="user-badge">
+<div id="user-badge" onclick="app.toggleSettings()" title="Paramètres" style="cursor:pointer">
   <div class="user-avatar" id="user-avatar">?</div>
-  <span id="user-email">—</span>
-  <button id="btn-logout" onclick="app.signOut()" title="Se déconnecter">⏻</button>
 </div>
 <button class="btn btn-secondary btn-icon" onclick="app.toggleSettings()">⚙</button>
 </div>
@@ -1201,6 +1192,16 @@ body[data-theme=dark] canvas { filter: none; }
 <button class="btn btn-icon btn-secondary" onclick="app.toggleSettings()">✕</button>
 </div>
 
+<!-- Compte utilisateur -->
+<div style="display:flex;align-items:center;gap:.85rem;padding:.85rem;background:var(--bg-secondary);border-radius:14px;margin-bottom:1.5rem">
+  <div id="settings-avatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0">?</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:.8rem;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="settings-email">—</div>
+    <div style="font-size:.68rem;color:var(--text-tertiary)">Compte connecté</div>
+  </div>
+  <button onclick="app.signOut()" style="background:rgba(244,67,54,.1);border:none;color:var(--danger);padding:.45rem .75rem;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Mono',monospace">⏻ Déconnexion</button>
+</div>
+
 <div class="form-group">
 <label class="form-label">📊 Google Sheets — URL CSV publié</label>
 <input type="text" class="form-input" id="set-gsheets-url" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv" style="font-family:'DM Mono',monospace;font-size:0.72rem">
@@ -1226,15 +1227,20 @@ body[data-theme=dark] canvas { filter: none; }
 
 <button class="btn" onclick="app.saveSettings()">Sauvegarder</button>
 
-<hr style="margin:2rem 0;border:none;border-top:1px solid var(--border-color)">
+<hr style="margin:1.5rem 0;border:none;border-top:1px solid var(--border-color)">
 
-<div class="form-group">
+<label class="form-label">📤 Export & Sauvegarde</label>
+<button class="btn" style="width:100%;margin-bottom:.65rem" onclick="app.backupData()">💾 Exporter en Excel (.xlsx)</button>
+
+<div class="form-group" style="margin-top:.25rem">
 <label class="form-label">Restaurer depuis Excel</label>
 <input type="file" class="form-input" id="import-excel" accept=".xlsx">
 <button class="btn btn-secondary btn-small" style="margin-top:.5rem" onclick="app.importExcel()">Restaurer</button>
 </div>
 
-<button class="btn btn-secondary" onclick="app.confirmReset()">Réinitialiser toutes les données</button>
+<hr style="margin:1.5rem 0;border:none;border-top:1px solid var(--border-color)">
+
+<button class="btn btn-secondary" onclick="app.confirmReset()">🗑 Réinitialiser toutes les données</button>
 </div>
 
 <script>
@@ -1473,10 +1479,13 @@ const app = {
 
     _updateUserBadge() {
         const email = this._auth.user?.email || '';
-        const emailEl = document.getElementById('user-email');
+        const initial = email ? email[0].toUpperCase() : '?';
         const avatarEl = document.getElementById('user-avatar');
-        if (emailEl) emailEl.textContent = email;
-        if (avatarEl) avatarEl.textContent = email ? email[0].toUpperCase() : '?';
+        const settingsAvatar = document.getElementById('settings-avatar');
+        const settingsEmail = document.getElementById('settings-email');
+        if (avatarEl) avatarEl.textContent = initial;
+        if (settingsAvatar) settingsAvatar.textContent = initial;
+        if (settingsEmail) settingsEmail.textContent = email;
     },
 
     _initApp() {
