@@ -10,101 +10,106 @@
     <style>
 :root{--bg-primary:#e8f0f7;--bg-secondary:#f5f9fc;--bg-card:#ffffff;--text-primary:#1e3a5f;--text-secondary:#4a6785;--text-tertiary:#7891ab;--accent-primary:#3f51b5;--accent-secondary:#5c6bc0;--accent-gradient-start:#3f51b5;--accent-gradient-end:#7c4dff;--success:#00c853;--warning:#ff9800;--danger:#f44336;--border-color:#d4e2ed;--shadow-light:rgba(174,195,217,0.4);--shadow-dark:rgba(255,255,255,0.9);--heatmap-rgb:63,81,181}[data-theme=dark]{--bg-primary:#1e2a3a;--bg-secondary:#131f2d;--bg-card:#2a3f55;--text-primary:#e0f2fe;--text-secondary:#a5c8e4;--text-tertiary:#7aaac8;--accent-primary:#a855f7;--accent-secondary:#67e8f9;--accent-gradient-start:#a855f7;--accent-gradient-end:#38bdf8;--border-color:rgba(56,189,248,0.25);--success:#00c853;--warning:#ff9800;--danger:#f44336;--shadow-light:rgba(0,0,0,0.4);--shadow-dark:rgba(56,189,248,0.08);--heatmap-rgb:168,85,247}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#e0eafc 0%,#cfdef3 100%);color:var(--text-primary);line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}#zoom-wrapper{width:100%;transform-origin:top left;will-change:transform}.container{max-width:1400px;margin:0 auto;padding:2rem}.header{background:var(--bg-card);padding:2rem 3rem;border-radius:20px;margin-bottom:2rem;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);display:flex;justify-content:space-between;align-items:center}.header h1{font-size:2.5rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Outfit',sans-serif}.header-controls{display:flex;gap:1rem}.header-controls{display:flex;gap:1rem;align-items:center}.backup-reminder{padding:.5rem 1rem;background:var(--warning);color:var(--text-primary);border-radius:4px;font-size:.875rem;animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}.nav-tabs{display:flex;gap:.5rem;margin-bottom:2rem;background:var(--bg-card);padding:.5rem;border-radius:16px;box-shadow:12px 12px 24px var(--shadow-light),-12px -12px 24px var(--shadow-dark);border-bottom:none;overflow-x:auto}.nav-tab{padding:.75rem 1.5rem;background:transparent;border:none;color:var(--text-secondary);cursor:pointer;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;transition:all .3s;white-space:nowrap;border-radius:12px}.nav-tab:hover{color:var(--text-primary)}.nav-tab.active{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;box-shadow:4px 4px 8px rgba(63,81,181,0.3),-4px -4px 8px rgba(255,255,255,0.5)}.tab-content{display:none;animation:fadeIn .3s ease-in}.tab-content.active{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.card{background:var(--bg-card);border:none;padding:2rem;margin-bottom:2rem;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);transition:all .3s;border-radius:20px}.card:hover{box-shadow:20px 20px 40px var(--shadow-light),-20px -20px 40px var(--shadow-dark);transform:translateY(-2px)}.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.card-title{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;font-family:'Outfit',sans-serif;color:var(--text-primary)}.grid{display:grid;gap:1.5rem}.grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.grid-3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.stat-card{background:var(--bg-card);border:none;padding:2rem;text-align:center;border-radius:20px;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);transition:all .3s}.stat-card.warning{border-left:4px solid var(--warning)}.stat-card.danger{border-left:4px solid var(--danger)}
 .stat-card:hover{transform:translateY(-5px);box-shadow:20px 20px 40px var(--shadow-light),-20px -20px 40px var(--shadow-dark)}.stat-label{font-family:'Inter',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.75rem;font-weight:600}.stat-value{font-size:2.5rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem;font-family:'Outfit',sans-serif}.stat-card-main .stat-value{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-value.accent{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-change{font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;margin-top:.5rem}.stat-change.positive{color:var(--success)}.stat-change.negative{color:var(--danger)}.form-group{margin-bottom:1.5rem}.form-label{display:block;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:.5rem}.form-input,.form-select{width:100%;padding:.75rem;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);font-family:'Crimson Pro',serif;font-size:1rem;transition:border-color .2s,background .2s;border-radius:12px}.form-input:focus,.form-select:focus{outline:0;border-color:var(--accent-primary);background:var(--bg-card)}.btn{padding:.75rem 1.5rem;background:var(--bg-card);color:var(--accent-primary);border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .3s;border-radius:12px;box-shadow:8px 8px 16px var(--shadow-light),-8px -8px 16px var(--shadow-dark);font-weight:600}.btn:hover{box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark);transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;box-shadow:8px 8px 16px rgba(63,81,181,0.3),-8px -8px 16px rgba(255,255,255,0.8)}.btn-secondary{background:var(--bg-secondary);color:var(--text-primary)}.btn-secondary:hover{background:var(--border-color)}.btn-small{padding:.5rem 1rem;font-size:.75rem}.btn-icon{width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center}.btn-gear{position:absolute;top:1rem;right:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:1rem}.btn-gear:hover{background:var(--border-color);transform:rotate(90deg)}.table-container{overflow-x:auto}.table{width:100%;border-collapse:collapse}.table td,.table th{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color)}.table th{font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);font-weight:500}.table tbody tr:hover{background:var(--bg-tertiary)}.table-input{width:100%;padding:.5rem;background:0 0;border:1px solid transparent;color:var(--text-primary);font-family:'Crimson Pro',serif}.table-input:focus{background:var(--bg-tertiary);border-color:var(--accent-primary);outline:0}.settings-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--bg-secondary);border-left:1px solid var(--border-color);padding:2rem;overflow-y:auto;transition:right .3s;z-index:1000;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}.settings-panel.open{right:0}.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;z-index:999}.overlay.active{display:block}.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-secondary);border:1px solid var(--border-color);padding:2rem;max-width:500px;width:90%;z-index:1001;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);display:none}.modal.active{display:block;animation:modalSlide .3s ease-out}@keyframes modalSlide{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-50%)}}.modal-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.modal-title{font-size:1.5rem;font-weight:400}.modal-body{margin-bottom:1.5rem;line-height:1.8}.modal-footer{display:flex;gap:1rem;justify-content:flex-end}.chart-container{position:relative;height:400px;margin:1.5rem 0;padding:1.5rem;background:var(--bg-secondary);border-radius:16px;box-shadow:inset 8px 8px 16px rgba(174,195,217,0.3),inset -8px -8px 16px rgba(255,255,255,0.7)}.chart-container canvas{max-height:100%}.toggle{position:relative;display:inline-block;width:50px;height:24px}.toggle input{opacity:0;width:0;height:0}.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:.3s;border-radius:24px}.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.3s;border-radius:50%}.toggle input:checked+.toggle-slider{background-color:var(--accent-primary)}.toggle input:checked+.toggle-slider:before{transform:translateX(26px)}.category-tag{display:inline-block;padding:.25rem .75rem;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;background:var(--bg-tertiary);color:var(--text-secondary)}.progress-bar{width:100%;height:12px;background:var(--bg-secondary);border-radius:10px;overflow:hidden;margin:1rem 0;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));transition:width .3s;border-radius:10px}.progress-fill.warning{background:linear-gradient(90deg,#ff9800,#ffb74d)}.progress-fill.danger{background:linear-gradient(90deg,#f44336,#e57373)}.card-tabs{display:flex;gap:.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border-color)}.card-tab{padding:.5rem 1rem;background:0 0;border:none;border-bottom:2px solid transparent;color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s}.card-tab:hover{color:var(--text-primary)}.card-tab.active{color:var(--accent-primary);border-bottom-color:var(--accent-primary)}.period-selector{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}.period-btn{padding:.5rem 1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;transition:all .2s}.period-btn:hover{background:var(--border-color)}.period-btn.active{background:var(--accent-primary);color:#fff;border-color:var(--accent-primary)}.notification{position:fixed;top:20px;right:20px;padding:1rem 1.5rem;background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:0 10px 15px -3px rgba(0,0,0,.1);max-width:400px;z-index:2000;animation:slideIn .3s ease-out}@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}.notification.success{border-left:4px solid var(--success)}.notification.error{border-left:4px solid var(--danger)}.notification.warning{border-left:4px solid var(--warning)}.notification.info{border-left:4px solid var(--info)}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-tertiary)}.empty-state-icon{font-size:3rem;margin-bottom:1rem}.action-buttons{display:flex;gap:.5rem;flex-wrap:wrap}.upload-area{border:2px dashed var(--border-color);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s}.upload-area:hover{border-color:var(--accent-primary)}.upload-area.dragover{border-color:var(--accent-primary);background:var(--bg-tertiary)}.budget-item{display:flex;align-items:center;gap:1rem;padding:.75rem;background:var(--bg-tertiary);margin-bottom:.5rem;border-radius:4px}.budget-item input{flex:1;min-width:0}.budget-item button{flex-shrink:0}.filter-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}.filter-bar>*{flex:1;min-width:150px}.input-modal{display:none}.input-modal.active{display:block}.show-more-btn{width:100%;padding:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;margin-top:1rem}.show-more-btn:hover{background:var(--border-color)}@media (max-width:768px){
-  .container{padding:.75rem}
-  
-  /* Header mobile */
-  .header{padding:1rem;border-radius:14px;flex-wrap:wrap;gap:.75rem}
-  .header h1{font-size:1.4rem}
-  .header-controls{gap:.4rem;flex-wrap:wrap;justify-content:flex-end}
-  .header-controls .zoom-controls{display:none}
-  .header-controls span[style*="Taille"]{display:none}
-  #backup-alert{display:none}
-  #user-badge span#user-email{display:none}
-  #user-badge{padding:.35rem .5rem;gap:.35rem}
-  .btn-small{padding:.4rem .7rem;font-size:.7rem}
-  .btn-icon{width:32px;height:32px}
-  
-  /* Nav tabs mobile - scroll horizontal */
-  .nav-tabs{padding:.35rem;gap:.25rem;margin-bottom:1rem;border-radius:12px}
-  .nav-tab{padding:.6rem .9rem;font-size:.72rem;letter-spacing:0;border-radius:10px;white-space:nowrap}
-  
-  /* Grilles en colonne */
-  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
-  
-  /* Stat cards plus compactes */
-  .stat-card{padding:1.2rem}
-  .stat-value{font-size:1.9rem}
-  .stat-label{font-size:.7rem;margin-bottom:.4rem}
-  .grid-stats{gap:.75rem;margin-bottom:1rem!important}
-  
-  /* Cards */
-  .card{padding:1.2rem;border-radius:14px;margin-bottom:1.2rem}
-  .card-header{margin-bottom:1rem;padding-bottom:.75rem}
-  .card-title{font-size:1.15rem}
-  
-  /* Formulaires */
-  .form-group{margin-bottom:1rem}
-  .form-input,.form-select{padding:.65rem .85rem;font-size:.95rem}
-  .btn{padding:.65rem 1.2rem;font-size:.8rem}
-  
-  /* Settings panel plein écran */
-  .settings-panel{width:100%;right:-100%}
-  
-  /* Charts plus petits */
-  .chart-container{height:220px;padding:1rem;margin:1rem 0}
-  
-  /* Modal plein écran presque */
-  .modal{width:95%;padding:1.25rem;border-radius:16px}
-  
-  /* Tableaux scrollables */
-  .table-container{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .table td,.table th{padding:.6rem .75rem;font-size:.82rem;white-space:nowrap}
-  
-  /* Filtre bar en colonne */
-  .filter-bar{flex-direction:column;gap:.75rem}
-  .filter-bar>*{min-width:0;width:100%}
-  
-  /* Action buttons wrap */
-  .action-buttons{gap:.4rem}
-  .action-buttons .btn{flex:1;min-width:0;text-align:center;padding:.6rem .5rem;font-size:.72rem}
-  
-  /* Period selector scroll */
-  .period-selector{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.25rem}
-  .period-btn{white-space:nowrap;flex-shrink:0;padding:.4rem .75rem;font-size:.72rem}
-  
-  /* Notification mobile */
-  .notification{left:1rem;right:1rem;max-width:none;top:auto;bottom:1rem;animation:slideUp .3s ease-out}
-  @keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
-  
-  /* Auth screen mobile */
-  #auth-screen .auth-card{padding:2rem 1.5rem;border-radius:20px;margin:1rem}
-  #auth-screen h2{font-size:1.6rem}
-  
-  /* Heatmap scroll */
-  #heatmap-grid,#heatmap-months-labels{overflow-x:auto;grid-template-columns:repeat(12,minmax(28px,1fr))}
-  
-  /* Budget items */
-  .budget-item{gap:.5rem;padding:.6rem}
-  .budget-item input{font-size:.9rem}
-  
-  /* PEA table sur mobile */
-  #tab-pea .table td:nth-child(4),
-  #tab-pea .table th:nth-child(4){display:none}
-
-  /* Zoom wrapper reset sur mobile */
+  /* ── Reset zoom sur mobile ── */
   #zoom-wrapper{transform:none!important;width:100%!important}
+  .zoom-controls, .zoom-controls+span, [style*="Taille"]{display:none!important}
+
+  /* ── Layout général ── */
+  .container{padding:.65rem}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+
+  /* ── Header ── */
+  .header{padding:.75rem 1rem;border-radius:14px;flex-wrap:wrap;gap:.5rem}
+  .header h1{font-size:1.35rem;flex:1}
+  .header-controls{gap:.35rem;flex-wrap:nowrap;justify-content:flex-end;width:100%}
+  #backup-alert{display:none}
+  #user-badge{padding:.3rem .5rem;gap:.3rem}
+  #user-email{display:none}
+  #user-avatar{width:24px;height:24px;font-size:.7rem}
+  .btn.btn-small[onclick*="backupData"]{display:none}
+
+  /* ── Nav tabs ── */
+  .nav-tabs{padding:.3rem;gap:.2rem;margin-bottom:.75rem;border-radius:12px;scrollbar-width:none}
+  .nav-tabs::-webkit-scrollbar{display:none}
+  .nav-tab{padding:.5rem .75rem;font-size:.65rem;letter-spacing:0;border-radius:9px}
+
+  /* ── Stat cards ── */
+  .stat-card{padding:1rem}
+  .stat-value{font-size:1.8rem}
+  .stat-label{font-size:.65rem;margin-bottom:.3rem}
+  .grid-stats{gap:.6rem;margin-bottom:.75rem!important}
+
+  /* ── Cards ── */
+  .card{padding:1rem;border-radius:14px;margin-bottom:1rem}
+  .card-header{margin-bottom:.85rem;padding-bottom:.65rem}
+  .card-title{font-size:1.1rem}
+  .card:hover{transform:none}
+
+  /* ── Formulaires ── */
+  .form-group{margin-bottom:.85rem}
+  .form-input,.form-select{padding:.6rem .8rem;font-size:.95rem}
+  .btn{padding:.6rem 1.1rem;font-size:.78rem}
+  .btn-icon{width:34px;height:34px}
+
+  /* ── Paramètres (settings panel) ── */
+  .settings-panel{width:100%;right:-100%}
+
+  /* ── Charts ── */
+  .chart-container{height:210px;padding:.85rem;margin:.75rem 0}
+
+  /* ── Modals ── */
+  .modal{width:96%;padding:1.25rem;border-radius:16px}
+
+  /* ── Tableaux — masqués sur mobile, remplacés par des cartes ── */
+  .mobile-hide-table{display:none}
+  .mobile-cards-container{display:flex;flex-direction:column;gap:.5rem}
+
+  /* ── Cards historique mobile ── */
+  .mobile-dep-card{
+    background:var(--bg-card);border-radius:14px;padding:.85rem;
+    border-left:3px solid var(--accent-primary);
+    box-shadow:6px 6px 12px var(--shadow-light),-4px -4px 8px var(--shadow-dark)
+  }
+  .mobile-dep-card .mdc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+  .mobile-dep-card .mdc-cat{font-size:.62rem;background:var(--bg-secondary);color:var(--accent-primary);padding:.2rem .5rem;border-radius:20px;font-weight:600;text-transform:uppercase}
+  .mobile-dep-card .mdc-amount{font-size:.95rem;font-weight:700;color:var(--text-primary);font-family:'Outfit',sans-serif}
+  .mobile-dep-card .mdc-note{font-size:.7rem;color:var(--text-secondary);margin-bottom:.4rem}
+  .mobile-dep-card .mdc-bottom{display:flex;justify-content:space-between;align-items:center}
+  .mobile-dep-card .mdc-date{font-size:.6rem;color:var(--text-tertiary);font-family:'DM Mono',monospace}
+  .mobile-dep-card .mdc-actions{display:flex;gap:.35rem}
+  .mobile-dep-card .mdc-btn{border:none;padding:.3rem .55rem;border-radius:8px;font-size:.65rem;cursor:pointer;font-weight:600;transition:all .2s}
+  .mobile-dep-card .mdc-btn-edit{background:var(--bg-secondary);color:var(--accent-primary)}
+  .mobile-dep-card .mdc-btn-del{background:rgba(244,67,54,.1);color:var(--danger)}
+
+  /* ── Filtre bar ── */
+  .filter-bar{flex-direction:column;gap:.6rem}
+  .filter-bar>*{min-width:0;width:100%}
+
+  /* ── Period selector ── */
+  .period-selector{overflow-x:auto;flex-wrap:nowrap;padding-bottom:.25rem;scrollbar-width:none}
+  .period-selector::-webkit-scrollbar{display:none}
+  .period-btn{white-space:nowrap;flex-shrink:0;padding:.4rem .7rem;font-size:.7rem}
+
+  /* ── Action buttons ── */
+  .action-buttons{flex-wrap:wrap}
+  .action-buttons .btn{flex:1;min-width:calc(50% - .25rem);text-align:center;padding:.55rem .4rem;font-size:.7rem}
+
+  /* ── Notifications ── */
+  .notification{left:.75rem;right:.75rem;max-width:none;top:auto;bottom:1rem;animation:slideUpNotif .3s ease-out}
+  @keyframes slideUpNotif{from{transform:translateY(80px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+  /* ── Auth ── */
+  #auth-screen .auth-card{padding:1.75rem 1.4rem;margin:1rem}
+  #auth-screen h2{font-size:1.5rem}
 }
 
 @media (max-width:480px){
-  .header h1{font-size:1.2rem}
-  .nav-tab{padding:.5rem .7rem;font-size:.68rem}
-  .stat-value{font-size:1.6rem}
-  .card-title{font-size:1.05rem}
-  .chart-container{height:190px}
-}
-    
-body[data-theme=dark] {
-    background: linear-gradient(135deg, #1e2a3a 0%, #131f2d 60%, #1a2535 100%) !important;
+  .header h1{font-size:1.15rem}
+  .nav-tab{padding:.45rem .6rem;font-size:.6rem}
+  .stat-value{font-size:1.5rem}
+  .card-title{font-size:1rem}
+  .chart-container{height:180px}
+  .modal{padding:1rem}
 }
 
 /* ── Auth Screen ─────────────────────────────────────────────────────────── */
@@ -645,12 +650,13 @@ body[data-theme=dark] canvas { filter: none; }
 <!-- 6. Historique -->
 <div class="card">
 <div class="card-header"><h2 class="card-title">Historique</h2></div>
-<div class="table-container">
+<div id="depenses-table-wrapper" class="table-container">
 <table class="table">
 <thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead>
 <tbody id="table-depenses"></tbody>
 </table>
 </div>
+<div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
 </div>
 </div> <!-- fin tab-depenses -->
@@ -751,12 +757,13 @@ body[data-theme=dark] canvas { filter: none; }
 <!-- 5. Historique -->
 <div class="card">
 <div class="card-header"><h2 class="card-title">Historique PEA</h2></div>
-<div class="table-container">
+<div id="pea-table-wrapper" class="table-container">
 <table class="table">
 <thead><tr><th>Date</th><th>Valeur</th><th>Investi</th><th>Gain/Perte</th><th>Note</th><th></th></tr></thead>
 <tbody id="table-pea"></tbody>
 </table>
 </div>
+<div id="mobile-pea-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-pea" onclick="app.toggleShowMore('pea')" style="display:none">Afficher plus</button>
 </div>
 </div>
@@ -840,7 +847,7 @@ body[data-theme=dark] canvas { filter: none; }
 <!-- 4. Historique -->
 <div class="card">
 <div class="card-header"><h2 class="card-title">Historique Patrimoine</h2></div>
-<div class="table-container">
+<div id="patrimoine-table-wrapper" class="table-container">
 <table class="table">
 <thead>
 <tr>
@@ -853,6 +860,7 @@ body[data-theme=dark] canvas { filter: none; }
 <tbody id="table-patrimoine"></tbody>
 </table>
 </div>
+<div id="mobile-patrimoine-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-patrimoine" onclick="app.toggleShowMore('patrimoine')" style="display:none">Afficher plus</button>
 </div>
 
@@ -2806,31 +2814,65 @@ const app = {
     },
     
     afficherDepenses() {
+        const isMobile = window.innerWidth <= 768;
         const tbody = document.getElementById('table-depenses');
+        const mobileContainer = document.getElementById('mobile-depenses-cards');
+        const tableWrapper = document.getElementById('depenses-table-wrapper');
         const btnShowMore = document.getElementById('show-more-depenses');
         const depenses = this.data.depenses.sort((a, b) => b.id - a.id);
         
+        if (isMobile) {
+            if (tableWrapper) tableWrapper.style.display = 'none';
+            if (mobileContainer) mobileContainer.style.display = 'flex';
+        } else {
+            if (tableWrapper) tableWrapper.style.display = '';
+            if (mobileContainer) mobileContainer.style.display = 'none';
+        }
+
+        const limit = this.showMoreState.depenses ? depenses.length : 15;
+        const toShow = depenses.slice(0, limit);
+
         if (depenses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📊</div><div>Aucune dépense enregistrée</div></td></tr>';
+            if (isMobile && mobileContainer) {
+                mobileContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div>Aucune dépense enregistrée</div></div>';
+            } else if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-state-icon">📊</div><div>Aucune dépense enregistrée</div></td></tr>';
+            }
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
-        
-        const limit = this.showMoreState.depenses ? depenses.length : 15;
-        const toShow = depenses.slice(0, limit);
-        
-        tbody.innerHTML = toShow.map(d => `
-            <tr>
-                <td>${new Date(d.date).toLocaleDateString('fr-FR')}</td>
-                <td><span class="category-tag">${d.categorie}</span></td>
-                <td>${this.formatCurrency(d.montant)}</td>
-                <td>
-                    ${d.note || '—'}
-                    <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', ${d.id})" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
-                </td>
-                <td><button class="btn btn-small btn-secondary" onclick="app.supprimerDepense(${d.id})">✕</button></td>
-            </tr>
-        `).join('');
+
+        if (isMobile && mobileContainer) {
+            mobileContainer.innerHTML = toShow.map(d => `
+                <div class="mobile-dep-card">
+                    <div class="mdc-top">
+                        <span class="mdc-cat">${d.categorie}</span>
+                        <span class="mdc-amount">${this.formatCurrency(d.montant)}</span>
+                    </div>
+                    <div class="mdc-note">${d.note || '—'}</div>
+                    <div class="mdc-bottom">
+                        <span class="mdc-date">${new Date(d.date).toLocaleDateString('fr-FR')}</span>
+                        <div class="mdc-actions">
+                            <button class="mdc-btn mdc-btn-edit" onclick="app.modifierNote('depense', ${d.id})">✏️ Modifier</button>
+                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerDepense(${d.id})">🗑 Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else if (tbody) {
+            tbody.innerHTML = toShow.map(d => `
+                <tr>
+                    <td>${new Date(d.date).toLocaleDateString('fr-FR')}</td>
+                    <td><span class="category-tag">${d.categorie}</span></td>
+                    <td>${this.formatCurrency(d.montant)}</td>
+                    <td>
+                        ${d.note || '—'}
+                        <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', ${d.id})" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
+                    </td>
+                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerDepense(${d.id})">✕</button></td>
+                </tr>
+            `).join('');
+        }
         
         if (btnShowMore) {
             if (depenses.length > 15) {
@@ -3129,35 +3171,70 @@ const app = {
     },
     
     afficherPEA() {
+        const isMobile = window.innerWidth <= 768;
         const tbody = document.getElementById('table-pea');
+        const mobileContainer = document.getElementById('mobile-pea-cards');
+        const tableWrapper = document.getElementById('pea-table-wrapper');
         const btnShowMore = document.getElementById('show-more-pea');
         const historique = [...this.data.suiviPEA].sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+
+        if (isMobile) {
+            if (tableWrapper) tableWrapper.style.display = 'none';
+            if (mobileContainer) mobileContainer.style.display = 'flex';
+        } else {
+            if (tableWrapper) tableWrapper.style.display = '';
+            if (mobileContainer) mobileContainer.style.display = 'none';
+        }
+
         if (historique.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune entrée PEA</div></td></tr>';
+            const emptyHtml = '<div class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune entrée PEA</div></div>';
+            if (isMobile && mobileContainer) mobileContainer.innerHTML = emptyHtml;
+            else if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune entrée PEA</div></td></tr>';
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
-        
+
         const limit = this.showMoreState.pea ? historique.length : 15;
         const toShow = historique.slice(0, limit);
-        
-        tbody.innerHTML = toShow.map(s => `
-            <tr>
-                <td>${new Date(s.date).toLocaleDateString('fr-FR')}</td>
-                <td>${this.formatCurrency(s.valeur)}</td>
-                <td>${this.formatCurrency(s.investi)}</td>
-                <td class="${s.gainPerte >= 0 ? 'stat-change positive' : 'stat-change negative'}">
-                    ${s.gainPerte >= 0 ? '+' : ''}${this.formatCurrency(s.gainPerte)} (${s.performance}%)
-                </td>
-                <td>
-                    ${s.note || '—'}
-                    <button class="btn btn-small btn-secondary" onclick="app.modifierNote('pea', ${s.id})" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
-                </td>
-                <td><button class="btn btn-small btn-secondary" onclick="app.supprimerPEA(${s.id})">✕</button></td>
-            </tr>
-        `).join('');
-        
+
+        if (isMobile && mobileContainer) {
+            mobileContainer.innerHTML = toShow.map(s => `
+                <div class="mobile-dep-card" style="border-color:${s.gainPerte >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                    <div class="mdc-top">
+                        <span class="mdc-cat">📈 PEA</span>
+                        <span class="mdc-amount">${this.formatCurrency(s.valeur)}</span>
+                    </div>
+                    <div class="mdc-note" style="color:${s.gainPerte >= 0 ? 'var(--success)' : 'var(--danger)'};font-weight:600">
+                        ${s.gainPerte >= 0 ? '+' : ''}${this.formatCurrency(s.gainPerte)} (${s.performance}%) · Investi : ${this.formatCurrency(s.investi)}
+                    </div>
+                    ${s.note ? `<div class="mdc-note">${s.note}</div>` : ''}
+                    <div class="mdc-bottom">
+                        <span class="mdc-date">${new Date(s.date).toLocaleDateString('fr-FR')}</span>
+                        <div class="mdc-actions">
+                            <button class="mdc-btn mdc-btn-edit" onclick="app.modifierNote('pea', ${s.id})">✏️ Note</button>
+                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPEA(${s.id})">🗑 Suppr.</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else if (tbody) {
+            tbody.innerHTML = toShow.map(s => `
+                <tr>
+                    <td>${new Date(s.date).toLocaleDateString('fr-FR')}</td>
+                    <td>${this.formatCurrency(s.valeur)}</td>
+                    <td>${this.formatCurrency(s.investi)}</td>
+                    <td class="${s.gainPerte >= 0 ? 'stat-change positive' : 'stat-change negative'}">
+                        ${s.gainPerte >= 0 ? '+' : ''}${this.formatCurrency(s.gainPerte)} (${s.performance}%)
+                    </td>
+                    <td>
+                        ${s.note || '—'}
+                        <button class="btn btn-small btn-secondary" onclick="app.modifierNote('pea', ${s.id})" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
+                    </td>
+                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerPEA(${s.id})">✕</button></td>
+                </tr>
+            `).join('');
+        }
+
         if (btnShowMore) {
             if (historique.length > 15) {
                 btnShowMore.style.display = 'block';
@@ -3273,31 +3350,64 @@ const app = {
     },
     
     afficherPatrimoine() {
+        const isMobile = window.innerWidth <= 768;
         const tbody = document.getElementById('table-patrimoine');
+        const mobileContainer = document.getElementById('mobile-patrimoine-cards');
+        const tableWrapper = document.getElementById('patrimoine-table-wrapper');
         const btnShowMore = document.getElementById('show-more-patrimoine');
         const historique = this.data.patrimoine.sort((a, b) => b.id - a.id);
-        
+
+        if (isMobile) {
+            if (tableWrapper) tableWrapper.style.display = 'none';
+            if (mobileContainer) mobileContainer.style.display = 'flex';
+        } else {
+            if (tableWrapper) tableWrapper.style.display = '';
+            if (mobileContainer) mobileContainer.style.display = 'none';
+        }
+
         if (historique.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="' + (this.data.comptes.length + 2) + '" class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></td></tr>';
+            const emptyHtml = '<div class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></div>';
+            if (isMobile && mobileContainer) mobileContainer.innerHTML = emptyHtml;
+            else if (tbody) tbody.innerHTML = '<tr><td colspan="' + (this.data.comptes.length + 2) + '" class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></td></tr>';
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
-        
+
         const limit = this.showMoreState.patrimoine ? historique.length : 15;
         const toShow = historique.slice(0, limit);
-        
-        tbody.innerHTML = toShow.map(p => {
-            let html = '<tr>';
-            html += `<td>${new Date(p.mois).toLocaleDateString('fr-FR', {year: 'numeric', month: 'long'})}</td>`;
-            this.data.comptes.forEach(compte => {
-                html += `<td>${this.formatCurrency(p[compte] || 0)}</td>`;
-            });
-            html += `<td><strong>${this.formatCurrency(p.total)}</strong></td>`;
-            html += `<td><button class="btn btn-small btn-secondary" onclick="app.supprimerPatrimoine(${p.id})">✕</button></td>`;
-            html += '</tr>';
-            return html;
-        }).join('');
-        
+
+        if (isMobile && mobileContainer) {
+            mobileContainer.innerHTML = toShow.map(p => {
+                const compteLines = this.data.comptes.map(c => `<span style="font-size:.65rem;color:var(--text-tertiary)">${c}: <strong style="color:var(--text-primary)">${this.formatCurrency(p[c] || 0)}</strong></span>`).join(' · ');
+                return `
+                <div class="mobile-dep-card" style="border-color:var(--accent-primary)">
+                    <div class="mdc-top">
+                        <span class="mdc-cat">🏦 Patrimoine</span>
+                        <span class="mdc-amount">${this.formatCurrency(p.total)}</span>
+                    </div>
+                    <div class="mdc-note" style="display:flex;flex-wrap:wrap;gap:.3rem">${compteLines}</div>
+                    <div class="mdc-bottom">
+                        <span class="mdc-date">${new Date(p.mois).toLocaleDateString('fr-FR', {year:'numeric',month:'long'})}</span>
+                        <div class="mdc-actions">
+                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPatrimoine(${p.id})">🗑 Supprimer</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        } else if (tbody) {
+            tbody.innerHTML = toShow.map(p => {
+                let html = '<tr>';
+                html += `<td>${new Date(p.mois).toLocaleDateString('fr-FR', {year: 'numeric', month: 'long'})}</td>`;
+                this.data.comptes.forEach(compte => {
+                    html += `<td>${this.formatCurrency(p[compte] || 0)}</td>`;
+                });
+                html += `<td><strong>${this.formatCurrency(p.total)}</strong></td>`;
+                html += `<td><button class="btn btn-small btn-secondary" onclick="app.supprimerPatrimoine(${p.id})">✕</button></td>`;
+                html += '</tr>';
+                return html;
+            }).join('');
+        }
+
         if (btnShowMore) {
             if (historique.length > 15) {
                 btnShowMore.style.display = 'block';
