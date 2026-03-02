@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
 :root{--bg-primary:#e8f0f7;--bg-secondary:#f5f9fc;--bg-card:#ffffff;--text-primary:#1e3a5f;--text-secondary:#4a6785;--text-tertiary:#7891ab;--accent-primary:#3f51b5;--accent-secondary:#5c6bc0;--accent-gradient-start:#3f51b5;--accent-gradient-end:#7c4dff;--success:#00c853;--warning:#ff9800;--danger:#f44336;--border-color:#d4e2ed;--shadow-light:rgba(174,195,217,0.4);--shadow-dark:rgba(255,255,255,0.9);--heatmap-rgb:63,81,181}[data-theme=dark]{--bg-primary:#1e2a3a;--bg-secondary:#131f2d;--bg-card:#2a3f55;--text-primary:#e0f2fe;--text-secondary:#a5c8e4;--text-tertiary:#7aaac8;--accent-primary:#a855f7;--accent-secondary:#67e8f9;--accent-gradient-start:#a855f7;--accent-gradient-end:#38bdf8;--border-color:rgba(56,189,248,0.25);--success:#00c853;--warning:#ff9800;--danger:#f44336;--shadow-light:rgba(0,0,0,0.4);--shadow-dark:rgba(56,189,248,0.08);--heatmap-rgb:168,85,247}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#e0eafc 0%,#cfdef3 100%);color:var(--text-primary);line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}#zoom-wrapper{width:100%;transform-origin:top left;will-change:transform}.container{max-width:1400px;margin:0 auto;padding:2rem}.header{background:var(--bg-card);padding:2rem 3rem;border-radius:20px;margin-bottom:2rem;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);display:flex;justify-content:space-between;align-items:center}.header h1{font-size:2.5rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Outfit',sans-serif}.header-controls{display:flex;gap:1rem}.header-controls{display:flex;gap:1rem;align-items:center}.backup-reminder{padding:.5rem 1rem;background:var(--warning);color:var(--text-primary);border-radius:4px;font-size:.875rem;animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}.nav-tabs{display:flex;gap:.5rem;margin-bottom:2rem;background:var(--bg-card);padding:.5rem;border-radius:16px;box-shadow:12px 12px 24px var(--shadow-light),-12px -12px 24px var(--shadow-dark);border-bottom:none;overflow-x:auto}.nav-tab{padding:.75rem 1.5rem;background:transparent;border:none;color:var(--text-secondary);cursor:pointer;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;transition:all .3s;white-space:nowrap;border-radius:12px}.nav-tab:hover{color:var(--text-primary)}.nav-tab.active{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;box-shadow:4px 4px 8px rgba(63,81,181,0.3),-4px -4px 8px rgba(255,255,255,0.5)}.tab-content{display:none;animation:fadeIn .3s ease-in}.tab-content.active{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.card{background:var(--bg-card);border:none;padding:2rem;margin-bottom:2rem;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);transition:all .3s;border-radius:20px}.card:hover{box-shadow:20px 20px 40px var(--shadow-light),-20px -20px 40px var(--shadow-dark);transform:translateY(-2px)}.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.card-title{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;font-family:'Outfit',sans-serif;color:var(--text-primary)}.grid{display:grid;gap:1.5rem}.grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.grid-3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.grid-4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.stat-card{background:var(--bg-card);border:none;padding:2rem;text-align:center;border-radius:20px;box-shadow:16px 16px 32px var(--shadow-light),-16px -16px 32px var(--shadow-dark);transition:all .3s}.stat-card.warning{border-left:4px solid var(--warning)}.stat-card.danger{border-left:4px solid var(--danger)}
-.stat-card:hover{transform:translateY(-5px);box-shadow:20px 20px 40px var(--shadow-light),-20px -20px 40px var(--shadow-dark)}.stat-label{font-family:'Inter',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.75rem;font-weight:600}.stat-value{font-size:2.5rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem;font-family:'Outfit',sans-serif}.stat-card-main .stat-value{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-value.accent{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-change{font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;margin-top:.5rem}.stat-change.positive{color:var(--success)}.stat-change.negative{color:var(--danger)}.form-group{margin-bottom:1.5rem}.form-label{display:block;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:.5rem}.form-input,.form-select{width:100%;padding:.75rem;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);font-family:'Crimson Pro',serif;font-size:1rem;transition:border-color .2s,background .2s;border-radius:12px}.form-input:focus,.form-select:focus{outline:0;border-color:var(--accent-primary);background:var(--bg-card)}.btn{padding:.75rem 1.5rem;background:var(--bg-card);color:var(--accent-primary);border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .3s;border-radius:12px;box-shadow:8px 8px 16px var(--shadow-light),-8px -8px 16px var(--shadow-dark);font-weight:600}.btn:hover{box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark);transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;box-shadow:8px 8px 16px rgba(63,81,181,0.3),-8px -8px 16px rgba(255,255,255,0.8)}.btn-secondary{background:var(--bg-secondary);color:var(--text-primary)}.btn-secondary:hover{background:var(--border-color)}.btn-small{padding:.5rem 1rem;font-size:.75rem}.btn-icon{width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center}.btn-gear{position:absolute;top:1rem;right:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:1rem}.btn-gear:hover{background:var(--border-color);transform:rotate(90deg)}.table-container{overflow-x:auto}.table{width:100%;border-collapse:collapse}.table td,.table th{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color)}.table th{font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);font-weight:500}.table tbody tr:hover{background:var(--bg-tertiary)}.table-input{width:100%;padding:.5rem;background:0 0;border:1px solid transparent;color:var(--text-primary);font-family:'Crimson Pro',serif}.table-input:focus{background:var(--bg-tertiary);border-color:var(--accent-primary);outline:0}.settings-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--bg-secondary);border-left:1px solid var(--border-color);padding:2rem;overflow-y:auto;transition:right .3s;z-index:1000;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}.settings-panel.open{right:0}.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;z-index:999}.overlay.active{display:block}.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-secondary);border:1px solid var(--border-color);padding:2rem;max-width:500px;width:90%;z-index:1001;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);display:none}.modal.active{display:block;animation:modalSlide .3s ease-out}@keyframes modalSlide{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-50%)}}.modal-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.modal-title{font-size:1.5rem;font-weight:400}.modal-body{margin-bottom:1.5rem;line-height:1.8}.modal-footer{display:flex;gap:1rem;justify-content:flex-end}.chart-container{position:relative;height:400px;margin:1.5rem 0;padding:1.5rem;background:var(--bg-secondary);border-radius:16px;box-shadow:inset 8px 8px 16px rgba(174,195,217,0.3),inset -8px -8px 16px rgba(255,255,255,0.7)}.chart-container canvas{max-height:100%}.toggle{position:relative;display:inline-block;width:50px;height:24px}.toggle input{opacity:0;width:0;height:0}.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:.3s;border-radius:24px}.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.3s;border-radius:50%}.toggle input:checked+.toggle-slider{background-color:var(--accent-primary)}.toggle input:checked+.toggle-slider:before{transform:translateX(26px)}.category-tag{display:inline-block;padding:.25rem .75rem;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;background:var(--bg-tertiary);color:var(--text-secondary)}.progress-bar{width:100%;height:12px;background:var(--bg-secondary);border-radius:10px;overflow:hidden;margin:1rem 0;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));transition:width .3s;border-radius:10px}.progress-fill.warning{background:linear-gradient(90deg,#ff9800,#ffb74d)}.progress-fill.danger{background:linear-gradient(90deg,#f44336,#e57373)}.card-tabs{display:flex;gap:.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border-color)}.card-tab{padding:.5rem 1rem;background:0 0;border:none;border-bottom:2px solid transparent;color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s}.card-tab:hover{color:var(--text-primary)}.card-tab.active{color:var(--accent-primary);border-bottom-color:var(--accent-primary)}.period-selector{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}.period-btn{padding:.5rem 1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.75rem;transition:all .2s}.period-btn:hover{background:var(--border-color)}.period-btn.active{background:var(--accent-primary);color:#fff;border-color:var(--accent-primary)}.notification{position:fixed;top:20px;right:20px;padding:1rem 1.5rem;background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:0 10px 15px -3px rgba(0,0,0,.1);max-width:400px;z-index:2000;animation:slideIn .3s ease-out}@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}.notification.success{border-left:4px solid var(--success)}.notification.error{border-left:4px solid var(--danger)}.notification.warning{border-left:4px solid var(--warning)}.notification.info{border-left:4px solid var(--info)}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-tertiary)}.empty-state-icon{font-size:3rem;margin-bottom:1rem}.action-buttons{display:flex;gap:.5rem;flex-wrap:wrap}.upload-area{border:2px dashed var(--border-color);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s}.upload-area:hover{border-color:var(--accent-primary)}.upload-area.dragover{border-color:var(--accent-primary);background:var(--bg-tertiary)}.budget-item{display:flex;align-items:center;gap:1rem;padding:.75rem;background:var(--bg-tertiary);margin-bottom:.5rem;border-radius:4px}.budget-item input{flex:1;min-width:0}.budget-item button{flex-shrink:0}.filter-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}.filter-bar>*{flex:1;min-width:150px}.input-modal{display:none}.input-modal.active{display:block}.show-more-btn{width:100%;padding:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:'DM Mono',monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;margin-top:1rem}.show-more-btn:hover{background:var(--border-color)}@media (max-width:768px){
+.stat-card:hover{transform:translateY(-5px);box-shadow:20px 20px 40px var(--shadow-light),-20px -20px 40px var(--shadow-dark)}.stat-label{font-family:'Inter',sans-serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.75rem;font-weight:600}.stat-value{font-size:2.5rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem;font-family:'Outfit',sans-serif}.stat-card-main .stat-value{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-value.accent{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-change{font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;margin-top:.5rem}.stat-change.positive{color:var(--success)}.stat-change.negative{color:var(--danger)}.form-group{margin-bottom:1.5rem}.form-label{display:block;font-family:DM Mono,monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);margin-bottom:.5rem}.form-input,.form-select{width:100%;padding:.75rem;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-primary);font-family:'Crimson Pro',serif;font-size:1rem;transition:border-color .2s,background .2s;border-radius:12px}.form-input:focus,.form-select:focus{outline:0;border-color:var(--accent-primary);background:var(--bg-card)}.btn{padding:.75rem 1.5rem;background:var(--bg-card);color:var(--accent-primary);border:none;cursor:pointer;font-family:DM Mono,monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .3s;border-radius:12px;box-shadow:8px 8px 16px var(--shadow-light),-8px -8px 16px var(--shadow-dark);font-weight:600}.btn:hover{box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark);transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;box-shadow:8px 8px 16px rgba(63,81,181,0.3),-8px -8px 16px rgba(255,255,255,0.8)}.btn-secondary{background:var(--bg-secondary);color:var(--text-primary)}.btn-secondary:hover{background:var(--border-color)}.btn-small{padding:.5rem 1rem;font-size:.75rem}.btn-icon{width:36px;height:36px;padding:0;display:flex;align-items:center;justify-content:center}.btn-gear{position:absolute;top:1rem;right:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:1rem}.btn-gear:hover{background:var(--border-color);transform:rotate(90deg)}.table-container{overflow-x:auto}.table{width:100%;border-collapse:collapse}.table td,.table th{padding:1rem;text-align:left;border-bottom:1px solid var(--border-color)}.table th{font-family:DM Mono,monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);font-weight:500}.table tbody tr:hover{background:var(--bg-tertiary)}.table-input{width:100%;padding:.5rem;background:0 0;border:1px solid transparent;color:var(--text-primary);font-family:'Crimson Pro',serif}.table-input:focus{background:var(--bg-tertiary);border-color:var(--accent-primary);outline:0}.settings-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--bg-secondary);border-left:1px solid var(--border-color);padding:2rem;overflow-y:auto;transition:right .3s;z-index:1000;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)}.settings-panel.open{right:0}.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;z-index:999}.overlay.active{display:block}.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-secondary);border:1px solid var(--border-color);padding:2rem;max-width:500px;width:90%;z-index:1001;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);display:none}.modal.active{display:block;animation:modalSlide .3s ease-out}@keyframes modalSlide{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-50%)}}.modal-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border-color)}.modal-title{font-size:1.5rem;font-weight:400}.modal-body{margin-bottom:1.5rem;line-height:1.8}.modal-footer{display:flex;gap:1rem;justify-content:flex-end}.chart-container{position:relative;height:400px;margin:1.5rem 0;padding:1.5rem;background:var(--bg-secondary);border-radius:16px;box-shadow:inset 8px 8px 16px rgba(174,195,217,0.3),inset -8px -8px 16px rgba(255,255,255,0.7)}.chart-container canvas{max-height:100%}.toggle{position:relative;display:inline-block;width:50px;height:24px}.toggle input{opacity:0;width:0;height:0}.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--border-color);transition:.3s;border-radius:24px}.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.3s;border-radius:50%}.toggle input:checked+.toggle-slider{background-color:var(--accent-primary)}.toggle input:checked+.toggle-slider:before{transform:translateX(26px)}.category-tag{display:inline-block;padding:.25rem .75rem;font-family:DM Mono,monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;border-radius:2px;background:var(--bg-tertiary);color:var(--text-secondary)}.progress-bar{width:100%;height:12px;background:var(--bg-secondary);border-radius:10px;overflow:hidden;margin:1rem 0;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));transition:width .3s;border-radius:10px}.progress-fill.warning{background:linear-gradient(90deg,#ff9800,#ffb74d)}.progress-fill.danger{background:linear-gradient(90deg,#f44336,#e57373)}.card-tabs{display:flex;gap:.5rem;margin-bottom:1rem;border-bottom:1px solid var(--border-color)}.card-tab{padding:.5rem 1rem;background:0 0;border:none;border-bottom:2px solid transparent;color:var(--text-secondary);cursor:pointer;font-family:DM Mono,monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s}.card-tab:hover{color:var(--text-primary)}.card-tab.active{color:var(--accent-primary);border-bottom-color:var(--accent-primary)}.period-selector{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}.period-btn{padding:.5rem 1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:DM Mono,monospace;font-size:.75rem;transition:all .2s}.period-btn:hover{background:var(--border-color)}.period-btn.active{background:var(--accent-primary);color:#fff;border-color:var(--accent-primary)}.notification{position:fixed;top:20px;right:20px;padding:1rem 1.5rem;background:var(--bg-secondary);border:1px solid var(--border-color);box-shadow:0 10px 15px -3px rgba(0,0,0,.1);max-width:400px;z-index:2000;animation:slideIn .3s ease-out}@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}.notification.success{border-left:4px solid var(--success)}.notification.error{border-left:4px solid var(--danger)}.notification.warning{border-left:4px solid var(--warning)}.notification.info{border-left:4px solid var(--info)}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-tertiary)}.empty-state-icon{font-size:3rem;margin-bottom:1rem}.action-buttons{display:flex;gap:.5rem;flex-wrap:wrap}.upload-area{border:2px dashed var(--border-color);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s}.upload-area:hover{border-color:var(--accent-primary)}.upload-area.dragover{border-color:var(--accent-primary);background:var(--bg-tertiary)}.budget-item{display:flex;align-items:center;gap:1rem;padding:.75rem;background:var(--bg-tertiary);margin-bottom:.5rem;border-radius:4px}.budget-item input{flex:1;min-width:0}.budget-item button{flex-shrink:0}.filter-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}.filter-bar>*{flex:1;min-width:150px}.input-modal{display:none}.input-modal.active{display:block}.show-more-btn{width:100%;padding:1rem;background:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-secondary);cursor:pointer;font-family:DM Mono,monospace;font-size:.875rem;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;margin-top:1rem}.show-more-btn:hover{background:var(--border-color)}@media (max-width:768px){
   /* ── Reset zoom sur mobile ── */
   #zoom-wrapper{transform:none!important;width:100%!important}
   .zoom-controls, .zoom-controls+span, [style*="Taille"]{display:none!important}
@@ -77,7 +77,7 @@
   .mobile-dep-card .mdc-amount{font-size:.95rem;font-weight:700;color:var(--text-primary);font-family:'Outfit',sans-serif}
   .mobile-dep-card .mdc-note{font-size:.7rem;color:var(--text-secondary);margin-bottom:.4rem}
   .mobile-dep-card .mdc-bottom{display:flex;justify-content:space-between;align-items:center}
-  .mobile-dep-card .mdc-date{font-size:.6rem;color:var(--text-tertiary);font-family:'DM Mono',monospace}
+  .mobile-dep-card .mdc-date{font-size:.6rem;color:var(--text-tertiary);font-family:DM Mono,monospace}
   .mobile-dep-card .mdc-actions{display:flex;gap:.35rem}
   .mobile-dep-card .mdc-btn{border:none;padding:.3rem .55rem;border-radius:8px;font-size:.65rem;cursor:pointer;font-weight:600;transition:all .2s}
   .mobile-dep-card .mdc-btn-edit{background:var(--bg-secondary);color:var(--accent-primary)}
@@ -379,13 +379,13 @@ body[data-theme=dark] canvas { filter: none; }
 <h1>Suivi Financier</h1>
 <div class="header-controls">
 <div id="backup-alert"></div>
-<div class="zoom-controls" style="display:flex;gap:0.25rem;align-items:center;background:var(--bg-secondary);border-radius:12px;padding:0.25rem;box-shadow:inset 4px 4px 8px var(--shadow-light),inset -4px -4px 8px var(--shadow-dark)">
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80" title="Très compact">XS</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90" title="Compact">S</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100" title="Normal" style="background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:white">M</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110" title="Confortable">L</button>
+<div class="zoom-controls" style="display:none">
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80">XS</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90">S</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100">M</button>
+    <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110">L</button>
 </div>
-<div id="sync-indicator" title="Synchronisation cloud" style="display:flex;align-items:center;gap:0.35rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-tertiary);padding:0.4rem 0.75rem;background:var(--bg-secondary);border-radius:10px;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
+<div id="sync-indicator" title="Synchronisation cloud" style="display:flex;align-items:center;gap:0.35rem;font-family:DM Mono,monospace;font-size:0.65rem;color:var(--text-tertiary);padding:0.4rem 0.75rem;background:var(--bg-secondary);border-radius:10px;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
   <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-tertiary);transition:background .3s"></span>
   <span id="sync-label">cloud</span>
 </div>
@@ -402,27 +402,55 @@ body[data-theme=dark] canvas { filter: none; }
 <button class="nav-tab" onclick="app.switchTab('pea')">📈 PEA</button>
 <button class="nav-tab" onclick="app.switchTab('patrimoine')">🏦 Patrimoine</button>
 <button class="nav-tab" onclick="app.switchTab('objectifs')">🎯 Objectifs</button>
+<button class="nav-tab" onclick="app.switchTab('abonnements')">💳 Abonnements</button>
 <button class="nav-tab" onclick="app.switchTab('bilan')">📋 Bilan</button>
-<button class="nav-tab" style="opacity:0.5;font-size:0.7rem" onclick="app.toggleAvance()">··· Avancé</button>
 </div>
 
 <!-- Dashboard -->
 <div id="tab-dashboard" class="tab-content active">
-<div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Patrimoine Net</div>
-<div class="stat-value accent" id="d-patrimoine">0 €</div>
-<div class="stat-change" id="d-patrimoine-ch">—</div>
+
+<!-- Hero patrimoine -->
+<div class="card" style="background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));border:none;padding:2rem 2.5rem;margin-bottom:1.5rem">
+  <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.75);font-family:DM Mono,monospace;margin-bottom:.4rem">Patrimoine Net · <span id="d-hero-mois"></span></div>
+  <div style="font-family:'Outfit',sans-serif;font-size:3rem;font-weight:800;color:#fff;line-height:1;margin-bottom:1rem" id="d-patrimoine">0 €</div>
+  <div style="display:flex;gap:2rem;flex-wrap:wrap">
+    <div><div style="font-size:.65rem;color:rgba(255,255,255,.65);text-transform:uppercase;font-family:DM Mono,monospace">vs mois dernier</div><div style="font-weight:700;color:#fff;font-size:.95rem" id="d-patrimoine-ch">—</div></div>
+    <div><div style="font-size:.65rem;color:rgba(255,255,255,.65);text-transform:uppercase;font-family:DM Mono,monospace">Dépenses ce mois</div><div style="font-weight:700;color:#fff;font-size:.95rem" id="d-depenses">0 €</div></div>
+    <div><div style="font-size:.65rem;color:rgba(255,255,255,.65);text-transform:uppercase;font-family:DM Mono,monospace">PEA Performance</div><div style="font-weight:700;color:#fff;font-size:.95rem" id="d-pea">0%</div></div>
+    <div><div style="font-size:.65rem;color:rgba(255,255,255,.65);text-transform:uppercase;font-family:DM Mono,monospace">Plus-value</div><div style="font-weight:700;color:#fff;font-size:.95rem" id="d-pea-gain">—</div></div>
+  </div>
 </div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Dépenses Mois</div>
-<div class="stat-value" id="d-depenses">0 €</div>
+
+<!-- Résumé hebdomadaire -->
+<div class="card" id="resume-hebdo-card" style="display:none;margin-bottom:1.5rem;border-left:4px solid var(--accent-primary);position:relative">
+  <button onclick="app.fermerResumeHebdo()" style="position:absolute;top:.85rem;right:.85rem;background:var(--bg-secondary);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.85rem;color:var(--text-tertiary);display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 6px var(--shadow-light)">✕</button>
+  <div style="display:flex;align-items:center;gap:.85rem;margin-bottom:1rem">
+    <div style="font-size:1.8rem" id="resume-hebdo-emoji">📬</div>
+    <div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700" id="resume-hebdo-titre">Résumé de la semaine</div>
+      <div style="font-size:.72rem;color:var(--text-tertiary);font-family:DM Mono,monospace" id="resume-hebdo-periode"></div>
+    </div>
+  </div>
+  <div id="resume-hebdo-body" style="display:flex;flex-direction:column;gap:.55rem"></div>
 </div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">PEA Performance</div>
-<div class="stat-value accent" id="d-pea">0%</div>
-<div class="stat-change" id="d-pea-gain">—</div>
-</div>
+
+<!-- Accès rapide -->
+<div class="card" style="padding:1.25rem;margin-bottom:1.5rem">
+  <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.85rem">⚡ Accès Rapide</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem">
+    <button class="btn btn-secondary" style="justify-content:flex-start;display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:14px" onclick="app.switchTab('depenses');setTimeout(()=>document.getElementById('dep-montant')?.focus(),100)">
+      <span style="font-size:1.1rem">➕</span><div style="text-align:left"><div style="font-size:.8rem;font-weight:700">Saisir dépense</div><div style="font-size:.65rem;color:var(--text-tertiary)">Action fréquente</div></div>
+    </button>
+    <button class="btn btn-secondary" style="justify-content:flex-start;display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:14px" onclick="app.switchTab('pea');app.actualiserCoursPEA()">
+      <span style="font-size:1.1rem">📡</span><div style="text-align:left"><div style="font-size:.8rem;font-weight:700">Actualiser PEA</div><div style="font-size:.65rem;color:var(--text-tertiary)" id="d-pea-lastupdate">Via Finnhub</div></div>
+    </button>
+    <button class="btn btn-secondary" style="justify-content:flex-start;display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:14px" onclick="app.switchTab('patrimoine')">
+      <span style="font-size:1.1rem">🏦</span><div style="text-align:left"><div style="font-size:.8rem;font-weight:700">Patrimoine</div><div style="font-size:.65rem;color:var(--text-tertiary)">Saisie mensuelle</div></div>
+    </button>
+    <button class="btn btn-secondary" style="justify-content:flex-start;display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border-radius:14px" onclick="app.switchTab('objectifs')">
+      <span style="font-size:1.1rem">🎯</span><div style="text-align:left"><div style="font-size:.8rem;font-weight:700">Objectifs</div><div style="font-size:.65rem;color:var(--text-tertiary)" id="d-obj-count">— en cours</div></div>
+    </button>
+  </div>
 </div>
 
 <!-- 1. Alertes intelligentes -->
@@ -431,11 +459,6 @@ body[data-theme=dark] canvas { filter: none; }
 <div id="alertes-container"><div class="empty-state"><div class="empty-state-icon">✅</div><div>Aucune anomalie détectée</div></div></div>
 </div>
 
-<!-- 2. Vue rapide -->
-<div class="card">
-<div class="card-header"><h2 class="card-title">⚡ Vue Rapide</h2></div>
-<div class="grid grid-3" id="vue-rapide-grid" style="gap:0.75rem"></div>
-</div>
 
 <!-- 3. Évolution patrimoine + Répartition -->
 <div class="grid grid-2">
@@ -464,11 +487,11 @@ body[data-theme=dark] canvas { filter: none; }
 <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:4px" id="heatmap-months-labels"></div>
 <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px" id="heatmap-grid"></div>
 <div style="display:flex;align-items:center;gap:0.6rem;margin-top:0.75rem;justify-content:flex-end">
-  <span style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--text-tertiary)">Peu</span>
+  <span style="font-family:DM Mono,monospace;font-size:0.55rem;color:var(--text-tertiary)">Peu</span>
   <div style="width:60px;height:5px;border-radius:100px;background:linear-gradient(90deg,rgba(var(--heatmap-rgb),0.1),rgba(var(--heatmap-rgb),1))"></div>
-  <span style="font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--text-tertiary)">Beaucoup</span>
+  <span style="font-family:DM Mono,monospace;font-size:0.55rem;color:var(--text-tertiary)">Beaucoup</span>
 </div>
-<div id="heatmap-legend" style="margin-top:0.4rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-tertiary);text-align:center"></div>
+<div id="heatmap-legend" style="margin-top:0.4rem;font-family:DM Mono,monospace;font-size:0.65rem;color:var(--text-tertiary);text-align:center"></div>
 </div>
 </div>
 
@@ -525,6 +548,40 @@ body[data-theme=dark] canvas { filter: none; }
 <button class="btn" onclick="app.ajouterDepense()">+ Ajouter</button>
 </div>
 
+<!-- 1b. Import relevé bancaire -->
+<div class="card">
+<div class="card-header">
+  <h2 class="card-title">🏦 Import relevé bancaire</h2>
+  <span style="font-size:.72rem;color:var(--text-tertiary);font-family:DM Mono,monospace">CSV de ta banque → dépenses auto</span>
+</div>
+<div id="import-drop-zone" 
+  style="border:2px dashed var(--border-color);border-radius:14px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-secondary)"
+  onclick="document.getElementById('import-csv-file').click()"
+  ondragover="event.preventDefault();this.style.borderColor='var(--accent-primary)'"
+  ondragleave="this.style.borderColor='var(--border-color)'"
+  ondrop="app.importCSVDrop(event)">
+  <div style="font-size:2rem;margin-bottom:.5rem">📥</div>
+  <div style="font-weight:600;font-size:.9rem;margin-bottom:.25rem">Glisse ton relevé CSV ici</div>
+  <div style="font-size:.75rem;color:var(--text-tertiary)">Boursorama · BNP · Crédit Agricole · LCL · Fortuneo · ou <span style="color:var(--accent-primary);font-weight:600">parcourir</span></div>
+  <input type="file" id="import-csv-file" accept=".csv,.tsv,.txt" style="display:none" onchange="app.importCSVFile(event)">
+</div>
+<div id="import-preview" style="display:none;margin-top:1.25rem">
+  <div style="font-family:DM Mono,monospace;font-size:.68rem;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.65rem;letter-spacing:.06em" id="import-preview-title">Transactions détectées</div>
+  <div class="table-container" style="max-height:300px;overflow-y:auto">
+  <table class="table" id="import-preview-table">
+    <thead><tr><th><input type="checkbox" id="import-check-all" onchange="app.importToggleAll(this.checked)" style="accent-color:var(--accent-primary)"> Tout</th><th>Date</th><th>Libellé</th><th>Montant</th><th>Catégorie</th></tr></thead>
+    <tbody id="import-preview-body"></tbody>
+  </table>
+  </div>
+  <div style="display:flex;gap:.75rem;margin-top:1rem;align-items:center">
+    <button class="btn" onclick="app.validerImportCSV()" id="btn-import-valider">✅ Importer la sélection</button>
+    <button class="btn btn-secondary btn-small" onclick="app.annulerImportCSV()">Annuler</button>
+    <span style="font-size:.75rem;color:var(--text-tertiary)" id="import-count-label"></span>
+  </div>
+</div>
+</div>
+
+
 <!-- 2. État des catégories -->
 <div class="card">
 <div class="card-header"><h2 class="card-title">État des catégories</h2></div>
@@ -535,20 +592,20 @@ body[data-theme=dark] canvas { filter: none; }
 <div class="card" id="prediction-card">
 <div class="card-header">
   <h2 class="card-title">🔮 Prédiction fin de mois</h2>
-  <span id="pred-badge" style="font-size:0.75rem;padding:0.2rem 0.75rem;border-radius:100px;font-family:'DM Mono',monospace"></span>
+  <span id="pred-badge" style="font-size:0.75rem;padding:0.2rem 0.75rem;border-radius:100px;font-family:DM Mono,monospace"></span>
 </div>
 <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
   <div class="stat-card stat-card-main"><div class="stat-label">Dépensé (j actuel)</div><div class="stat-value accent" id="pred-actuel">0 €</div></div>
   <div class="stat-card stat-card-main"><div class="stat-label">Projeté (fin mois)</div><div class="stat-value" id="pred-projete">0 €</div></div>
   <div class="stat-card stat-card-main"><div class="stat-label">Budget</div><div class="stat-value" id="pred-budget">0 €</div></div>
 </div>
-<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary)">Progression réelle</div>
+<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary)">Progression réelle</div>
 <div style="height:24px;border-radius:10px;overflow:hidden;background:var(--bg-secondary);box-shadow:inset 2px 2px 6px var(--shadow-light);position:relative;margin-bottom:0.4rem">
-  <div id="pred-bar-reel" style="height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));border-radius:10px;transition:width .5s;display:flex;align-items:center;padding-left:0.5rem"><span id="pred-bar-reel-label" style="font-size:0.65rem;color:white;font-family:'DM Mono',monospace;white-space:nowrap"></span></div>
+  <div id="pred-bar-reel" style="height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));border-radius:10px;transition:width .5s;display:flex;align-items:center;padding-left:0.5rem"><span id="pred-bar-reel-label" style="font-size:0.65rem;color:white;font-family:DM Mono,monospace;white-space:nowrap"></span></div>
 </div>
-<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary)">Projection fin de mois</div>
+<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary)">Projection fin de mois</div>
 <div style="height:24px;border-radius:10px;overflow:hidden;background:var(--bg-secondary);box-shadow:inset 2px 2px 6px var(--shadow-light);position:relative">
-  <div id="pred-bar-proj" style="height:100%;border-radius:10px;transition:width .5s;display:flex;align-items:center;padding-left:0.5rem"><span id="pred-bar-proj-label" style="font-size:0.65rem;color:white;font-family:'DM Mono',monospace;white-space:nowrap"></span></div>
+  <div id="pred-bar-proj" style="height:100%;border-radius:10px;transition:width .5s;display:flex;align-items:center;padding-left:0.5rem"><span id="pred-bar-proj-label" style="font-size:0.65rem;color:white;font-family:DM Mono,monospace;white-space:nowrap"></span></div>
 </div>
 <div id="pred-message" style="margin-top:0.75rem;padding:0.75rem;border-radius:12px;font-size:0.85rem;display:none"></div>
 </div>
@@ -558,11 +615,11 @@ body[data-theme=dark] canvas { filter: none; }
 <div class="card-header">
   <h2 class="card-title">📊 Comparaison mois à mois</h2>
   <div style="display:flex;gap:0.5rem;align-items:center">
-    <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text-tertiary)">Réf.</span>
+    <span style="font-family:DM Mono,monospace;font-size:0.6rem;color:var(--text-tertiary)">Réf.</span>
     <select class="form-select" id="comp-mois-a" style="padding:0.4rem 0.6rem;font-size:0.8rem;width:auto" onchange="app.refreshComparaison()"></select>
     <span style="color:var(--text-tertiary)">→</span>
     <select class="form-select" id="comp-mois-b" style="padding:0.4rem 0.6rem;font-size:0.8rem;width:auto" onchange="app.refreshComparaison()"></select>
-    <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text-tertiary)">Actuel</span>
+    <span style="font-family:DM Mono,monospace;font-size:0.6rem;color:var(--text-tertiary)">Actuel</span>
   </div>
 </div>
 <div id="comparaison-container"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Ajoute des dépenses sur 2 mois différents pour comparer</div></div></div>
@@ -574,13 +631,13 @@ body[data-theme=dark] canvas { filter: none; }
   <h2 class="card-title">📊 Règle 50 / 30 / 20</h2>
   <span style="font-size:0.8rem;color:var(--text-tertiary)">Besoins · Envies · Épargne</span>
 </div>
-<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Idéal</div>
+<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Idéal</div>
 <div style="height:28px;border-radius:8px;overflow:hidden;display:flex;gap:2px;margin-bottom:0.5rem">
   <div style="width:50%;background:rgba(63,81,181,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-primary);font-weight:600">50%</div>
   <div style="width:30%;background:rgba(92,107,192,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-secondary);font-weight:600">30%</div>
   <div style="width:20%;background:rgba(0,200,83,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--success);font-weight:600">20%</div>
 </div>
-<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Ce mois</div>
+<div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Ce mois</div>
 <div style="height:28px;border-radius:8px;overflow:hidden;display:flex;gap:2px;margin-bottom:0.75rem" id="bar-503020"></div>
 <div class="grid grid-3" id="comparaison-503020" style="gap:0.75rem;text-align:center"></div>
 </div>
@@ -745,6 +802,7 @@ body[data-theme=dark] canvas { filter: none; }
   <h2 class="card-title">Évolution PEA : Valeur vs Investi</h2>
   <div style="display:flex;gap:.5rem;align-items:center">
     <button class="btn btn-small btn-secondary" id="btn-benchmark-toggle" onclick="app.toggleBenchmark()" style="font-size:.7rem">📊 Benchmark</button>
+    <button class="btn btn-small btn-secondary" id="btn-pea-outils-toggle" onclick="app.togglePeaOutils()" style="font-size:.7rem">🧮 Outils</button>
   </div>
 </div>
 <div class="chart-container"><canvas id="chart-pea"></canvas></div>
@@ -772,6 +830,81 @@ body[data-theme=dark] canvas { filter: none; }
 <div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.75rem;padding:.6rem;background:var(--bg-secondary);border-radius:10px;line-height:1.6">
   💡 <strong>Indices calculés depuis Finnhub</strong> (MSCI World via IWDA · S&P 500 via SPY) — données de clôture.
   <span id="benchmark-last-update"></span>
+</div>
+</div>
+
+<!-- 5. Outils PEA (Prévisions + Calculateur) -->
+<div class="card" id="pea-outils-card" style="display:none">
+<div class="card-header">
+  <h2 class="card-title">🧮 Outils PEA</h2>
+  <div style="display:flex;gap:.5rem">
+    <button class="btn btn-small period-btn active" id="pea-outil-prev-btn" onclick="app.switchPeaOutil('previsions',this)">📊 Prévisions</button>
+    <button class="btn btn-small btn-secondary period-btn" id="pea-outil-calc-btn" onclick="app.switchPeaOutil('calculateur',this)">🧮 Calculateur</button>
+    <button class="btn btn-small btn-secondary" onclick="app.togglePeaOutils()" style="margin-left:.5rem">✕</button>
+  </div>
+</div>
+
+<!-- Panel Prévisions PEA -->
+<div id="pea-outil-previsions">
+  <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
+    <select class="form-select" id="select-scenario" style="flex:1" onchange="app.chargerScenario()"><option value="">-- Nouveau scénario --</option></select>
+    <button class="btn btn-small" onclick="app.sauvegarderScenario()">💾</button>
+    <button class="btn btn-small btn-secondary" onclick="app.supprimerScenario()">🗑</button>
+  </div>
+  <div class="grid grid-2">
+    <div class="form-group"><label class="form-label">Nom du scénario</label><input type="text" class="form-input" id="prev-scenario-nom" placeholder="Mon scénario"></div>
+    <div class="form-group"><label class="form-label">Valeur actuelle (€)</label><input type="number" class="form-input" id="prev-pea-actuel" placeholder="0" step="0.01"></div>
+    <div class="form-group"><label class="form-label">Versement mensuel (€)</label><input type="number" class="form-input" id="prev-pea-mensuel" placeholder="400" step="10"></div>
+    <div class="form-group"><label class="form-label">Rendement annuel (%)</label><input type="number" class="form-input" id="prev-pea-taux" placeholder="8" step="0.1"></div>
+    <div class="form-group"><label class="form-label">Projection (années)</label><input type="number" class="form-input" id="prev-pea-annees" placeholder="10" min="1" max="50"></div>
+  </div>
+  <button class="btn" onclick="app.calculerPrevisionsPEA()">📊 Calculer</button>
+  <div id="prev-pea-results" style="display:none;margin-top:1.25rem">
+    <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
+      <div class="stat-card stat-card-main"><div class="stat-label">Objectif final</div><div class="stat-value" id="prev-pea-final">0 €</div></div>
+      <div class="stat-card stat-card-main"><div class="stat-label">Total versé</div><div class="stat-value" id="prev-pea-verse">0 €</div></div>
+      <div class="stat-card stat-card-main"><div class="stat-label">Gains espérés</div><div class="stat-value" id="prev-pea-gains">0 €</div></div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+      <button class="btn btn-small" id="btn-vue-annee" onclick="app.switchVuePrevision('annee')">Vue Annuelle</button>
+      <button class="btn btn-small btn-secondary" id="btn-vue-mois" onclick="app.switchVuePrevision('mois')">Vue Mensuelle</button>
+    </div>
+    <div class="chart-container" style="height:280px"><canvas id="chart-prev-compare"></canvas></div>
+    <div class="grid grid-3 grid-stats" style="margin-top:1rem">
+      <div class="stat-card stat-card-main"><div class="stat-label">Perf. moyenne réelle</div><div class="stat-value" id="perf-moyenne">0%</div></div>
+      <div class="stat-card stat-card-main"><div class="stat-label">Projection réaliste</div><div class="stat-value" id="proj-realiste">0 €</div></div>
+      <div class="stat-card stat-card-main"><div class="stat-label">Écart vs objectif</div><div class="stat-value" id="ecart-objectif">0 €</div></div>
+    </div>
+    <div class="chart-container" style="height:220px;margin-top:1rem"><canvas id="chart-proj-realiste"></canvas></div>
+  </div>
+</div>
+
+<!-- Panel Calculateur -->
+<div id="pea-outil-calculateur" style="display:none">
+  <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
+    <select class="form-select" id="select-modele" style="flex:1" onchange="app.chargerModele()"><option value="">-- Nouveau modèle --</option></select>
+    <button class="btn btn-small" onclick="app.sauvegarderModele()">💾</button>
+    <button class="btn btn-small btn-secondary" onclick="app.supprimerModele()">🗑</button>
+  </div>
+  <div class="grid grid-2">
+    <div class="form-group"><label class="form-label">Nom du modèle</label><input type="text" class="form-input" id="calc-nom-modele" placeholder="Mon portefeuille"></div>
+    <div class="form-group"><label class="form-label">Budget (€)</label><input type="number" class="form-input" id="calc-budget" placeholder="1300" step="0.01" onchange="app.calculer()"></div>
+    <div class="form-group"><label class="form-label">Nombre de lignes</label><input type="number" class="form-input" id="calc-lignes" value="3" min="1" max="10" onchange="app.genererLignes()"></div>
+  </div>
+  <div class="table-container" style="margin-bottom:1rem">
+    <table class="table"><thead><tr><th>Action</th><th>Alloc %</th><th>Budget</th><th>Cours</th><th>Qté</th><th>Investi</th><th>Reste</th></tr></thead><tbody id="calc-body"></tbody></table>
+  </div>
+  <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
+    <div class="stat-card stat-card-main"><div class="stat-label">Budget</div><div class="stat-value" id="calc-total">0 €</div></div>
+    <div class="stat-card stat-card-main"><div class="stat-label">Investi</div><div class="stat-value" id="calc-investi">0 €</div></div>
+    <div class="stat-card stat-card-main"><div class="stat-label">Reste</div><div class="stat-value" id="calc-reste">0 €</div></div>
+  </div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-secondary btn-small" onclick="app.allocation('conservateur')">Conservateur 60/30/10</button>
+    <button class="btn btn-secondary btn-small" onclick="app.allocation('equilibre')">Équilibré 50/30/20</button>
+    <button class="btn btn-secondary btn-small" onclick="app.allocation('dynamique')">Dynamique 40/40/20</button>
+    <button class="btn btn-secondary btn-small" onclick="app.allocation('agressif')">Agressif 30/30/40</button>
+  </div>
 </div>
 </div>
 
@@ -927,7 +1060,7 @@ body[data-theme=dark] canvas { filter: none; }
 <div style="margin-top:1rem;padding:1rem;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border-color)">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div>
-      <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);font-family:'DM Mono',monospace">Total à épargner / mois</div>
+      <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);font-family:DM Mono,monospace">Total à épargner / mois</div>
       <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.2rem">Pour atteindre tous vos objectifs à temps</div>
     </div>
     <div class="stat-value accent" id="obj-grand-total" style="font-size:1.4rem">0 €</div>
@@ -944,14 +1077,14 @@ body[data-theme=dark] canvas { filter: none; }
       <label class="form-label">Si j'épargnais… par mois</label>
       <div style="display:flex;align-items:center;gap:1rem">
         <input type="range" id="sim-epargne" min="50" max="2000" value="300" step="50" style="flex:1;accent-color:var(--accent-primary)" oninput="app.refreshSimulateur()">
-        <span id="sim-epargne-val" style="font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;color:var(--accent-primary);min-width:60px">300 €</span>
+        <span id="sim-epargne-val" style="font-family:DM Mono,monospace;font-size:1rem;font-weight:600;color:var(--accent-primary);min-width:60px">300 €</span>
       </div>
     </div>
     <div class="form-group" style="margin-bottom:1rem">
       <label class="form-label">Rendement annuel</label>
       <div style="display:flex;align-items:center;gap:1rem">
         <input type="range" id="sim-taux" min="1" max="12" value="6" step="0.5" style="flex:1;accent-color:var(--accent-primary)" oninput="app.refreshSimulateur()">
-        <span id="sim-taux-val" style="font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;color:var(--accent-primary);min-width:40px">6%</span>
+        <span id="sim-taux-val" style="font-family:DM Mono,monospace;font-size:1rem;font-weight:600;color:var(--accent-primary);min-width:40px">6%</span>
       </div>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
@@ -981,6 +1114,38 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 </div>
 </div>
+
+<!-- Abonnements -->
+<div id="tab-abonnements" class="tab-content">
+
+<div class="grid grid-3 grid-stats">
+  <div class="stat-card stat-card-main"><div class="stat-label">Coût mensuel</div><div class="stat-value accent" id="sub-total-mensuel">0 €</div></div>
+  <div class="stat-card stat-card-main"><div class="stat-label">Abonnements actifs</div><div class="stat-value" id="sub-count">0</div></div>
+  <div class="stat-card stat-card-main"><div class="stat-label">Coût annuel estimé</div><div class="stat-value accent" id="sub-total-annuel">0 €</div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">💳 Mes Abonnements</h2>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <button class="btn btn-small btn-secondary" onclick="app.detecterAbonnements()" title="Analyse l'historique des dépenses récurrentes">🔍 Auto-détecter</button>
+      <button class="btn btn-small" onclick="app.ouvrirAjoutAbonnement()">+ Ajouter</button>
+    </div>
+  </div>
+  <!-- Prochains prélèvements -->
+  <div id="sub-prochains" style="margin-bottom:1.25rem"></div>
+  <!-- Liste complète -->
+  <div id="sub-list"><div class="empty-state"><div class="empty-state-icon">💳</div><div>Aucun abonnement. Clique sur "Auto-détecter" ou "+ Ajouter".</div></div></div>
+</div>
+
+<!-- Répartition par catégorie -->
+<div class="card" id="sub-repartition-card" style="display:none">
+  <div class="card-header"><h2 class="card-title">Répartition des abonnements</h2></div>
+  <div id="sub-repartition"></div>
+</div>
+
+</div>
+
 
 <!-- Bilan -->
 <div id="tab-bilan" class="tab-content">
@@ -1039,162 +1204,6 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 </div>
 
-<!-- Prévisions PEA ULTIMATE -->
-<div id="tab-previsions" class="tab-content">
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">Gestion des Scénarios</h2>
-</div>
-<div style="display:flex;gap:1rem;margin-bottom:1rem;align-items:center">
-<select class="form-select" id="select-scenario" style="flex:1" onchange="app.chargerScenario()">
-<option value="">-- Nouveau scénario --</option>
-</select>
-<button class="btn btn-small" onclick="app.sauvegarderScenario()">💾 Sauvegarder</button>
-<button class="btn btn-small btn-secondary" onclick="app.supprimerScenario()">🗑️ Supprimer</button>
-</div>
-</div>
-
-<div class="card">
-<div class="card-header"><h2 class="card-title">Paramètres de Prévision PEA</h2></div>
-<div class="grid grid-2">
-<div class="form-group">
-<label class="form-label">Nom du scénario</label>
-<input type="text" class="form-input" id="prev-scenario-nom" placeholder="Mon scénario">
-</div>
-<div class="form-group">
-<label class="form-label">Valeur actuelle (€)</label>
-<input type="number" class="form-input" id="prev-pea-actuel" placeholder="0" step="0.01">
-</div>
-<div class="form-group">
-<label class="form-label">Versement mensuel (€)</label>
-<input type="number" class="form-input" id="prev-pea-mensuel" placeholder="400" step="10">
-</div>
-<div class="form-group">
-<label class="form-label">Rendement annuel objectif (%)</label>
-<input type="number" class="form-input" id="prev-pea-taux" placeholder="8" step="0.1">
-</div>
-<div class="form-group">
-<label class="form-label">Projection (années)</label>
-<input type="number" class="form-input" id="prev-pea-annees" placeholder="10" min="1" max="50">
-</div>
-</div>
-<button class="btn" onclick="app.calculerPrevisionsPEA()">📊 Calculer les Prévisions</button>
-</div>
-
-<div id="prev-pea-results" style="display:none">
-<div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Objectif final</div>
-<div class="stat-value" id="prev-pea-final">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Total à verser</div>
-<div class="stat-value" id="prev-pea-verse">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Gains espérés</div>
-<div class="stat-value" id="prev-pea-gains">0 €</div>
-</div>
-</div>
-
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">Projection vs Réalité</h2>
-<div style="display:flex;gap:0.5rem">
-<button class="btn btn-small" id="btn-vue-annee" onclick="app.switchVuePrevision('annee')">Vue Annuelle</button>
-<button class="btn btn-small btn-secondary" id="btn-vue-mois" onclick="app.switchVuePrevision('mois')">Vue Mensuelle</button>
-</div>
-</div>
-<div class="chart-container"><canvas id="chart-prev-compare"></canvas></div>
-</div>
-
-<div class="card">
-<div class="card-header"><h2 class="card-title">Projection basée sur vos performances réelles</h2></div>
-<div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Performance moyenne</div>
-<div class="stat-value" id="perf-moyenne">0%</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Projection réaliste</div>
-<div class="stat-value" id="proj-realiste">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Écart vs Objectif</div>
-<div class="stat-value" id="ecart-objectif">0 €</div>
-</div>
-</div>
-<div class="chart-container"><canvas id="chart-proj-realiste"></canvas></div>
-</div>
-</div>
-</div>
-
-<!-- Calculateur AVEC MODÈLES -->
-<div id="tab-calculateur" class="tab-content">
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">Mes Modèles</h2>
-</div>
-<div style="display:flex;gap:1rem;margin-bottom:1rem;align-items:center">
-<select class="form-select" id="select-modele" style="flex:1" onchange="app.chargerModele()">
-<option value="">-- Nouveau modèle --</option>
-</select>
-<button class="btn btn-small" onclick="app.sauvegarderModele()">💾 Sauvegarder</button>
-<button class="btn btn-small btn-secondary" onclick="app.supprimerModele()">🗑️ Supprimer</button>
-</div>
-</div>
-
-<div class="card">
-<div class="card-header"><h2 class="card-title">Calculateur d'actions</h2></div>
-<div class="grid grid-2">
-<div class="form-group">
-<label class="form-label">Nom du modèle</label>
-<input type="text" class="form-input" id="calc-nom-modele" placeholder="Mon portefeuille">
-</div>
-<div class="form-group">
-<label class="form-label">Budget (€)</label>
-<input type="number" class="form-input" id="calc-budget" placeholder="1300" step="0.01" onchange="app.calculer()">
-</div>
-<div class="form-group">
-<label class="form-label">Lignes</label>
-<input type="number" class="form-input" id="calc-lignes" value="3" min="1" max="10" onchange="app.genererLignes()">
-</div>
-</div>
-
-<div class="table-container">
-<table class="table">
-<thead><tr><th>Action</th><th>Alloc %</th><th>Budget</th><th>Cours</th><th>Qté</th><th>Investi</th><th>Reste</th></tr></thead>
-<tbody id="calc-body"></tbody>
-</table>
-</div>
-
-<div class="grid grid-3 grid-stats" style="margin-top:1.5rem">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Budget</div>
-<div class="stat-value" id="calc-total">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Investi</div>
-<div class="stat-value" id="calc-investi">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Reste</div>
-<div class="stat-value" id="calc-reste">0 €</div>
-</div>
-</div>
-</div>
-
-<div class="card">
-<div class="card-header"><h2 class="card-title">Allocations prédéfinies</h2></div>
-<div class="action-buttons">
-<button class="btn btn-secondary" onclick="app.allocation('conservateur')">Conservateur 60/30/10</button>
-<button class="btn btn-secondary" onclick="app.allocation('equilibre')">Équilibré 50/30/20</button>
-<button class="btn btn-secondary" onclick="app.allocation('dynamique')">Dynamique 40/40/20</button>
-<button class="btn btn-secondary" onclick="app.allocation('agressif')">Agressif 30/30/40</button>
-</div>
-</div>
-</div>
-</div>
 </div> <!-- fin zoom-wrapper -->
 
 <!-- Emoji Picker global -->
@@ -1204,16 +1213,6 @@ body[data-theme=dark] canvas { filter: none; }
     <div class="emoji-grid" id="emoji-grid"></div>
 </div>
 
-<!-- Panneau Avancé (Prévisions + Calculateur) -->
-<div class="settings-panel" id="avance-panel">
-<div class="settings-header">
-<h2 class="card-title">⚙ Outils Avancés</h2>
-<button class="btn btn-icon btn-secondary" onclick="app.toggleAvance()">✕</button>
-</div>
-<p style="font-size:0.85rem;color:var(--text-tertiary);margin-bottom:1.5rem">Outils moins fréquents — Prévisions PEA et Calculateur d'allocation.</p>
-<button class="btn" style="width:100%;margin-bottom:0.75rem" onclick="app.toggleAvance();app.switchTab('previsions')">📊 Prévisions PEA</button>
-<button class="btn btn-secondary" style="width:100%" onclick="app.toggleAvance();app.switchTab('calculateur')">🧮 Calculateur d'actions</button>
-</div>
 
 <!-- Settings -->
 <div class="settings-panel" id="settings">
@@ -1229,18 +1228,18 @@ body[data-theme=dark] canvas { filter: none; }
     <div style="font-size:.8rem;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="settings-email">—</div>
     <div style="font-size:.68rem;color:var(--text-tertiary)">Compte connecté</div>
   </div>
-  <button onclick="app.signOut()" style="background:rgba(244,67,54,.1);border:none;color:var(--danger);padding:.45rem .75rem;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Mono',monospace">⏻ Déconnexion</button>
+  <button onclick="app.signOut()" style="background:rgba(244,67,54,.1);border:none;color:var(--danger);padding:.45rem .75rem;border-radius:10px;font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:DM Mono,monospace">⏻ Déconnexion</button>
 </div>
 
 <div class="form-group">
 <label class="form-label">📡 Finnhub API Key — Cours en temps réel</label>
 <div style="display:flex;gap:.5rem;align-items:center">
-  <input type="password" class="form-input" id="set-finnhub-key" placeholder="Clé API (ex: cxxxxxxxxxxxxxx)" style="font-family:'DM Mono',monospace;font-size:0.82rem;flex:1">
+  <input type="password" class="form-input" id="set-finnhub-key" placeholder="Clé API (ex: cxxxxxxxxxxxxxx)" style="font-family:DM Mono,monospace;font-size:0.82rem;flex:1">
   <button class="btn btn-small btn-secondary" onclick="app.testerFinnhub()" style="white-space:nowrap;flex-shrink:0">🔌 Tester</button>
 </div>
 <div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:0.5rem;line-height:1.7">
   Gratuit sur <strong style="color:var(--accent-primary)">finnhub.io</strong> → Sign up → API Key (60 appels/min, sans CB).<br>
-  Format tickers : <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent-primary)">CW8.PA</span> (Euronext Paris) · <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent-primary)">AAPL</span> (Nasdaq/NYSE)
+  Format tickers : <span style="font-family:DM Mono,monospace;font-size:.75rem;color:var(--accent-primary)">CW8.PA</span> (Euronext Paris) · <span style="font-family:DM Mono,monospace;font-size:.75rem;color:var(--accent-primary)">AAPL</span> (Nasdaq/NYSE)
 </div>
 </div>
 
@@ -1297,6 +1296,7 @@ const app = {
         scenarios: [],
         objectifs: [],
         recurrences: [],
+        abonnements: [],
         notes: [],
         lignesPEA: [],
         allocationCible: {},
@@ -1553,6 +1553,8 @@ const app = {
         this.refreshRecurrences();
         this.refreshLignesPEA();
         this.refreshHeatmap();
+        this.refreshAbonnements();
+        this.checkResumeHebdo();
         if (this.data.objectifs.length === 0 && !localStorage.getItem('suiviFinancier')) {
             this.chargerDonneesExemple();
         }
@@ -1703,6 +1705,7 @@ const app = {
             objectifs:      loaded.objectifs       || [],
             recurrences:    loaded.recurrences     || [],
             notes:          loaded.notes           || [],
+            abonnements:    loaded.abonnements    || [],
             lignesPEA:      loaded.lignesPEA       || [],
             allocationCible:loaded.allocationCible || {},
             parametres:     loaded.parametres      || this.data.parametres
@@ -2089,6 +2092,8 @@ const app = {
         if (name === 'objectifs') { this.refreshObjectifs(); this.refreshSimulateur(); }
         if (name === 'bilan') { this.refreshNotes(); this.refreshBilanAnnuel(); this.initRapportSelect(); }
         if (name === 'pea') { this.refreshLignesPEA(); this.refreshAllocationPEA(); }
+        if (name === 'abonnements') { this.refreshAbonnements(); }
+        if (name === 'abonnements') { this.refreshAbonnements(); }
         if (name === 'patrimoine') { this.refreshInflation(); }
     },
 
@@ -2114,7 +2119,7 @@ const app = {
         });
         const max = Math.max(...totaux, 1);
         labels.innerHTML = moisLabels.map(m =>
-            `<div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--text-tertiary);text-align:center">${m}</div>`
+            `<div style="font-family:DM Mono,monospace;font-size:0.5rem;color:var(--text-tertiary);text-align:center">${m}</div>`
         ).join('');
         grid.innerHTML = totaux.map((val, i) => {
             const intensity = val / max;
@@ -2243,7 +2248,7 @@ const app = {
                     <div style="position:absolute;top:2px;bottom:2px;left:0;width:${wA}%;background:rgba(var(--heatmap-rgb),0.55);border-radius:4px;min-width:2px"></div>
                     <div style="position:absolute;top:2px;bottom:2px;left:0;width:${wB}%;background:rgba(var(--heatmap-rgb),0.25);border-radius:4px;min-width:2px;border-left:2px solid var(--bg-secondary)"></div>
                 </div>
-                <span style="font-family:'DM Mono',monospace;font-size:0.65rem;min-width:48px;text-align:right;font-weight:600;color:${diffColor}">${sign}${this.formatCurrency(Math.abs(diff))}</span>
+                <span style="font-family:DM Mono,monospace;font-size:0.65rem;min-width:48px;text-align:right;font-weight:600;color:${diffColor}">${sign}${this.formatCurrency(Math.abs(diff))}</span>
             </div>`;
         }).join('');
 
@@ -2253,18 +2258,18 @@ const app = {
                     <div style="display:flex;align-items:center;gap:0.5rem">
                         <div style="width:10px;height:10px;border-radius:2px;background:rgba(var(--heatmap-rgb),0.55);flex-shrink:0"></div>
                         <span style="font-size:0.82rem;font-weight:600;color:var(--text-primary)">${moisA}</span>
-                        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-tertiary)">${this.formatCurrency(totA)}</span>
+                        <span style="font-family:DM Mono,monospace;font-size:0.72rem;color:var(--text-tertiary)">${this.formatCurrency(totA)}</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:0.5rem">
                         <div style="width:10px;height:10px;border-radius:2px;background:rgba(var(--heatmap-rgb),0.25);flex-shrink:0;border:1px solid rgba(var(--heatmap-rgb),0.4)"></div>
                         <span style="font-size:0.82rem;font-weight:600;color:var(--text-primary)">${moisB}</span>
-                        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-tertiary)">${this.formatCurrency(totB)}</span>
+                        <span style="font-family:DM Mono,monospace;font-size:0.72rem;color:var(--text-tertiary)">${this.formatCurrency(totB)}</span>
                     </div>
                 </div>
                 <div style="text-align:right">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);font-family:'DM Mono',monospace;margin-bottom:0.2rem">Évolution globale</div>
+                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);font-family:DM Mono,monospace;margin-bottom:0.2rem">Évolution globale</div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:${colorTotal};line-height:1">${signTotal}${pctTotal}%</div>
-                    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:${colorTotal};margin-top:0.1rem">${signTotal}${this.formatCurrency(Math.abs(diffTotal))}</div>
+                    <div style="font-family:DM Mono,monospace;font-size:0.65rem;color:${colorTotal};margin-top:0.1rem">${signTotal}${this.formatCurrency(Math.abs(diffTotal))}</div>
                 </div>
             </div>
             ${rows}`;
@@ -2349,7 +2354,7 @@ const app = {
                         <div style="flex:1;height:8px;border-radius:100px;background:var(--bg-secondary);overflow:hidden">
                             <div style="width:${pct}%;height:100%;background:${color};border-radius:100px"></div>
                         </div>
-                        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;min-width:45px;text-align:right;color:${c.infl > 0 ? 'var(--danger)' : 'var(--success)'}">${c.infl > 0 ? '+' : ''}${c.infl}%</span>
+                        <span style="font-family:DM Mono,monospace;font-size:0.72rem;min-width:45px;text-align:right;color:${c.infl > 0 ? 'var(--danger)' : 'var(--success)'}">${c.infl > 0 ? '+' : ''}${c.infl}%</span>
                     </div>`;
                 }).join('')}
             </div>`;
@@ -2452,12 +2457,12 @@ const app = {
         <div id="rapport-print" style="background:white;border-radius:16px;padding:2rem;border:1px solid var(--border-color)">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #e8edf2">
                 <div>
-                    <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7891ab">Bilan financier</div>
+                    <div style="font-family:DM Mono,monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7891ab">Bilan financier</div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:#1e3a5f">${moisLabel.charAt(0).toUpperCase()+moisLabel.slice(1)}</div>
                 </div>
                 <div style="text-align:right">
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#3f51b5,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${this.formatCurrency(total)}</div>
-                    <div style="font-family:'DM Mono',monospace;font-size:0.7rem;color:${resteBudget >= 0 ? '#00c853' : '#f44336'}">${resteBudget >= 0 ? '✅' : '⚠️'} ${resteBudget >= 0 ? '+' : ''}${this.formatCurrency(resteBudget)} vs budget</div>
+                    <div style="font-family:DM Mono,monospace;font-size:0.7rem;color:${resteBudget >= 0 ? '#00c853' : '#f44336'}">${resteBudget >= 0 ? '✅' : '⚠️'} ${resteBudget >= 0 ? '+' : ''}${this.formatCurrency(resteBudget)} vs budget</div>
                 </div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(${salaire > 0 ? 4 : 3},1fr);gap:0.75rem;margin-bottom:1.5rem">
@@ -2467,16 +2472,16 @@ const app = {
                     ['Utilisation', budgetTotal > 0 ? ((total/budgetTotal)*100).toFixed(0)+'%' : '—', total > budgetTotal ? '#f44336' : '#1e3a5f'],
                     ...(epargne !== null ? [['Épargne', this.formatCurrency(epargne), '#00c853']] : [])
                 ].map(([l,v,c]) => `<div style="background:#f5f9fc;border-radius:12px;padding:0.75rem;text-align:center">
-                    <div style="font-family:'DM Mono',monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:#7891ab">${l}</div>
+                    <div style="font-family:DM Mono,monospace;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:#7891ab">${l}</div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:${c}">${v}</div>
                 </div>`).join('')}
             </div>
             ${catsSorted.length > 0 ? `<div style="margin-bottom:1.5rem">
-                <div style="font-family:'DM Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.75rem">Répartition par catégorie</div>
+                <div style="font-family:DM Mono,monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.75rem">Répartition par catégorie</div>
                 ${catsSorted.map(([cat, val]) => `<div style="margin-bottom:0.5rem">
                     <div style="display:flex;justify-content:space-between;margin-bottom:0.2rem">
                         <span style="font-size:0.85rem;color:#2d3748">${cat}</span>
-                        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:#4a6785">${this.formatCurrency(val)} (${((val/total)*100).toFixed(0)}%)</span>
+                        <span style="font-family:DM Mono,monospace;font-size:0.72rem;color:#4a6785">${this.formatCurrency(val)} (${((val/total)*100).toFixed(0)}%)</span>
                     </div>
                     <div style="height:6px;background:#e8edf2;border-radius:100px;overflow:hidden">
                         <div style="width:${((val/maxCat)*100).toFixed(0)}%;height:100%;background:linear-gradient(90deg,#3f51b5,#7c4dff);border-radius:100px"></div>
@@ -2484,20 +2489,20 @@ const app = {
                 </div>`).join('')}
             </div>` : ''}
             ${peaLast ? `<div style="background:#f5f9fc;border-radius:12px;padding:1rem;margin-bottom:1.5rem;border:1px solid #d4e2ed">
-                <div style="font-family:'DM Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.5rem">PEA</div>
+                <div style="font-family:DM Mono,monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.5rem">PEA</div>
                 <div style="display:flex;justify-content:space-between;font-size:0.85rem">
                     <span>Valeur : <strong>${this.formatCurrency(peaLast.valeur)}</strong></span>
                     <span style="color:${parseFloat(peaLast.performance)>=0?'#00c853':'#f44336'}">Perf : ${peaLast.performance}%</span>
                 </div>
             </div>` : ''}
             ${obj.length > 0 ? `<div style="margin-bottom:1.5rem">
-                <div style="font-family:'DM Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.75rem">Objectifs en cours</div>
+                <div style="font-family:DM Mono,monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:#7891ab;margin-bottom:0.75rem">Objectifs en cours</div>
                 ${obj.map(o => { const pct = Math.min(100,(o.actuel/o.cible)*100).toFixed(0); return `<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem">
                     <span style="font-size:1.1rem">${o.emoji}</span>
                     <div style="flex:1">
                         <div style="display:flex;justify-content:space-between;margin-bottom:0.2rem">
                             <span style="font-size:0.85rem">${o.nom}</span>
-                            <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:#4a6785">${pct}%</span>
+                            <span style="font-family:DM Mono,monospace;font-size:0.7rem;color:#4a6785">${pct}%</span>
                         </div>
                         <div style="height:5px;background:#e8edf2;border-radius:100px;overflow:hidden">
                             <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#3f51b5,#7c4dff);border-radius:100px"></div>
@@ -2505,7 +2510,7 @@ const app = {
                     </div>
                 </div>`; }).join('')}
             </div>` : ''}
-            <div style="text-align:center;font-family:'DM Mono',monospace;font-size:0.6rem;color:#a0aec0;padding-top:1rem;border-top:1px solid #e8edf2">Généré le ${new Date().toLocaleDateString('fr-FR')} — Suivi Financier</div>
+            <div style="text-align:center;font-family:DM Mono,monospace;font-size:0.6rem;color:#a0aec0;padding-top:1rem;border-top:1px solid #e8edf2">Généré le ${new Date().toLocaleDateString('fr-FR')} — Suivi Financier</div>
         </div>`;
         this.notify('Rapport généré ✓', 'success');
     },
@@ -3118,7 +3123,7 @@ const app = {
                     </div>
                 </div>`;
             } else {
-                html += `<h4 style="margin-top:1.5rem;margin-bottom:0.75rem;font-size:0.9rem;color:var(--text-secondary)">Détail par catégorie <span style="font-size:0.7rem;font-family:'DM Mono',monospace;opacity:0.6">— clique sur une ligne pour voir les transactions</span></h4>`;
+                html += `<h4 style="margin-top:1.5rem;margin-bottom:0.75rem;font-size:0.9rem;color:var(--text-secondary)">Détail par catégorie <span style="font-size:0.7rem;font-family:DM Mono,monospace;opacity:0.6">— clique sur une ligne pour voir les transactions</span></h4>`;
                 const catsSorted = Object.keys(parCat).sort((a,b) => parCat[b] - parCat[a]);
                 html += `<div id="cat-accordion" style="display:flex;flex-direction:column;gap:0.5rem">`;
                 catsSorted.forEach(cat => {
@@ -3127,9 +3132,9 @@ const app = {
                     const txCat = depensesFiltrees.filter(d => d.categorie === cat).sort((a,b) => new Date(b.date) - new Date(a.date));
                     const txRows = txCat.map(d => `
                         <div style="display:flex;align-items:center;gap:1rem;padding:0.5rem 0.75rem;border-radius:8px;background:var(--bg-secondary);margin-bottom:4px">
-                            <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-tertiary);min-width:80px">${new Date(d.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span>
+                            <span style="font-family:DM Mono,monospace;font-size:0.7rem;color:var(--text-tertiary);min-width:80px">${new Date(d.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span>
                             <span style="font-size:0.82rem;flex:1;color:var(--text-secondary)">${d.note || '—'}</span>
-                            <span style="font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary)">${this.formatCurrency(d.montant)}</span>
+                            <span style="font-family:DM Mono,monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary)">${this.formatCurrency(d.montant)}</span>
                             <button onclick="app.supprimerDepense(${d.id})" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.75rem;padding:0 0.25rem" title="Supprimer">✕</button>
                         </div>`).join('');
                     html += `
@@ -3139,14 +3144,14 @@ const app = {
                             <div style="flex:1;height:6px;background:var(--bg-secondary);border-radius:100px;overflow:hidden;box-shadow:inset 2px 2px 4px var(--shadow-light)">
                                 <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));border-radius:100px;transition:width 0.4s ease"></div>
                             </div>
-                            <span style="font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary);min-width:70px;text-align:right">${this.formatCurrency(montant)}</span>
-                            <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-tertiary);min-width:36px;text-align:right">${pct}%</span>
+                            <span style="font-family:DM Mono,monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary);min-width:70px;text-align:right">${this.formatCurrency(montant)}</span>
+                            <span style="font-family:DM Mono,monospace;font-size:0.72rem;color:var(--text-tertiary);min-width:36px;text-align:right">${pct}%</span>
                             <span class="cat-chevron" style="font-size:0.75rem;color:var(--text-tertiary);transition:transform 0.25s;margin-left:0.25rem">▶</span>
                         </div>
                         <div class="cat-detail" style="display:none;padding:0 1rem 0.75rem">
                             ${txRows}
                             <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0.75rem;margin-top:4px;border-top:1px solid var(--border-color)">
-                                <span style="font-family:'DM Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary)">${txCat.length} transaction${txCat.length > 1 ? 's' : ''}</span>
+                                <span style="font-family:DM Mono,monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary)">${txCat.length} transaction${txCat.length > 1 ? 's' : ''}</span>
                                 <span style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${this.formatCurrency(montant)}</span>
                             </div>
                         </div>
@@ -4969,7 +4974,7 @@ const app = {
                 </div>
                 <div style="display:flex;align-items:center;gap:1rem">
                     <div style="text-align:right">
-                        <div style="font-family:'DM Mono',monospace;font-size:0.9rem;font-weight:600;color:var(--danger)">−${this.formatCurrency(r.montant)}</div>
+                        <div style="font-family:DM Mono,monospace;font-size:0.9rem;font-weight:600;color:var(--danger)">−${this.formatCurrency(r.montant)}</div>
                         <div style="font-size:0.65rem;color:var(--text-tertiary)">Dans ${jours} jours</div>
                     </div>
                     <button class="btn btn-small btn-secondary" onclick="app.supprimerRecurrence(${r.id})">✕</button>
@@ -5060,23 +5065,85 @@ const app = {
         document.getElementById('obj-total-cible').textContent = this.formatCurrency(objs.reduce((s, o) => s + o.cible, 0));
 
         if (objs.length === 0) {
-            list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div>Aucun objectif défini</div></div>';
+            list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div>Aucun objectif. Clique sur + Nouvel objectif !</div></div>';
             if (calcCard) calcCard.style.display = 'none';
             document.getElementById('obj-mensuel-total').textContent = '0 €';
+            // update dashboard counter
+            const dc = document.getElementById('d-obj-count'); if(dc) dc.textContent = '0 en cours';
             return;
         }
 
         let totalMensuel = 0;
         let calcHtml = '';
+        const gradients = [
+            'linear-gradient(135deg,#1e3a5f,#3f51b5)',
+            'linear-gradient(135deg,#4a1a6b,#7c4dff)',
+            'linear-gradient(135deg,#0a3d2e,#00c853)',
+            'linear-gradient(135deg,#5c2000,#ff9800)',
+            'linear-gradient(135deg,#1a0a3d,#3949ab)',
+            'linear-gradient(135deg,#3d0a0a,#e53935)',
+        ];
 
-        list.innerHTML = objs.map(o => {
+        // Séparer terminés et en cours
+        const termines = objs.filter(o => (o.actuel / o.cible) >= 1);
+        const encours  = objs.filter(o => (o.actuel / o.cible) < 1);
+
+        // Construire grid visuelle
+        let gridHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-bottom:1.5rem">';
+
+        [...encours, ...termines].forEach((o, idx) => {
             const pct = Math.min(100, (o.actuel / o.cible) * 100);
-            const moisRestants = o.dateTarget ? Math.max(1, Math.ceil((new Date(o.dateTarget + '-01') - now) / (1000 * 60 * 60 * 24 * 30))) : 12;
+            const done = pct >= 100;
+            const moisRestants = o.dateTarget ? Math.max(1, Math.ceil((new Date(o.dateTarget + '-01') - now) / (1000*60*60*24*30))) : 12;
             const mensuel = Math.ceil((o.cible - o.actuel) / moisRestants);
-            totalMensuel += Math.max(0, mensuel);
+            totalMensuel += done ? 0 : Math.max(0, mensuel);
+            const dateLabel = o.dateTarget ? new Date(o.dateTarget + '-01').toLocaleDateString('fr-FR', {month:'short', year:'numeric'}) : '—';
+            const grad = done ? 'linear-gradient(135deg,#006b2e,#00c853)' : gradients[idx % gradients.length];
 
-            const dateLabel = o.dateTarget ? new Date(o.dateTarget + '-01').toLocaleDateString('fr-FR', {month:'long', year:'numeric'}) : 'Pas de date';
-            const progressCls = pct >= 100 ? 'success' : pct >= 60 ? '' : pct >= 30 ? 'warning' : 'danger';
+            // Projection intelligente
+            const salaire = this.data.parametres.salaire || 0;
+            const epMensuelle = salaire > 0 ? salaire * 0.2 : 150; // 20% du salaire ou 150€ par défaut
+            const moisProj = epMensuelle > 0 ? Math.ceil((o.cible - o.actuel) / epMensuelle) : null;
+            let projText = '';
+            if (!done && moisProj) {
+                const projDate = new Date(); projDate.setMonth(projDate.getMonth() + moisProj);
+                const projLabel = projDate.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+                projText = moisProj <= (moisRestants||999)
+                    ? `<div style="background:rgba(0,200,83,.12);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:#00a344;margin-top:.6rem">📊 Au rythme actuel → <strong>${projLabel}</strong></div>`
+                    : `<div style="background:rgba(255,152,0,.1);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:#e07800;margin-top:.6rem">⚡ Augmenter l'épargne pour respecter l'échéance</div>`;
+            }
+            const progressColor = done ? '#00c853' : pct >= 60 ? 'var(--accent-primary)' : pct >= 30 ? '#ff9800' : '#f44336';
+            const doneTag = done ? '<span style="background:rgba(0,200,83,.15);color:#00a344;border:1px solid rgba(0,200,83,.3);border-radius:20px;font-size:.6rem;font-family:DM Mono,monospace;padding:.1rem .5rem;font-weight:600">ATTEINT ✓</span>' : '';
+
+            gridHtml += `
+            <div style="background:var(--bg-card);border-radius:18px;overflow:hidden;box-shadow:8px 8px 20px var(--shadow-light),-8px -8px 20px var(--shadow-dark);transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+              <div style="background:${grad};padding:1.1rem 1.25rem;position:relative">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                  <div style="font-size:1.8rem">${o.emoji}</div>
+                  <button onclick="app.supprimerObjectif(${o.id})" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center">✕</button>
+                </div>
+                <div style="font-weight:700;color:#fff;font-size:.95rem;margin-top:.35rem">${o.nom}</div>
+                <div style="font-size:.65rem;color:rgba(255,255,255,.7);margin-top:.15rem">${dateLabel} ${doneTag}</div>
+              </div>
+              <div style="padding:.9rem 1.1rem">
+                <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.35rem">
+                  <span style="font-weight:700;font-size:1rem;font-family:'Outfit',sans-serif">${this.formatCurrency(o.actuel)}</span>
+                  <span style="color:var(--text-tertiary)">${this.formatCurrency(o.cible)}</span>
+                </div>
+                <div class="progress-bar" style="height:8px;margin:.4rem 0">
+                  <div class="progress-fill" style="width:${pct}%;background:${progressColor}"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-tertiary);margin-bottom:.4rem">
+                  <span>${pct.toFixed(0)}% atteint</span>
+                  ${done ? '' : `<span>${moisRestants} mois restants</span>`}
+                </div>
+                ${projText}
+                ${done ? '' : `
+                <div style="display:flex;gap:.4rem;margin-top:.65rem;align-items:center">
+                  <input type="number" class="form-input" placeholder="Mettre à jour (€)" step="50" style="flex:1;padding:.5rem;font-size:.8rem" onchange="app.mettreAJourObjectif(${o.id}, this.value)">
+                </div>`}
+              </div>
+            </div>`;
 
             calcHtml += `
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:0.65rem 0.85rem;background:var(--bg-secondary);border-radius:10px;margin-bottom:0.5rem;border:1px solid var(--border-color)">
@@ -5084,40 +5151,14 @@ const app = {
                         <div style="font-size:0.72rem;color:var(--text-tertiary)">${dateLabel} · ${moisRestants} mois</div>
                     </div>
                     <div style="text-align:right">
-                        <div style="font-family:'DM Mono',monospace;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${this.formatCurrency(Math.max(0, mensuel))}/mois</div>
+                        <div style="font-family:DM Mono,monospace;font-size:0.9rem;font-weight:700;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${this.formatCurrency(Math.max(0, mensuel))}/mois</div>
                         <div style="font-size:0.68rem;color:var(--text-tertiary)">Reste ${this.formatCurrency(Math.max(0, o.cible - o.actuel))}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
+        });
 
-            return `
-            <div class="card" style="margin-bottom:1rem;padding:1.25rem">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.75rem">
-                    <div style="display:flex;align-items:center;gap:0.5rem">
-                        <span style="font-size:1.3rem">${o.emoji}</span>
-                        <div>
-                            <div style="font-weight:700;font-size:0.95rem">${o.nom}</div>
-                            <div style="font-size:0.72rem;color:var(--text-tertiary)">${dateLabel} · ${moisRestants} mois restants</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:0.5rem">
-                        <span style="font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-secondary)">${this.formatCurrency(o.actuel)} / ${this.formatCurrency(o.cible)}</span>
-                        <button class="btn btn-small btn-secondary" onclick="app.supprimerObjectif(${o.id})">✕</button>
-                    </div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill ${progressCls}" style="width:${pct}%"></div>
-                </div>
-                <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.78rem;color:var(--text-tertiary)">
-                    <span>${pct.toFixed(0)}% atteint</span>
-                    <span>Épargner <strong>${this.formatCurrency(Math.max(0,mensuel))}/mois</strong></span>
-                </div>
-                <div style="margin-top:0.75rem;display:flex;gap:0.5rem;align-items:center">
-                    <input type="number" class="form-input" placeholder="Mettre à jour le montant" step="50" style="flex:1"
-                        onchange="app.mettreAJourObjectif(${o.id}, this.value)">
-                </div>
-            </div>`;
-        }).join('');
+        gridHtml += '</div>';
+        list.innerHTML = gridHtml;
 
         if (calcCard) {
             calcCard.style.display = 'block';
@@ -5125,6 +5166,8 @@ const app = {
             document.getElementById('obj-grand-total').textContent = this.formatCurrency(totalMensuel);
         }
         document.getElementById('obj-mensuel-total').textContent = this.formatCurrency(totalMensuel);
+        const dc = document.getElementById('d-obj-count');
+        if(dc) dc.textContent = `${encours.length} en cours`;
     },
 
     // ===================== NOTES =====================
@@ -5169,7 +5212,7 @@ const app = {
             <div style="background:var(--bg-secondary);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;border-left:3px solid ${color};border:1px solid var(--border-color);border-left:3px solid ${color}">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
                     <div style="display:flex;align-items:center;gap:0.5rem">
-                        <span style="font-family:'DM Mono',monospace;font-size:0.78rem;color:${color};font-weight:600">${dateLabel}</span>
+                        <span style="font-family:DM Mono,monospace;font-size:0.78rem;color:${color};font-weight:600">${dateLabel}</span>
                         <span style="font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:4px;background:${color}22;color:${color}">${n.tag}</span>
                     </div>
                     <button class="btn btn-small btn-secondary" onclick="app.supprimerNote(${n.id})">✕</button>
@@ -5194,11 +5237,11 @@ const app = {
             <div class="modal-body">
                 <div class="grid grid-2">
                     <div class="form-group"><label class="form-label">Nom du titre</label><input type="text" class="form-input" id="lpea-nom" placeholder="MSCI World"></div>
-                    <div class="form-group"><label class="form-label">ISIN</label><input type="text" class="form-input" id="lpea-isin" placeholder="IE00B4L5Y983" style="font-family:'DM Mono',monospace;letter-spacing:0.04em"></div>
+                    <div class="form-group"><label class="form-label">ISIN</label><input type="text" class="form-input" id="lpea-isin" placeholder="IE00B4L5Y983" style="font-family:DM Mono,monospace;letter-spacing:0.04em"></div>
                     <div class="form-group"><label class="form-label">Nombre de parts</label><input type="number" class="form-input" id="lpea-parts" placeholder="10" step="1"></div>
                     <div class="form-group"><label class="form-label">PRU (€ / part)</label><input type="number" class="form-input" id="lpea-pru" placeholder="0.00" step="0.01"></div>
                 </div>
-                <p style="font-size:0.72rem;color:var(--text-tertiary);font-family:'DM Mono',monospace;margin-top:0.5rem">💡 Saisis l'ISIN (ex: <strong>IE00B4L5Y983</strong>) ou directement le ticker Yahoo Finance (ex: <strong>MWRD.PA</strong>). Le cours sera récupéré automatiquement via 🔄 Actualiser.</p>
+                <p style="font-size:0.72rem;color:var(--text-tertiary);font-family:DM Mono,monospace;margin-top:0.5rem">💡 Saisis l'ISIN (ex: <strong>IE00B4L5Y983</strong>) ou directement le ticker Yahoo Finance (ex: <strong>MWRD.PA</strong>). Le cours sera récupéré automatiquement via 🔄 Actualiser.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="document.getElementById('lignePEAModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
@@ -5254,12 +5297,12 @@ const app = {
             return `
             <tr>
                 <td><strong>${l.nom}</strong></td>
-                <td style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-tertiary)">${isinDisplay}</td>
-                <td style="font-family:'DM Mono',monospace">${l.parts}</td>
-                <td style="font-family:'DM Mono',monospace">${this.formatCurrency(l.pru)}</td>
-                <td style="font-family:'DM Mono',monospace">${this.formatCurrency(l.valeurActuelle || l.pru)}</td>
-                <td style="font-family:'DM Mono',monospace">${this.formatCurrency(investi)}</td>
-                <td class="stat-change ${pv >= 0 ? 'positive' : 'negative'}" style="font-family:'DM Mono',monospace">${pv >= 0 ? '+' : ''}${pvPct}%</td>
+                <td style="font-family:DM Mono,monospace;font-size:0.72rem;color:var(--text-tertiary)">${isinDisplay}</td>
+                <td style="font-family:DM Mono,monospace">${l.parts}</td>
+                <td style="font-family:DM Mono,monospace">${this.formatCurrency(l.pru)}</td>
+                <td style="font-family:DM Mono,monospace">${this.formatCurrency(l.valeurActuelle || l.pru)}</td>
+                <td style="font-family:DM Mono,monospace">${this.formatCurrency(investi)}</td>
+                <td class="stat-change ${pv >= 0 ? 'positive' : 'negative'}" style="font-family:DM Mono,monospace">${pv >= 0 ? '+' : ''}${pvPct}%</td>
                 <td><button class="btn btn-small btn-secondary" onclick="app.supprimerLignePEA(${l.id})">✕</button></td>
             </tr>`;
         }).join('');
@@ -5654,7 +5697,7 @@ const app = {
             <div style="margin-bottom:1rem">
                 <div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;font-size:0.82rem">
                     <span style="font-weight:600">${l.nom}</span>
-                    <span style="font-family:'DM Mono',monospace;color:var(--text-secondary)">cible ${cible}% · réel ${reel}%</span>
+                    <span style="font-family:DM Mono,monospace;color:var(--text-secondary)">cible ${cible}% · réel ${reel}%</span>
                 </div>
                 <div style="height:10px;background:var(--bg-secondary);border-radius:6px;position:relative;overflow:hidden">
                     <div style="height:100%;width:${Math.min(100,cible)}%;background:var(--border-color);position:absolute;left:0;top:0;border-radius:6px;"></div>
@@ -5857,6 +5900,450 @@ const app = {
         }
         document.getElementById('emojiPicker').classList.remove('open');
     },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ─── OUTILS PEA (Prévisions + Calculateur) ────────────────────────
+    // ═══════════════════════════════════════════════════════════════════
+    togglePeaOutils() {
+        const card = document.getElementById('pea-outils-card');
+        const btn  = document.getElementById('btn-pea-outils-toggle');
+        if (!card) return;
+        const open = card.style.display !== 'none';
+        card.style.display = open ? 'none' : 'block';
+        if (btn) btn.textContent = open ? '🧮 Outils' : '✕ Outils';
+    },
+
+    switchPeaOutil(nom, el) {
+        ['previsions','calculateur'].forEach(n => {
+            const panel = document.getElementById('pea-outil-' + n);
+            if (panel) panel.style.display = n === nom ? 'block' : 'none';
+        });
+        document.querySelectorAll('#pea-outils-card .period-btn').forEach(b => {
+            b.classList.toggle('active', b === el);
+            b.classList.toggle('btn-secondary', b !== el);
+        });
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ─── RÉSUMÉ HEBDOMADAIRE ───────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════
+    fermerResumeHebdo() {
+        const card = document.getElementById('resume-hebdo-card');
+        if (card) card.style.display = 'none';
+        localStorage.setItem('resumeHebdoFerme', new Date().toISOString().split('T')[0]);
+    },
+
+    checkResumeHebdo() {
+        const today     = new Date();
+        const dayOfWeek = today.getDay(); // 1 = lundi
+        const fermeKey  = localStorage.getItem('resumeHebdoFerme');
+        const fermeToday = fermeKey === today.toISOString().split('T')[0];
+        if (fermeToday) return; // Déjà fermé aujourd'hui
+        // Afficher chaque lundi OU si données dispo (toujours afficher pour test)
+        this.genererResumeHebdo();
+    },
+
+    genererResumeHebdo() {
+        const card = document.getElementById('resume-hebdo-card');
+        if (!card) return;
+
+        const today  = new Date();
+        const lundi  = new Date(today); lundi.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+        const dimanche = new Date(lundi); dimanche.setDate(lundi.getDate() - 1);
+        const lundiPrev = new Date(lundi); lundiPrev.setDate(lundi.getDate() - 7);
+
+        const fmtDate = (d) => d.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+        const periode = `${fmtDate(lundiPrev)} — ${fmtDate(dimanche)}`;
+
+        // Dépenses de la semaine passée
+        const lundiPrevStr  = lundiPrev.toISOString().split('T')[0];
+        const dimancheStr   = dimanche.toISOString().split('T')[0];
+        const depsSemaine   = this.data.depenses.filter(d => d.date >= lundiPrevStr && d.date <= dimancheStr);
+        const totalSemaine  = depsSemaine.reduce((s,d) => s + d.montant, 0);
+
+        // Semaine d'avant pour comparaison
+        const lundi2Prev = new Date(lundiPrev); lundi2Prev.setDate(lundiPrev.getDate() - 7);
+        const lundi2Str  = lundi2Prev.toISOString().split('T')[0];
+        const deps2Sem   = this.data.depenses.filter(d => d.date >= lundi2Str && d.date < lundiPrevStr);
+        const total2Sem  = deps2Sem.reduce((s,d) => s + d.montant, 0);
+        const deltaPerc  = total2Sem > 0 ? ((totalSemaine - total2Sem) / total2Sem * 100).toFixed(0) : null;
+
+        // Performance PEA cette semaine
+        const peaSorted = [...this.data.suiviPEA].sort((a,b) => b.date.localeCompare(a.date));
+        const peaLast   = peaSorted[0];
+        const peaPrev   = peaSorted[1];
+        const gainPEA   = (peaLast && peaPrev) ? (peaLast.valeur - peaPrev.valeur) : null;
+
+        // Objectifs en cours
+        const objsEnCours = this.data.objectifs.filter(o => (o.actuel / o.cible) < 1 && (o.actuel / o.cible) >= 0.5);
+
+        // Construire les items
+        const items = [];
+
+        if (depsSemaine.length > 0) {
+            const delta = deltaPerc !== null ? (parseInt(deltaPerc) > 0 ? `<span style="color:var(--danger)">+${deltaPerc}%</span>` : `<span style="color:var(--success)">${deltaPerc}%</span>`) : '';
+            const topCat = {};
+            depsSemaine.forEach(d => { topCat[d.categorie] = (topCat[d.categorie]||0) + d.montant; });
+            const cats = Object.entries(topCat).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([c,v])=>`${c} ${this.formatCurrency(v)}`).join(' · ');
+            items.push({ icon: '💸', color: 'var(--text-secondary)', title: `Dépenses semaine : ${this.formatCurrency(totalSemaine)} ${delta}`, sub: cats || 'Aucune catégorie' });
+        } else {
+            items.push({ icon: '✅', color: 'var(--success)', title: 'Aucune dépense la semaine dernière', sub: 'Semaine parfaite !' });
+        }
+
+        if (gainPEA !== null) {
+            const col = gainPEA >= 0 ? 'var(--success)' : 'var(--danger)';
+            items.push({ icon: '📈', color: col, title: `PEA : ${gainPEA >= 0 ? '+' : ''}${this.formatCurrency(gainPEA)} vs entrée précédente`, sub: `Valeur actuelle : ${this.formatCurrency(peaLast.valeur)} · Perf : ${peaLast.performance}%` });
+        }
+
+        const budget = Object.values(this.data.budgets).reduce((s,v)=>s+v,0);
+        if (budget > 0) {
+            const mois = today.toISOString().slice(0,7);
+            const depsMois = this.data.depenses.filter(d=>d.date.startsWith(mois)).reduce((s,d)=>s+d.montant,0);
+            const ratio = depsMois / budget * 100;
+            const col   = ratio > 90 ? 'var(--danger)' : ratio > 70 ? 'var(--warning)' : 'var(--success)';
+            items.push({ icon: ratio > 90 ? '⚠️' : '💰', color: col, title: `Budget mensuel : ${depsMois.toFixed(0)}€ / ${budget}€ (${ratio.toFixed(0)}%)`, sub: ratio > 90 ? 'Attention, budget presque épuisé' : 'Dans les clous' });
+        }
+
+        objsEnCours.forEach(o => {
+            const pct = (o.actuel/o.cible*100).toFixed(0);
+            items.push({ icon: o.emoji||'🎯', color: 'var(--accent-primary)', title: `${o.nom} — ${pct}% atteint`, sub: `${this.formatCurrency(o.actuel)} / ${this.formatCurrency(o.cible)}` });
+        });
+
+        if (items.length === 0) return; // Pas assez de données
+
+        // Emoji et titre selon santé financière
+        const score = totalSemaine < budget/4 ? '🟢' : totalSemaine < budget/2 ? '🟡' : '🔴';
+        const titre = totalSemaine === 0 ? 'Aucune dépense cette semaine !' : totalSemaine < budget/4 ? 'Bonne semaine !' : 'Semaine chargée';
+
+        document.getElementById('resume-hebdo-emoji').textContent  = score;
+        document.getElementById('resume-hebdo-titre').textContent  = titre;
+        document.getElementById('resume-hebdo-periode').textContent = periode;
+
+        const body = document.getElementById('resume-hebdo-body');
+        body.innerHTML = items.map(item => `
+            <div style="display:flex;align-items:flex-start;gap:.75rem;padding:.65rem .85rem;background:var(--bg-secondary);border-radius:12px;border-left:3px solid ${item.color}">
+                <span style="font-size:1.1rem;flex-shrink:0">${item.icon}</span>
+                <div><div style="font-size:.85rem;font-weight:600">${item.title}</div><div style="font-size:.72rem;color:var(--text-tertiary);margin-top:.15rem">${item.sub}</div></div>
+            </div>`).join('');
+
+        card.style.display = 'block';
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ─── ABONNEMENTS ──────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════
+    refreshAbonnements() {
+        const subs = this.data.abonnements || [];
+        const today = new Date();
+
+        // Stats
+        const totalMens  = subs.filter(s=>s.actif).reduce((a,s)=>{
+            if (s.freq==='annuel') return a + s.montant/12;
+            if (s.freq==='trim')   return a + s.montant/3;
+            return a + s.montant;
+        }, 0);
+        const el1 = document.getElementById('sub-total-mensuel');
+        const el2 = document.getElementById('sub-count');
+        const el3 = document.getElementById('sub-total-annuel');
+        if (el1) el1.textContent = this.formatCurrency(totalMens);
+        if (el2) el2.textContent = subs.filter(s=>s.actif).length;
+        if (el3) el3.textContent = this.formatCurrency(totalMens * 12);
+
+        // Prochains prélèvements (<=7 jours)
+        const prochains = subs.filter(s => s.actif && s.jour).map(s => {
+            let next = new Date(today.getFullYear(), today.getMonth(), s.jour);
+            if (next <= today) next.setMonth(next.getMonth() + 1);
+            return { ...s, nextDate: next, jours: Math.ceil((next - today) / 86400000) };
+        }).filter(s => s.jours <= 10).sort((a,b) => a.jours - b.jours);
+
+        const prochainsEl = document.getElementById('sub-prochains');
+        if (prochainsEl) {
+            if (prochains.length > 0) {
+                prochainsEl.innerHTML = `
+                    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.6rem;letter-spacing:.06em">⚡ Prochains prélèvements</div>
+                    ${prochains.map(s => `
+                    <div style="display:flex;align-items:center;gap:.85rem;padding:.75rem;background:var(--bg-secondary);border-radius:12px;margin-bottom:.4rem;border-left:3px solid var(--warning)">
+                        <span style="font-size:1.2rem">${s.emoji||'💳'}</span>
+                        <div style="flex:1"><div style="font-size:.85rem;font-weight:600">${s.nom}</div><div style="font-size:.7rem;color:var(--text-tertiary)">${s.nextDate.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</div></div>
+                        <div style="text-align:right">
+                            <div style="font-family:DM Mono,monospace;font-size:.9rem;font-weight:700">${this.formatCurrency(s.montant)}</div>
+                            <div style="font-size:.65rem;color:${s.jours<=3?'var(--danger)':'var(--warning)'}">Dans ${s.jours}j</div>
+                        </div>
+                    </div>`).join('')}`;
+            } else { prochainsEl.innerHTML = ''; }
+        }
+
+        // Liste complète
+        const list = document.getElementById('sub-list');
+        if (!list) return;
+        if (subs.length === 0) {
+            list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💳</div><div>Aucun abonnement. Clique sur "Auto-détecter" ou "+ Ajouter".</div></div>';
+            return;
+        }
+
+        // Grouper par catégorie
+        const cats = {};
+        subs.forEach(s => { const c = s.categorie||'Autre'; (cats[c]||(cats[c]=[])).push(s); });
+
+        list.innerHTML = Object.entries(cats).map(([cat, items]) => `
+            <div style="margin-bottom:1.25rem">
+                <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.5rem;letter-spacing:.06em">${cat}</div>
+                ${items.map(s => {
+                    const montantAff = s.freq==='annuel' ? `${this.formatCurrency(s.montant)}/an` : s.freq==='trim' ? `${this.formatCurrency(s.montant)}/trim` : `${this.formatCurrency(s.montant)}/mois`;
+                    return `<div style="display:flex;align-items:center;gap:.85rem;padding:.85rem;background:var(--bg-secondary);border-radius:14px;margin-bottom:.4rem;opacity:${s.actif?1:.5}">
+                        <div style="width:40px;height:40px;border-radius:12px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">${s.emoji||'💳'}</div>
+                        <div style="flex:1;min-width:0">
+                            <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.nom}</div>
+                            <div style="font-size:.7rem;color:var(--text-tertiary)">${s.freq==='mensuel'?'Mensuel':s.freq==='annuel'?'Annuel':s.freq==='trim'?'Trimestriel':'Mensuel'}${s.jour ? ' · J' + s.jour : ''}</div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                            <div style="font-family:DM Mono,monospace;font-size:.9rem;font-weight:700">${montantAff}</div>
+                            <div style="font-size:.65rem;color:var(--text-tertiary)">${this.formatCurrency(s.freq==='annuel'?s.montant/12:s.freq==='trim'?s.montant/3:s.montant)}/mois</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:.3rem">
+                            <button onclick="app.toggleAbonnement(${s.id})" style="background:${s.actif?'rgba(0,200,83,.1)':'rgba(244,67,54,.1)'};border:none;padding:.25rem .5rem;border-radius:6px;font-size:.65rem;color:${s.actif?'var(--success)':'var(--danger)'};cursor:pointer;font-family:DM Mono,monospace">${s.actif?'ON':'OFF'}</button>
+                            <button onclick="app.supprimerAbonnement(${s.id})" style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:.8rem">✕</button>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>`).join('');
+
+        // Répartition
+        const reptCard = document.getElementById('sub-repartition-card');
+        const reptEl   = document.getElementById('sub-repartition');
+        if (reptCard && reptEl && subs.length > 0) {
+            reptCard.style.display = 'block';
+            const bycat = {};
+            subs.filter(s=>s.actif).forEach(s => {
+                const c = s.categorie||'Autre';
+                const m = s.freq==='annuel'?s.montant/12:s.freq==='trim'?s.montant/3:s.montant;
+                bycat[c] = (bycat[c]||0) + m;
+            });
+            reptEl.innerHTML = Object.entries(bycat).sort((a,b)=>b[1]-a[1]).map(([c,v]) => {
+                const pct = totalMens > 0 ? (v/totalMens*100).toFixed(0) : 0;
+                return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                    <span style="font-size:.85rem">${c}</span>
+                    <div style="display:flex;align-items:center;gap:.75rem;flex:1;margin:0 .75rem">
+                        <div style="flex:1;height:8px;background:var(--bg-secondary);border-radius:8px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));border-radius:8px"></div></div>
+                    </div>
+                    <span style="font-family:DM Mono,monospace;font-size:.82rem;font-weight:600;min-width:70px;text-align:right">${this.formatCurrency(v)}/m</span>
+                </div>`;
+            }).join('');
+        }
+    },
+
+    ouvrirAjoutAbonnement() {
+        this.openInputModal("Nom de l abonnement", (nom) => {
+            if (!nom) return;
+            const id = Date.now();
+            const montantStr = prompt('Montant (€) :');
+            const montant = parseFloat(montantStr);
+            if (isNaN(montant) || montant <= 0) { this.notify('Montant invalide', 'error'); return; }
+            const freqChoix = ['mensuel','annuel','trimestriel'];
+            const freq = prompt('Frequence : 0=Mensuel 1=Annuel 2=Trimestriel (entrez 0, 1 ou 2)');
+            const freqVal = freqChoix[parseInt(freq)||0] || 'mensuel';
+            const jourStr = prompt('Jour du mois du prélèvement (1-28, ou vide) :');
+            const jour = parseInt(jourStr) || null;
+            const emoji = prompt('Emoji (facultatif, ex: 📺) :') || '💳';
+            const cat = prompt('Catégorie (Streaming, Sport, Logiciel, Autre…) :') || 'Autre';
+            if (!this.data.abonnements) this.data.abonnements = [];
+            this.data.abonnements.push({ id, nom, montant, freq: freqVal, jour, emoji, categorie: cat, actif: true });
+            this.save();
+            this.refreshAbonnements();
+            this.notify(`${emoji} ${nom} ajouté ✓`, 'success');
+        });
+    },
+
+    toggleAbonnement(id) {
+        const sub = (this.data.abonnements||[]).find(s=>s.id===id);
+        if (sub) { sub.actif = !sub.actif; this.save(); this.refreshAbonnements(); }
+    },
+
+    supprimerAbonnement(id) {
+        this.data.abonnements = (this.data.abonnements||[]).filter(s=>s.id!==id);
+        this.save();
+        this.refreshAbonnements();
+        this.notify('Abonnement supprimé', 'success');
+    },
+
+    detecterAbonnements() {
+        const deps = this.data.depenses;
+        if (deps.length < 20) { this.notify("Pas assez de depenses pour detecter (besoin d au moins 20)", 'warning'); return; }
+
+        // Chercher les montants qui reviennent au moins 2 fois avec le même libellé
+        const map = {};
+        deps.forEach(d => {
+            const key = `${d.note?.toLowerCase().trim()}_${d.montant.toFixed(2)}`;
+            if (d.note && d.note.trim()) map[key] = (map[key]||[]).concat(d);
+        });
+
+        const candidats = Object.values(map).filter(arr => arr.length >= 2).map(arr => ({
+            nom: arr[0].note,
+            montant: arr[0].montant,
+            occurrences: arr.length,
+            cat: arr[0].categorie
+        }));
+
+        if (candidats.length === 0) { this.notify('Aucun abonnement détecté automatiquement', 'warning'); return; }
+
+        // Filtrer ceux déjà ajoutés
+        const existants = (this.data.abonnements||[]).map(s => s.nom.toLowerCase().trim());
+        const nouveaux = candidats.filter(c => !existants.includes(c.nom.toLowerCase().trim()));
+
+        if (nouveaux.length === 0) { this.notify('Tous les abonnements détectés sont déjà enregistrés ✓', 'success'); return; }
+
+        let added = 0;
+        nouveaux.forEach(c => {
+            if (!this.data.abonnements) this.data.abonnements = [];
+            this.data.abonnements.push({ id: Date.now() + Math.random(), nom: c.nom, montant: c.montant, freq: 'mensuel', jour: null, emoji: '🔄', categorie: c.cat||'Autre', actif: true });
+            added++;
+        });
+        this.save();
+        this.refreshAbonnements();
+        this.notify(`${added} abonnement(s) détecté(s) et ajouté(s) ✓`, 'success');
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ─── IMPORT RELEVÉ BANCAIRE CSV ───────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════
+    _importRows: [],
+
+    importCSVDrop(e) {
+        e.preventDefault();
+        document.getElementById('import-drop-zone').style.borderColor = 'var(--border-color)';
+        const file = e.dataTransfer?.files[0];
+        if (file) this._parseImportCSV(file);
+    },
+
+    importCSVFile(e) {
+        const file = e.target.files[0];
+        if (file) this._parseImportCSV(file);
+    },
+
+    _parseImportCSV(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(l => l.trim().length > 3);
+                const sep   = lines[0].includes(';') ? ';' : ',';
+                // Ignorer l'en-tête
+                const dataLines = lines.filter(l => {
+                    const cols = l.split(sep);
+                    return cols.some(c => /[\d]/.test(c) && /-?[\d]+/.test(c));
+                });
+
+                this._importRows = [];
+                dataLines.forEach(line => {
+                    const cols = line.split(sep).map(c => c.trim().replace(/^["']|["']$/g,''));
+                    // Chercher une date (YYYY-MM-DD ou DD/MM/YYYY)
+                    let date = null, montant = null, libelle = '';
+                    cols.forEach(c => {
+                        if (!date) {
+                            const m1 = c.match(/^(\d{4})[-/](\d{2})[-/](\d{2})/);
+                            const m2 = c.match(/^(\d{2})[./](\d{2})[./](\d{4})/);
+                            if (m1) date = `${m1[1]}-${m1[2]}-${m1[3]}`;
+                            if (m2) date = `${m2[3]}-${m2[2]}-${m2[1]}`;
+                        }
+                        const num = parseFloat(c.replace(',','.').replace(/\s/g,''));
+                        if (!isNaN(num) && Math.abs(num) > 0.5 && Math.abs(num) < 50000) {
+                            if (montant === null || Math.abs(num) > Math.abs(montant)) montant = num;
+                        }
+                        if (c.length > 4 && !/^-?[\d.,]+$/.test(c) && !c.match(/\d{4}/)) {
+                            if (c.length > libelle.length) libelle = c;
+                        }
+                    });
+                    if (date && montant !== null && libelle && montant < 0) {
+                        const cat = this._guessCategory(libelle);
+                        this._importRows.push({ date, montant: Math.abs(montant), libelle, categorie: cat, selected: true });
+                    }
+                });
+
+                if (this._importRows.length === 0) {
+                    this.notify('Aucune transaction de débit trouvée dans ce fichier', 'error'); return;
+                }
+                this._renderImportPreview();
+            } catch(err) {
+                this.notify('Erreur de lecture du fichier : ' + err.message, 'error');
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+    },
+
+    _guessCategory(lib) {
+        const l = lib.toLowerCase();
+        const cats = this.data.budgets ? Object.keys(this.data.budgets) : [];
+        if (/carrefour|leclerc|lidl|aldi|intermarche|casino|monop|super|marché|boulangerie|boucherie|primeur/.test(l)) return cats.find(c=>/mang|courses|alimentation/i.test(c)) || 'MANGER';
+        if (/netflix|spotify|prime|disney|apple|google|xbox|psn|jeux|stream/.test(l)) return cats.find(c=>/loisir/i.test(c)) || 'LOISIR';
+        if (/sncf|ter|navigo|ratp|blabla|total|esso|bp|shell|carbu|station/.test(l)) return cats.find(c=>/carbu|transport/i.test(c)) || 'CARBU';
+        if (/pharmacie|medecin|docteur|hopital|sante|optic|dentiste/.test(l)) return 'SANTE';
+        if (/amazon|fnac|darty|decathlon|zara|h&m|vêtement|vetement/.test(l)) return cats.find(c=>/vetement/i.test(c)) || 'VETEMENT';
+        if (/bar|cafe|bistro|restaurant|brasserie|kebab|pizza|mcdo|kfc/.test(l)) return cats.find(c=>/bar|restaur/i.test(c)) || 'BAR';
+        return cats[0] || 'AUTRE';
+    },
+
+    _renderImportPreview() {
+        const preview = document.getElementById('import-preview');
+        const body    = document.getElementById('import-preview-body');
+        const title   = document.getElementById('import-preview-title');
+        const count   = document.getElementById('import-count-label');
+        if (!preview || !body) return;
+
+        const cats = this.data.budgets ? Object.keys(this.data.budgets) : ['AUTRE'];
+
+        title.textContent = `${this._importRows.length} transactions détectées — vérifie et sélectionne`;
+        body.innerHTML = this._importRows.map((row, i) => `
+            <tr>
+                <td><input type="checkbox" ${row.selected?'checked':''} onchange="app._importRows[${i}].selected=this.checked;app._updateImportCount()" style="accent-color:var(--accent-primary)"></td>
+                <td style="font-family:DM Mono,monospace;font-size:.78rem;white-space:nowrap">${row.date}</td>
+                <td style="font-size:.82rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${row.libelle}">${row.libelle}</td>
+                <td style="font-weight:700;color:var(--danger);font-family:DM Mono,monospace">${this.formatCurrency(row.montant)}</td>
+                <td>
+                    <select style="padding:.25rem .4rem;font-size:.72rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary)" onchange="app._importRows[${i}].categorie=this.value">
+                        ${cats.map(c=>`<option value="${c}" ${c===row.categorie?'selected':''}>${c}</option>`).join('')}
+                    </select>
+                </td>
+            </tr>`).join('');
+
+        this._updateImportCount();
+        preview.style.display = 'block';
+    },
+
+    _updateImportCount() {
+        const n = (this._importRows||[]).filter(r=>r.selected).length;
+        const btn = document.getElementById('btn-import-valider');
+        const lbl = document.getElementById('import-count-label');
+        if (btn) btn.textContent = `✅ Importer la sélection (${n})`;
+        if (lbl) lbl.textContent = `${n} / ${(this._importRows||[]).length} sélectionnées`;
+    },
+
+    importToggleAll(checked) {
+        (this._importRows||[]).forEach(r => r.selected = checked);
+        this._renderImportPreview();
+    },
+
+    validerImportCSV() {
+        const selected = (this._importRows||[]).filter(r => r.selected);
+        if (selected.length === 0) { this.notify('Aucune transaction sélectionnée', 'error'); return; }
+        let added = 0;
+        selected.forEach(row => {
+            this.data.depenses.push({ id: Date.now() + Math.random(), categorie: row.categorie, montant: row.montant, date: row.date, note: row.libelle });
+            added++;
+        });
+        this.save();
+        this.annulerImportCSV();
+        this.refreshDepenses();
+        this.notify(`✅ ${added} dépenses importées`, 'success');
+    },
+
+    annulerImportCSV() {
+        this._importRows = [];
+        const preview = document.getElementById('import-preview');
+        if (preview) preview.style.display = 'none';
+        const fileInput = document.getElementById('import-csv-file');
+        if (fileInput) fileInput.value = '';
+    },
+
 
     notify(msg, type = 'success') {
         const notif = document.createElement('div');
