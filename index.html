@@ -569,7 +569,15 @@ body[data-theme=dark] canvas { filter: none; }
   <div style="font-family:DM Mono,monospace;font-size:.68rem;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:.65rem;letter-spacing:.06em" id="import-preview-title">Transactions détectées</div>
   <div class="table-container" style="max-height:300px;overflow-y:auto">
   <table class="table" id="import-preview-table">
-    <thead><tr><th><input type="checkbox" id="import-check-all" onchange="app.importToggleAll(this.checked)" style="accent-color:var(--accent-primary)"> Tout</th><th>Date</th><th>Libellé</th><th>Montant</th><th>Catégorie</th></tr></thead>
+    <thead><tr>
+      <th><input type="checkbox" id="import-check-all" onchange="app.importToggleAll(this.checked)" style="accent-color:var(--accent-primary)"> Tout</th>
+      <th>Date</th>
+      <th>Libellé brut</th>
+      <th>Note (modifiable)</th>
+      <th>Montant</th>
+      <th>Type</th>
+      <th>Catégorie</th>
+    </tr></thead>
     <tbody id="import-preview-body"></tbody>
   </table>
   </div>
@@ -6220,65 +6228,243 @@ const app = {
         if (file) this._parseImportCSV(file);
     },
 
-    _parseImportCSV(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const text = e.target.result;
-                const lines = text.split('\n').filter(l => l.trim().length > 3);
-                const sep   = lines[0].includes(';') ? ';' : ',';
-                // Ignorer l'en-tête
-                const dataLines = lines.filter(l => {
-                    const cols = l.split(sep);
-                    return cols.some(c => /[\d]/.test(c) && /-?[\d]+/.test(c));
-                });
+    // ═══════════════════════════════════════════════════════════════════════
+    // ─── IMPORT RELEVÉ BANCAIRE — PARSER UNIVERSEL ─────────────────────────
+    // Gère : CA, Boursorama, BNP, SG, LCL, CIC, Caisse d'Épargne, Fortuneo…
+    // ═══════════════════════════════════════════════════════════════════════
+    _importRows: [],
 
-                this._importRows = [];
-                dataLines.forEach(line => {
-                    const cols = line.split(sep).map(c => c.trim().replace(/^["']|["']$/g,''));
-                    // Chercher une date (YYYY-MM-DD ou DD/MM/YYYY)
-                    let date = null, montant = null, libelle = '';
-                    cols.forEach(c => {
-                        if (!date) {
-                            const m1 = c.match(/^(\d{4})[-/](\d{2})[-/](\d{2})/);
-                            const m2 = c.match(/^(\d{2})[./](\d{2})[./](\d{4})/);
-                            if (m1) date = `${m1[1]}-${m1[2]}-${m1[3]}`;
-                            if (m2) date = `${m2[3]}-${m2[2]}-${m2[1]}`;
-                        }
-                        const num = parseFloat(c.replace(',','.').replace(/\s/g,''));
-                        if (!isNaN(num) && Math.abs(num) > 0.5 && Math.abs(num) < 50000) {
-                            if (montant === null || Math.abs(num) > Math.abs(montant)) montant = num;
-                        }
-                        if (c.length > 4 && !/^-?[\d.,]+$/.test(c) && !c.match(/\d{4}/)) {
-                            if (c.length > libelle.length) libelle = c;
-                        }
-                    });
-                    if (date && montant !== null && libelle && montant < 0) {
-                        const cat = this._guessCategory(libelle);
-                        this._importRows.push({ date, montant: Math.abs(montant), libelle, categorie: cat, selected: true });
-                    }
-                });
-
-                if (this._importRows.length === 0) {
-                    this.notify('Aucune transaction de débit trouvée dans ce fichier', 'error'); return;
-                }
-                this._renderImportPreview();
-            } catch(err) {
-                this.notify('Erreur de lecture du fichier : ' + err.message, 'error');
-            }
-        };
-        reader.readAsText(file, 'UTF-8');
+    importCSVDrop(e) {
+        e.preventDefault();
+        document.getElementById('import-drop-zone').style.borderColor = 'var(--border-color)';
+        const file = e.dataTransfer?.files[0];
+        if (file) this._parseImportCSV(file);
     },
 
-    _guessCategory(lib) {
-        const l = lib.toLowerCase();
+    importCSVFile(e) {
+        const file = e.target.files[0];
+        if (file) this._parseImportCSV(file);
+    },
+
+    _parseImportCSV(file) {
+        // Essayer UTF-8 d'abord, puis ISO-8859-1 (banques FR souvent en Latin-1)
+        const self = this;
+        const tryParse = (encoding) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const ok = self._doParse(ev.target.result);
+                if (!ok && encoding === 'UTF-8') tryParse('ISO-8859-1');
+                else if (!ok) self.notify('Format non reconnu. Réexporte depuis ta banque en CSV.', 'error');
+            };
+            reader.readAsText(file, encoding);
+        };
+        tryParse('UTF-8');
+    },
+
+    _doParse(text) {
+        // ── 1. Nettoyage ─────────────────────────────────────────────────────
+        const allLines = text.replace(/\r/g, '').split('\n').filter(l => l.trim().length > 2);
+        if (allLines.length < 2) return false;
+
+        // ── 2. Détection séparateur ( ; , \t ) ───────────────────────────────
+        const sample = allLines.slice(0, 10).join('\n');
+        const cnt = (c) => (sample.split(c).length - 1);
+        const sepScores = [[';', cnt(';')], [',', cnt(',')], ['\t', cnt('\t')]];
+        const sep = sepScores.sort((a,b) => b[1]-a[1])[0][0];
+
+        const splitLine = (l) => l.split(sep).map(c => c.trim().replace(/^["']|["']$/g, '').trim());
+
+        // ── 3. Trouver l'en-tête ─────────────────────────────────────────────
+        let headerIdx = -1, headers = [];
+        for (let i = 0; i < Math.min(10, allLines.length); i++) {
+            const cols = splitLine(allLines[i]);
+            if (cols.length >= 3 && cols.filter(c => c.length > 0).length >= 3) {
+                headerIdx = i;
+                headers = cols.map(c => c.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9\s]/g, ' ').trim());
+                break;
+            }
+        }
+        if (headerIdx === -1) return false;
+
+        // ── 4. Mapping colonnes par nom ───────────────────────────────────────
+        const findCol = (...kws) => {
+            for (const kw of kws) {
+                const idx = headers.findIndex(h => h.includes(kw));
+                if (idx !== -1) return idx;
+            }
+            return -1;
+        };
+
+        // Chercher la PREMIÈRE colonne date (pas "date de valeur" qui est souvent la 2e)
+        const colDate    = headers.findIndex(h => h === 'date' || h === 'dat' || h.startsWith('date ') && !h.includes('valeur') && !h.includes('analyse'));
+        const colLibelle = findCol('libelle', 'label', 'description', 'intitule', 'operation', 'wording', 'motif', 'detail', 'tiers');
+        const colNote    = findCol('note personnelle', 'note');
+        const colDebit   = findCol('debit', 'sortie', 'debit ', 'retrait', 'withdrawal', 'montant debit');
+        const colCredit  = findCol('credit', 'entree', 'depot', 'deposit', 'montant credit');
+        const colMontant = findCol('montant', 'amount', 'valeur');
+        const colSolde   = findCol('solde', 'balance', 'cumul');
+        const colCateg   = findCol('categorie', 'category');
+
+        const hasDebitCredit  = colDebit !== -1 && colCredit !== -1;
+        const hasMontantUnique = !hasDebitCredit && colMontant !== -1;
+
+        // ── 5. Parser chaque ligne ────────────────────────────────────────────
+        this._importRows = [];
+
+        allLines.slice(headerIdx + 1).forEach(line => {
+            if (!line.trim()) return;
+            const cols = splitLine(line);
+            if (cols.length < 2) return;
+
+            // ─ Date ─
+            let date = null;
+            const dateCandidates = colDate >= 0
+                ? [cols[colDate] || '']
+                : cols.slice(0, Math.min(4, cols.length));
+
+            for (const s of dateCandidates) {
+                const m1 = s.match(/^(\d{2})[./](\d{2})[./](\d{4})/);
+                const m2 = s.match(/^(\d{4})[-/](\d{2})[-/](\d{2})/);
+                const m3 = s.match(/^(\d{4})(\d{2})(\d{2})$/);
+                if (m1) { date = m1[3]+'-'+m1[2]+'-'+m1[1]; break; }
+                if (m2) { date = m2[1]+'-'+m2[2]+'-'+m2[3]; break; }
+                if (m3 && parseInt(m3[2]) <= 12) { date = m3[1]+'-'+m3[2]+'-'+m3[3]; break; }
+            }
+            if (!date) return;
+
+            // ─ Libellé brut ─
+            let libelle = colLibelle >= 0 ? (cols[colLibelle] || '') : '';
+            if (!libelle) {
+                // Fallback : colonne textuelle la plus longue
+                libelle = cols.reduce((best, c, i) => {
+                    if (i === colSolde || i === colDate) return best;
+                    const isText = c.length > 3 && !/^-?[\d\s.,]+$/.test(c);
+                    return (isText && c.length > best.length) ? c : best;
+                }, '');
+            }
+            if (!libelle) libelle = 'Transaction';
+
+            // ─ Libellé nettoyé ─
+            const libelleNettoye = this._nettoyerLibelle(libelle);
+
+            // ─ Montant & Type ─
+            let montant = 0, type = 'debit';
+            const parseNum = (s) => {
+                if (!s || !s.trim() || s.trim() === '-' || s.trim() === '') return NaN;
+                let c = s.trim().replace(/\s/g, '');
+                // Format français 1.234,56
+                if (/^\-?[\d]+\.[\d]{3},[\d]/.test(c)) c = c.replace(/\./g, '').replace(',', '.');
+                // Format standard 1,234.56
+                else if (/^\-?[\d]+,[\d]{3}\.[\d]/.test(c)) c = c.replace(/,/g, '');
+                // Séparateur décimal virgule simple
+                else c = c.replace(',', '.');
+                return parseFloat(c);
+            };
+
+            if (hasDebitCredit) {
+                const d = parseNum(cols[colDebit]  || '');
+                const cr = parseNum(cols[colCredit] || '');
+                const dVal  = isNaN(d)  ? 0 : Math.abs(d);
+                const crVal = isNaN(cr) ? 0 : Math.abs(cr);
+                if (dVal > 0)       { montant = dVal;  type = 'debit';  }
+                else if (crVal > 0) { montant = crVal; type = 'credit'; }
+                else return; // ligne vide (ex: ligne de solde)
+            } else if (hasMontantUnique) {
+                const val = parseNum(cols[colMontant] || '');
+                if (isNaN(val) || val === 0) return;
+                montant = Math.abs(val);
+                type    = val < 0 ? 'debit' : 'credit';
+            } else {
+                // Fallback heuristique : trouver un montant dans les colonnes
+                const candidates = cols.map((c, i) => {
+                    if (i === colSolde) return NaN;
+                    return parseNum(c);
+                }).filter(n => !isNaN(n) && Math.abs(n) >= 0.01 && Math.abs(n) < 99999);
+                if (candidates.length === 0) return;
+                const sorted = candidates.slice().sort((a,b) => Math.abs(a)-Math.abs(b));
+                const val = sorted[0];
+                montant = Math.abs(val);
+                type    = val < 0 ? 'debit' : 'credit';
+            }
+
+            if (montant < 0.01) return;
+
+            const bankCat = colCateg >= 0 ? (cols[colCateg] || '') : '';
+            const cat = this._guessCategory(libelle, bankCat);
+
+            this._importRows.push({
+                date, montant, libelle, libelleNettoye,
+                note: libelleNettoye,
+                categorie: cat, type,
+                selected: type === 'debit'
+            });
+        });
+
+        if (this._importRows.length === 0) return false;
+
+        this._importRows.sort((a,b) => b.date.localeCompare(a.date));
+
+        const nd = this._importRows.filter(r=>r.type==='debit').length;
+        const nc = this._importRows.filter(r=>r.type==='credit').length;
+        this.notify(this._importRows.length + ' transactions trouvées (' + nd + ' débits, ' + nc + ' crédits)', 'info');
+        this._renderImportPreview();
+        return true;
+    },
+
+    // Nettoie un libellé bancaire brut en nom lisible
+    // "PAIEMENT PSC 2502 GOLBEY TRANE GOLBEY CARTE 4448 GIR0126..." → "Trane Golbey"
+    _nettoyerLibelle(raw) {
+        if (!raw) return '';
+        let s = raw;
+        // Supprimer les préfixes banque
+        s = s.replace(/^(PAIEMENT PSC|PAIEMENT CB|VIR SEPA|VIR INST|VIR C\/C|VIR LIVRET|VIR ALFA|VIR DE |VIR |RETRAIT DAB|VRST REF\w+|F COTIS|F RETRO|AVOIR |PRELEVEMENT |REM CHQ)\s*/i, '');
+        // Supprimer date embarquée type "2502 " (4 chiffres en début)
+        s = s.replace(/^\d{4}\s+/, '');
+        // Supprimer ville tout en majuscules en début (ex: "GOLBEY ")
+        s = s.replace(/^([A-Z][A-Z\s\-]{2,20})\s+(?=[A-Z])/g, (m, ville) => {
+            // Garder si c'est un vrai nom de commerce (court)
+            return ville.length > 12 ? '' : m;
+        });
+        // Supprimer tout ce qui suit CARTE, GIR, GIP, CG3, VG6, REF
+        s = s.replace(/\s+(CARTE\s+[\d\s*]+.*|GI[PR]\d+.*|CG3\w+.*|VG\w+.*|REF\w+.*|TR\s+\w+.*)/i, '');
+        // Supprimer références numériques longues restantes
+        s = s.replace(/\s+\d{8,}.*/g, '');
+        s = s.replace(/[*]\w+/g, '');
+        // Nettoyer espaces multiples
+        s = s.replace(/\s{2,}/g, ' ').trim();
+        // Title case
+        s = s.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+        // Fallback si trop court
+        if (s.length < 3) s = raw.substring(0, 45).trim();
+        return s;
+    },
+
+    _guessCategory(lib, bankCat) {
+        const bc = (bankCat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const l  = lib.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const cats = this.data.budgets ? Object.keys(this.data.budgets) : [];
-        if (/carrefour|leclerc|lidl|aldi|intermarche|casino|monop|super|marché|boulangerie|boucherie|primeur/.test(l)) return cats.find(c=>/mang|courses|alimentation/i.test(c)) || 'MANGER';
-        if (/netflix|spotify|prime|disney|apple|google|xbox|psn|jeux|stream/.test(l)) return cats.find(c=>/loisir/i.test(c)) || 'LOISIR';
-        if (/sncf|ter|navigo|ratp|blabla|total|esso|bp|shell|carbu|station/.test(l)) return cats.find(c=>/carbu|transport/i.test(c)) || 'CARBU';
-        if (/pharmacie|medecin|docteur|hopital|sante|optic|dentiste/.test(l)) return 'SANTE';
-        if (/amazon|fnac|darty|decathlon|zara|h&m|vêtement|vetement/.test(l)) return cats.find(c=>/vetement/i.test(c)) || 'VETEMENT';
-        if (/bar|cafe|bistro|restaurant|brasserie|kebab|pizza|mcdo|kfc/.test(l)) return cats.find(c=>/bar|restaur/i.test(c)) || 'BAR';
+        const find = (...kws) => cats.find(c => kws.some(k => c.toLowerCase().includes(k))) || null;
+
+        // Mapper les catégories banque en priorité (très fiables pour CA)
+        if (/alimentation|grande surface|petit commer|snack|repas au travail/.test(bc)) return find('mang','course','aliment') || 'MANGER';
+        if (/loisirs|sport|sortie|restaurant/.test(bc))  return find('loisir') || 'LOISIR';
+        if (/culture|passion/.test(bc))                   return find('loisir','culture') || 'LOISIR';
+        if (/carburant|vehicule/.test(bc))                return find('carbu','transport') || 'CARBU';
+        if (/sante|pharmacie|medecin|optique/.test(bc))   return find('sante') || 'SANTE';
+        if (/habillement|shopping|soin/.test(bc))         return find('vetement','habit','shopping') || 'VETEMENT';
+        if (/cafe|tabac|jeux/.test(bc))                   return find('bar','cafe','loisir') || 'BAR';
+        if (/frais bancaires/.test(bc))                   return find('banque','autre','frais') || (cats[0] || 'AUTRE');
+
+        // Deviner depuis le libellé
+        if (/carrefour|leclerc|lidl|aldi|intermarche|colruyt|casino|monop|thiriet|biocoop|grand frais|intermarch/.test(l)) return find('mang','course') || 'MANGER';
+        if (/mcdonald|mcdo|kfc|burger|pizza|subway|kebab|sushi|brasserie|bistro|resto|chez gaston|au p.tit|trane|restaurant|cyrano|san remo|zak food|adas/.test(l)) return find('bar','loisir') || 'BAR';
+        if (/netflix|spotify|prime video|disney|apple|google play|xbox|psn|steam|gaming|instant gaming|microsoft|megaport/.test(l)) return find('loisir') || 'LOISIR';
+        if (/sncf|ratp|navigo|ter |blabla|total |esso|bp |shell|station|petro|avia |carbu/.test(l)) return find('carbu','transport') || 'CARBU';
+        if (/pharmacie|medecin|docteur|hopital|clinique|optic|dentiste/.test(l)) return find('sante') || 'SANTE';
+        if (/amazon|fnac|darty|decathlon|zara|h.m|intersport|nike|adidas|klarna|hollister/.test(l)) return find('vetement','habit') || 'VETEMENT';
+        if (/loyer|edf|engie|eau |fibre|orange|sfr|bouygues|assurance/.test(l)) return find('loyer','logement') || (cats[0] || 'AUTRE');
         return cats[0] || 'AUTRE';
     },
 
@@ -6286,35 +6472,47 @@ const app = {
         const preview = document.getElementById('import-preview');
         const body    = document.getElementById('import-preview-body');
         const title   = document.getElementById('import-preview-title');
-        const count   = document.getElementById('import-count-label');
         if (!preview || !body) return;
 
-        const cats = this.data.budgets ? Object.keys(this.data.budgets) : ['AUTRE'];
+        const cats  = this.data.budgets ? Object.keys(this.data.budgets) : ['AUTRE'];
+        const total = this._importRows.length;
+        const nd    = this._importRows.filter(r=>r.type==='debit').length;
+        title.textContent = total + ' transactions trouvées · ' + nd + ' débits pré-cochés · Modifie la note si besoin avant d\'importer';
 
-        title.textContent = `${this._importRows.length} transactions détectées — vérifie et sélectionne`;
-        body.innerHTML = this._importRows.map((row, i) => `
-            <tr>
-                <td><input type="checkbox" ${row.selected?'checked':''} onchange="app._importRows[${i}].selected=this.checked;app._updateImportCount()" style="accent-color:var(--accent-primary)"></td>
-                <td style="font-family:DM Mono,monospace;font-size:.78rem;white-space:nowrap">${row.date}</td>
-                <td style="font-size:.82rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${row.libelle}">${row.libelle}</td>
-                <td style="font-weight:700;color:var(--danger);font-family:DM Mono,monospace">${this.formatCurrency(row.montant)}</td>
-                <td>
-                    <select style="padding:.25rem .4rem;font-size:.72rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary)" onchange="app._importRows[${i}].categorie=this.value">
-                        ${cats.map(c=>`<option value="${c}" ${c===row.categorie?'selected':''}>${c}</option>`).join('')}
-                    </select>
-                </td>
-            </tr>`).join('');
+        body.innerHTML = this._importRows.map((row, i) => {
+            const color = row.type === 'debit' ? 'var(--danger)' : 'var(--success)';
+            const sign  = row.type === 'debit' ? '-' : '+';
+            const badge = row.type === 'debit'
+                ? '<span style="background:rgba(244,67,54,.1);color:var(--danger);border-radius:6px;padding:.15rem .4rem;font-size:.62rem;font-family:DM Mono,monospace;font-weight:600">DÉBIT</span>'
+                : '<span style="background:rgba(0,200,83,.1);color:var(--success);border-radius:6px;padding:.15rem .4rem;font-size:.62rem;font-family:DM Mono,monospace;font-weight:600">CRÉDIT</span>';
+            const rawEsc   = row.libelle.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            const noteEsc  = row.note.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+            const netEsc   = row.libelleNettoye.replace(/</g,'&lt;');
+            const catOpts  = cats.map(c => '<option value="'+c+'" '+(c===row.categorie?'selected':'')+'>'+c+'</option>').join('');
+            return '<tr style="'+(row.type==='credit'?'opacity:.6':'')+'">'+
+                '<td><input type="checkbox" '+(row.selected?'checked':'')+' onchange="app._importRows['+i+'].selected=this.checked;app._updateImportCount()" style="accent-color:var(--accent-primary)"></td>'+
+                '<td style="font-family:DM Mono,monospace;font-size:.75rem;white-space:nowrap">'+row.date+'</td>'+
+                '<td style="max-width:200px">'+
+                  '<div style="font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+rawEsc+'">'+netEsc+'</div>'+
+                  '<div style="font-size:.62rem;color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1rem" title="'+rawEsc+'">'+rawEsc+'</div>'+
+                '</td>'+
+                '<td><input type="text" value="'+noteEsc+'" oninput="app._importRows['+i+'].note=this.value" style="width:140px;padding:.3rem .5rem;font-size:.75rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-family:inherit"></td>'+
+                '<td style="font-weight:700;color:'+color+';font-family:DM Mono,monospace;white-space:nowrap">'+sign+this.formatCurrency(row.montant)+'</td>'+
+                '<td>'+badge+'</td>'+
+                '<td><select style="padding:.25rem .4rem;font-size:.72rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary)" onchange="app._importRows['+i+'].categorie=this.value">'+catOpts+'</select></td>'+
+                '</tr>';
+        }).join('');
 
         this._updateImportCount();
         preview.style.display = 'block';
     },
 
     _updateImportCount() {
-        const n = (this._importRows||[]).filter(r=>r.selected).length;
+        const n   = (this._importRows||[]).filter(r=>r.selected).length;
         const btn = document.getElementById('btn-import-valider');
         const lbl = document.getElementById('import-count-label');
-        if (btn) btn.textContent = `✅ Importer la sélection (${n})`;
-        if (lbl) lbl.textContent = `${n} / ${(this._importRows||[]).length} sélectionnées`;
+        if (btn) btn.textContent = '✅ Importer la sélection (' + n + ')';
+        if (lbl) lbl.textContent = n + ' / ' + (this._importRows||[]).length + ' sélectionnées';
     },
 
     importToggleAll(checked) {
@@ -6327,13 +6525,19 @@ const app = {
         if (selected.length === 0) { this.notify('Aucune transaction sélectionnée', 'error'); return; }
         let added = 0;
         selected.forEach(row => {
-            this.data.depenses.push({ id: Date.now() + Math.random(), categorie: row.categorie, montant: row.montant, date: row.date, note: row.libelle });
+            this.data.depenses.push({
+                id: Date.now() + Math.random(),
+                categorie: row.categorie,
+                montant: row.montant,
+                date: row.date,
+                note: row.note || row.libelleNettoye || row.libelle
+            });
             added++;
         });
         this.save();
         this.annulerImportCSV();
         this.refreshDepenses();
-        this.notify(`✅ ${added} dépenses importées`, 'success');
+        this.notify('✅ ' + added + ' dépenses importées', 'success');
     },
 
     annulerImportCSV() {
