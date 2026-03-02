@@ -741,8 +741,38 @@ body[data-theme=dark] canvas { filter: none; }
 
 <!-- 4. Graphique évolution -->
 <div class="card">
-<div class="card-header"><h2 class="card-title">Évolution PEA : Valeur vs Investi</h2></div>
+<div class="card-header">
+  <h2 class="card-title">Évolution PEA : Valeur vs Investi</h2>
+  <div style="display:flex;gap:.5rem;align-items:center">
+    <button class="btn btn-small btn-secondary" id="btn-benchmark-toggle" onclick="app.toggleBenchmark()" style="font-size:.7rem">📊 Benchmark</button>
+  </div>
+</div>
 <div class="chart-container"><canvas id="chart-pea"></canvas></div>
+</div>
+
+<!-- 4b. Benchmark vs indices -->
+<div class="card" id="benchmark-card" style="display:none">
+<div class="card-header">
+  <h2 class="card-title">📊 Benchmark — Ton PEA vs Indices</h2>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-small period-btn active" onclick="app.switchBenchmarkPeriod(this,'1m')">1M</button>
+    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'3m')">3M</button>
+    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'6m')">6M</button>
+    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'1a')">1 An</button>
+  </div>
+</div>
+
+<!-- Stats comparatives -->
+<div class="grid grid-3" id="benchmark-stats" style="margin-bottom:1.25rem"></div>
+
+<!-- Graphique benchmark -->
+<div class="chart-container"><canvas id="chart-benchmark"></canvas></div>
+
+<!-- Note données -->
+<div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.75rem;padding:.6rem;background:var(--bg-secondary);border-radius:10px;line-height:1.6">
+  💡 <strong>Indices calculés depuis Finnhub</strong> (MSCI World via IWDA · S&P 500 via SPY) — données de clôture.
+  <span id="benchmark-last-update"></span>
+</div>
 </div>
 
 <!-- 5. Historique -->
@@ -1203,10 +1233,14 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 
 <div class="form-group">
-<label class="form-label">📊 Google Sheets — URL CSV publié</label>
-<input type="text" class="form-input" id="set-gsheets-url" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv" style="font-family:'DM Mono',monospace;font-size:0.72rem">
-<div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:0.4rem;line-height:1.6">
-  Clique sur <strong style="color:var(--accent-primary);cursor:pointer" onclick="app.ouvrirGuideGSheets()">📖 Voir le guide de configuration</strong> pour créer ton Google Sheet en 3 minutes.
+<label class="form-label">📡 Finnhub API Key — Cours en temps réel</label>
+<div style="display:flex;gap:.5rem;align-items:center">
+  <input type="password" class="form-input" id="set-finnhub-key" placeholder="Clé API (ex: cxxxxxxxxxxxxxx)" style="font-family:'DM Mono',monospace;font-size:0.82rem;flex:1">
+  <button class="btn btn-small btn-secondary" onclick="app.testerFinnhub()" style="white-space:nowrap;flex-shrink:0">🔌 Tester</button>
+</div>
+<div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:0.5rem;line-height:1.7">
+  Gratuit sur <strong style="color:var(--accent-primary)">finnhub.io</strong> → Sign up → API Key (60 appels/min, sans CB).<br>
+  Format tickers : <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent-primary)">CW8.PA</span> (Euronext Paris) · <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent-primary)">AAPL</span> (Nasdaq/NYSE)
 </div>
 </div>
 
@@ -1677,10 +1711,10 @@ const app = {
         if (!this.data.parametres.salaire) this.data.parametres.salaire = 0;
         const elTheme   = document.getElementById('set-theme');
         const elSalaire = document.getElementById('set-salaire');
-        const elGs      = document.getElementById('set-gsheets-url');
         if (elTheme)   elTheme.value   = this.data.parametres.theme;
         if (elSalaire) elSalaire.value = this.data.parametres.salaire || '';
-        if (elGs)      elGs.value      = this.data.parametres.googleSheetsUrl || '';
+        const elFinnhub = document.getElementById('set-finnhub-key');
+        if (elFinnhub) elFinnhub.value = this.data.parametres.finnhubKey || '';
     },
 
     save() {
@@ -4121,10 +4155,9 @@ const app = {
     saveSettings() {
         const salaire = parseFloat(document.getElementById('set-salaire').value) || 0;
         this.data.parametres.salaire = salaire;
-        const gsUrl = (document.getElementById('set-gsheets-url')?.value || '').trim();
-        this.data.parametres.googleSheetsUrl = gsUrl;
+        const finnhubKey = (document.getElementById('set-finnhub-key')?.value || '').trim();
+        if (finnhubKey) this.data.parametres.finnhubKey = finnhubKey;
         this.save();
-        // Rafraîchir tout ce qui dépend du salaire
         this.refreshVueRapide();
         this.refreshAlertes();
         this.refreshRegle503020();
@@ -5234,17 +5267,29 @@ const app = {
     },
 
     // ===================== ACTUALISATION COURS PEA — GOOGLE SHEETS =====================
+    // ─── Finnhub : appel API de base ────────────────────────────────────────────
+    async _finnhubQuote(ticker) {
+        const key = (this.data.parametres.finnhubKey || '').trim();
+        if (!key) throw new Error('Clé Finnhub manquante — ouvre les ⚙ Paramètres');
+        const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${key}`;
+        const r = await Promise.race([
+            fetch(url),
+            new Promise((_,rej) => setTimeout(() => rej(new Error('Timeout Finnhub')), 8000))
+        ]);
+        if (!r.ok) throw new Error(`Finnhub HTTP ${r.status}`);
+        const d = await r.json();
+        if (!d || d.c === undefined || d.c === 0) throw new Error(`Ticker "${ticker}" introuvable sur Finnhub`);
+        return d.c; // current price
+    },
+
+    // ─── Actualiser cours PEA via Finnhub ───────────────────────────────────────
     async actualiserCoursPEA() {
         const lignes = this.data.lignesPEA;
-        if (lignes.length === 0) {
-            this.notify('Ajoute des lignes PEA en premier', 'error');
-            return;
-        }
-
-        const sheetUrl = (this.data.parametres.googleSheetsUrl || '').trim();
-        if (!sheetUrl) {
-            this.notify('URL Google Sheets manquante — ouvre les ⚙ Paramètres', 'error');
-            app.ouvrirGuideGSheets();
+        if (lignes.length === 0) { this.notify('Ajoute des lignes PEA en premier', 'error'); return; }
+        const key = (this.data.parametres.finnhubKey || '').trim();
+        if (!key) {
+            this.notify('Clé Finnhub manquante — ouvre les ⚙ Paramètres', 'error');
+            this.toggleSettings();
             return;
         }
 
@@ -5252,55 +5297,27 @@ const app = {
         const icon = document.getElementById('actualiser-icon');
         if (btn)  btn.disabled = true;
         if (icon) icon.textContent = '⏳';
-        this.notify('Lecture du Google Sheet…', 'info');
+        this.notify('Récupération des cours Finnhub…', 'info');
 
         try {
-            // Google Sheets publiés en CSV = CORS natif, aucun proxy nécessaire
-            const r = await Promise.race([
-                fetch(sheetUrl),
-                new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout — vérifie que le Sheet est bien publié')), 10000))
-            ]);
-            if (!r.ok) throw new Error(`Erreur HTTP ${r.status} — le Sheet est-il publié en accès public ?`);
-
-            const csv = await r.text();
-            const rows = csv.trim().split(String.fromCharCode(10)).map(row =>
-                row.split(',').map(cell => cell.trim().replace(/^"|"$/g, ''))
-            );
-
-            // Détecte si la première ligne est un header (contient du texte non-numérique)
-            const firstRowIsHeader = isNaN(parseFloat(rows[0]?.[1]));
-            const dataRows = firstRowIsHeader ? rows.slice(1) : rows;
-
-            if (dataRows.length === 0) throw new Error('Le Google Sheet semble vide');
-
-            // Construit un dictionnaire : identifiant (ISIN ou nom, insensible à la casse) → prix
-            const prixMap = {};
-            dataRows.forEach(row => {
-                if (row.length < 2) return;
-                const key   = (row[0] || '').trim().toUpperCase();
-                const prix  = parseFloat((row[1] || '').replace(',', '.'));
-                if (key && !isNaN(prix) && prix > 0) prixMap[key] = prix;
-            });
-
-            if (Object.keys(prixMap).length === 0)
-                throw new Error('Aucun cours trouvé dans le Sheet — vérifie le format (colonne A = ISIN, colonne B = prix)');
-
-            // Match chaque ligne PEA avec le Sheet (par ISIN ou par nom)
             let mises = 0, nonTrouves = [];
-            lignes.forEach(l => {
-                const isinKey = (l.isin || '').trim().toUpperCase();
-                const nomKey  = (l.nom  || '').trim().toUpperCase();
-                const prix = prixMap[isinKey] ?? prixMap[nomKey] ?? null;
-                if (prix !== null) {
+
+            // Récupère chaque cours en séquence (évite de saturer la limite 60/min)
+            for (const l of lignes) {
+                const ticker = (l.ticker || '').trim();
+                if (!ticker) { nonTrouves.push(l.nom + ' (pas de ticker)'); continue; }
+                try {
+                    const prix = await this._finnhubQuote(ticker);
                     l.valeurActuelle = prix;
                     mises++;
-                } else {
+                } catch(e) {
                     nonTrouves.push(l.nom);
                 }
-            });
+                // Petite pause entre appels pour respecter la limite
+                await new Promise(r => setTimeout(r, 200));
+            }
 
-            if (mises === 0)
-                throw new Error(`Aucune correspondance trouvée. Vérifie que les ISIN du Sheet (${Object.keys(prixMap).join(', ')}) correspondent à tes lignes PEA.`);
+            if (mises === 0) throw new Error(`Aucun cours récupéré. Vérifie les tickers de tes lignes PEA (ex: CW8.PA pour Euronext Paris).`);
 
             // Entrée automatique dans l'historique PEA
             const totalValeur  = lignes.reduce((s, l) => s + (l.parts * (l.valeurActuelle || l.pru)), 0);
@@ -5309,7 +5326,7 @@ const app = {
             const perf = totalInvesti > 0 ? ((gain / totalInvesti) * 100).toFixed(2) : '0';
             const today = new Date().toISOString().split('T')[0];
             const entry = { id: Date.now(), date: today, valeur: totalValeur, investi: totalInvesti,
-                            gainPerte: gain, performance: perf, note: '🔄 Google Sheets' };
+                            gainPerte: gain, performance: perf, note: '📡 Finnhub' };
             const idx = this.data.suiviPEA.findIndex(p => p.date === today);
             if (idx >= 0) this.data.suiviPEA[idx] = entry; else this.data.suiviPEA.push(entry);
 
@@ -5320,132 +5337,256 @@ const app = {
             this.chartPEA();
             this.refreshAllocationPEA();
 
-            const warn = nonTrouves.length > 0 ? ` ⚠️ Non trouvés : ${nonTrouves.join(', ')}` : '';
+            const warn = nonTrouves.length > 0 ? ` · ⚠️ Non trouvés : ${nonTrouves.join(', ')}` : '';
             this.notify(`✅ ${mises} cours mis à jour — PEA : ${this.formatCurrency(totalValeur)}${warn}`, 'success');
 
         } catch(err) {
             this.notify(`❌ ${err.message}`, 'error');
-            console.error('Actualisation PEA (GSheets):', err);
         } finally {
             if (btn)  btn.disabled = false;
             if (icon) icon.textContent = '🔄';
         }
     },
 
-    // ─── Guide Google Sheets ───────────────────────────────────────────────────
-    ouvrirGuideGSheets() {
-        let modal = document.getElementById('gsheetsGuideModal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'gsheetsGuideModal';
-            modal.className = 'modal';
-            modal.style.cssText = 'border-radius:20px;max-width:560px;width:calc(100% - 2rem);max-height:90vh;overflow-y:auto';
-            document.body.appendChild(modal);
+    // ─── Tester la clé Finnhub ────────────────────────────────────────────────
+    async testerFinnhub() {
+        const key = (document.getElementById('set-finnhub-key')?.value || '').trim();
+        if (!key) { this.notify('Entre d'abord ta clé API', 'error'); return; }
+        this.data.parametres.finnhubKey = key;
+        this.notify('Test en cours…', 'info');
+        try {
+            const url = `https://finnhub.io/api/v1/quote?symbol=AAPL&token=${key}`;
+            const r = await fetch(url);
+            const d = await r.json();
+            if (d && d.c > 0) {
+                this.notify(`✅ Finnhub connecté ! Apple = $${d.c}`, 'success');
+                this.save();
+            } else {
+                this.notify('❌ Clé invalide ou quota dépassé', 'error');
+            }
+        } catch(e) {
+            this.notify('❌ Erreur de connexion Finnhub', 'error');
+        }
+    },
+
+    // ─── Benchmark vs MSCI World / S&P 500 ───────────────────────────────────
+    _benchmarkPeriod: '1m',
+    _benchmarkCache: {},
+
+    toggleBenchmark() {
+        const card = document.getElementById('benchmark-card');
+        const btn  = document.getElementById('btn-benchmark-toggle');
+        if (!card) return;
+        const open = card.style.display !== 'none';
+        card.style.display = open ? 'none' : 'block';
+        btn.textContent = open ? '📊 Benchmark' : '✕ Fermer';
+        if (!open) this.refreshBenchmark();
+    },
+
+    switchBenchmarkPeriod(el, period) {
+        this._benchmarkPeriod = period;
+        document.querySelectorAll('.period-btn').forEach(b => {
+            b.className = b === el ? 'btn btn-small period-btn active' : 'btn btn-small btn-secondary period-btn';
+        });
+        this.refreshBenchmark();
+    },
+
+    async refreshBenchmark() {
+        const key = (this.data.parametres.finnhubKey || '').trim();
+        const statsEl = document.getElementById('benchmark-stats');
+        const lastEl  = document.getElementById('benchmark-last-update');
+
+        if (!key) {
+            if (statsEl) statsEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔑</div><div>Configure ta clé Finnhub dans les ⚙️ Paramètres pour voir le benchmark</div></div>';
+            return;
         }
 
-        // Génère les formules pour les lignes PEA existantes
-        const lignes = this.data.lignesPEA;
-        const exIsin = lignes.length > 0 ? lignes[0].isin || 'FR001400U5Q4' : 'FR001400U5Q4';
-        const exNom  = lignes.length > 0 ? lignes[0].nom  || 'Amundi PEA Monde' : 'Amundi PEA Monde';
+        // Données PEA depuis l'historique local
+        const peaData = [...this.data.suiviPEA].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (peaData.length < 2) {
+            if (statsEl) statsEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div>Il faut au moins 2 entrées dans ton historique PEA pour comparer</div></div>';
+            return;
+        }
 
-        const templateRows = lignes.length > 0
-            ? lignes.map(l => `<tr style="border-bottom:1px solid var(--border-color)">
-                <td style="padding:0.4rem 0.6rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text-primary)">${l.isin || l.nom}</td>
-                <td style="padding:0.4rem 0.6rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--success)">=GOOGLEFINANCE("${l.isin || l.nom}","price")</td>
-              </tr>`).join('')
-            : `<tr><td style="padding:0.4rem 0.6rem;font-family:'DM Mono',monospace;font-size:0.72rem">${exIsin}</td>
-               <td style="padding:0.4rem 0.6rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--success)">=GOOGLEFINANCE("${exIsin}","price")</td></tr>`;
+        const period = this._benchmarkPeriod;
+        const now = new Date();
+        const cutoff = new Date(now);
+        if      (period === '1m') cutoff.setMonth(cutoff.getMonth() - 1);
+        else if (period === '3m') cutoff.setMonth(cutoff.getMonth() - 3);
+        else if (period === '6m') cutoff.setMonth(cutoff.getMonth() - 6);
+        else                      cutoff.setFullYear(cutoff.getFullYear() - 1);
 
-        modal.innerHTML = `
-            <div class="modal-header">
-                <h2 class="modal-title">📊 Configurer Google Sheets</h2>
-            </div>
-            <div class="modal-body" style="padding-top:0.5rem">
+        const peaFiltered = peaData.filter(p => new Date(p.date) >= cutoff);
+        if (peaFiltered.length < 1) {
+            if (statsEl) statsEl.innerHTML = '<div class="empty-state"><div>Pas assez de données PEA sur cette période</div></div>';
+            return;
+        }
 
-                <!-- Étapes -->
-                <div style="display:flex;flex-direction:column;gap:1rem">
+        if (statsEl) statsEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:1.5rem;color:var(--text-tertiary)">⏳ Récupération des indices…</div>';
 
-                    <div style="display:flex;gap:0.75rem;align-items:flex-start">
-                        <div style="min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;flex-shrink:0">1</div>
-                        <div>
-                            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem">Crée un nouveau Google Sheet</div>
-                            <a href="https://sheets.new" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.75rem;background:var(--bg-secondary);border-radius:8px;color:var(--accent-primary);text-decoration:none;font-size:0.8rem;font-weight:600;border:1px solid var(--border-color)">
-                                🔗 Ouvrir sheets.new
-                            </a>
-                        </div>
-                    </div>
+        try {
+            // Calcul performance PEA sur la période
+            const peaStart = peaFiltered[0].valeur;
+            const peaEnd   = peaFiltered[peaFiltered.length - 1].valeur;
+            const peaPerf  = peaStart > 0 ? ((peaEnd - peaStart) / peaStart * 100) : 0;
 
-                    <div style="display:flex;gap:0.75rem;align-items:flex-start">
-                        <div style="min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;flex-shrink:0">2</div>
-                        <div style="width:100%">
-                            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.5rem">Remplis le sheet avec tes ISIN</div>
-                            <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.5rem">Colonne A = ISIN · Colonne B = formule GOOGLEFINANCE</div>
-                            <div style="background:var(--bg-secondary);border-radius:10px;overflow:hidden;border:1px solid var(--border-color)">
-                                <div style="display:flex;padding:0.35rem 0.6rem;background:rgba(var(--heatmap-rgb),0.1);font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-tertiary);font-weight:600;gap:2rem">
-                                    <span style="min-width:140px">A — ISIN</span><span>B — Formule prix</span>
-                                </div>
-                                <table style="width:100%;border-collapse:collapse">${templateRows}</table>
-                            </div>
-                            <div style="margin-top:0.5rem;font-size:0.72rem;color:var(--text-tertiary)">
-                                💡 GOOGLEFINANCE reconnaît les ISIN directement — pas besoin de ticker.
-                            </div>
-                        </div>
-                    </div>
+            // Récupération cours actuels des indices via Finnhub
+            const [msciPrice, sp500Price] = await Promise.all([
+                this._finnhubQuote('IWDA'), // iShares MSCI World (proxy MSCI)
+                this._finnhubQuote('SPY'),  // S&P 500
+            ]);
 
-                    <div style="display:flex;gap:0.75rem;align-items:flex-start">
-                        <div style="min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;flex-shrink:0">3</div>
-                        <div>
-                            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem">Publie le sheet en CSV</div>
-                            <div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.7">
-                                <strong>Fichier</strong> → <strong>Partager</strong> → <strong>Publier sur le web</strong><br>
-                                → Sélectionne <strong>Feuille 1</strong> et format <strong>Valeurs séparées par des virgules (.csv)</strong><br>
-                                → Clique <strong>Publier</strong> → Copie l'URL générée
-                            </div>
-                        </div>
-                    </div>
+            // Estimation historique depuis le cache ou calcul relatif
+            const cacheKey = `bench_${period}`;
+            let msciPerf = 0, sp500Perf = 0;
 
-                    <div style="display:flex;gap:0.75rem;align-items:flex-start">
-                        <div style="min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;flex-shrink:0">4</div>
-                        <div style="width:100%">
-                            <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.4rem">Colle l'URL dans les Paramètres</div>
-                            <div style="display:flex;gap:0.5rem">
-                                <input type="text" id="guide-gsheets-url" placeholder="https://docs.google.com/spreadsheets/d/..." class="form-input" style="font-size:0.72rem;font-family:'DM Mono',monospace;flex:1">
-                                <button class="btn btn-small" onclick="app._saveGsheetsUrlFromGuide()">Sauvegarder</button>
-                            </div>
-                        </div>
-                    </div>
+            if (this._benchmarkCache[cacheKey]) {
+                msciPerf  = this._benchmarkCache[cacheKey].msci;
+                sp500Perf = this._benchmarkCache[cacheKey].sp500;
+            } else {
+                // Récupérer le cours historique via Finnhub candles
+                const fromTs = Math.floor(cutoff.getTime() / 1000);
+                const toTs   = Math.floor(now.getTime() / 1000);
 
+                const fetchCandles = async (symbol) => {
+                    const url = `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${fromTs}&to=${toTs}&token=${key}`;
+                    const r = await fetch(url);
+                    const d = await r.json();
+                    if (!d || !d.c || d.c.length < 2) return null;
+                    return { start: d.c[0], end: d.c[d.c.length - 1], dates: d.t, closes: d.c };
+                };
+
+                const [msciCandles, sp500Candles] = await Promise.all([
+                    fetchCandles('IWDA'),
+                    fetchCandles('SPY'),
+                ]);
+
+                if (msciCandles)  msciPerf  = (msciCandles.end - msciCandles.start) / msciCandles.start * 100;
+                if (sp500Candles) sp500Perf = (sp500Candles.end - sp500Candles.start) / sp500Candles.start * 100;
+
+                this._benchmarkCache[cacheKey] = { msci: msciPerf, sp500: sp500Perf, ts: Date.now() };
+
+                // Construire le graphique avec données réelles
+                if (msciCandles && sp500Candles) {
+                    const basePeaVal = peaFiltered[0]?.valeur || 1000;
+                    this._renderBenchmarkChart(peaFiltered, msciCandles, sp500Candles, basePeaVal);
+                }
+            }
+
+            const alpha = peaPerf - msciPerf;
+
+            // Render stats
+            if (statsEl) {
+                const fmt = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
+                const col = (v) => v >= 0 ? 'var(--success)' : 'var(--danger)';
+                statsEl.innerHTML = `
+                <div class="stat-card" style="text-align:center">
+                    <div class="stat-label">Ton PEA</div>
+                    <div class="stat-value" style="color:${col(peaPerf)};font-size:1.8rem">${fmt(peaPerf)}</div>
+                    <div class="stat-change" style="color:var(--text-tertiary);font-size:.72rem">${period === '1m' ? '1 mois' : period === '3m' ? '3 mois' : period === '6m' ? '6 mois' : '1 an'}</div>
                 </div>
+                <div class="stat-card" style="text-align:center">
+                    <div class="stat-label">MSCI World (IWDA)</div>
+                    <div class="stat-value" style="color:${col(msciPerf)};font-size:1.8rem">${fmt(msciPerf)}</div>
+                    <div class="stat-change" style="color:var(--text-tertiary);font-size:.72rem">Référence mondiale</div>
+                </div>
+                <div class="stat-card" style="text-align:center;${Math.abs(alpha) > 0.1 ? 'border-left:3px solid ' + col(alpha) : ''}">
+                    <div class="stat-label">Alpha généré</div>
+                    <div class="stat-value" style="color:${col(alpha)};font-size:1.8rem">${fmt(alpha)}</div>
+                    <div class="stat-change" style="color:var(--text-tertiary);font-size:.72rem">${alpha > 0 ? '🏆 Tu bats le marché' : alpha < -0.5 ? '📉 En dessous du marché' : '≈ Dans la moyenne'}</div>
+                </div>`;
+            }
 
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('gsheetsGuideModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Fermer</button>
-                <button class="btn" onclick="app._saveGsheetsUrlFromGuide();app.actualiserCoursPEA()">🔄 Tester maintenant</button>
-            </div>`;
+            if (lastEl) lastEl.textContent = ` · Mis à jour : ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}`;
 
-        modal.classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-        document.getElementById('overlay').onclick = () => {
-            modal.classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        };
-        // Pré-rempli si URL déjà connue
-        const inp = document.getElementById('guide-gsheets-url');
-        if (inp && this.data.parametres.googleSheetsUrl) inp.value = this.data.parametres.googleSheetsUrl;
+        } catch(e) {
+            if (statsEl) statsEl.innerHTML = `<div style="grid-column:1/-1;color:var(--danger);padding:1rem;font-size:.85rem">❌ Erreur : ${e.message}</div>`;
+        }
     },
 
-    _saveGsheetsUrlFromGuide() {
-        const url = (document.getElementById('guide-gsheets-url')?.value || '').trim();
-        if (!url) { this.notify('Colle une URL', 'error'); return; }
-        this.data.parametres.googleSheetsUrl = url;
-        // Sync dans settings panel aussi
-        const inp2 = document.getElementById('set-gsheets-url');
-        if (inp2) inp2.value = url;
-        this.save();
-        document.getElementById('gsheetsGuideModal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
-        this.notify('URL Google Sheets sauvegardée ✓', 'success');
+    _renderBenchmarkChart(peaData, msciCandles, sp500Candles, basePeaVal) {
+        const c = this.getChartColors();
+        // Aligner les données sur les mêmes dates (via timestamps Finnhub)
+        const labels = msciCandles.dates.map(t => {
+            const d = new Date(t * 1000);
+            return d.toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
+        });
+        const msciBase  = msciCandles.closes[0];
+        const sp500Base = sp500Candles.closes[0];
+        const msciNorm  = msciCandles.closes.map(v => ((v - msciBase) / msciBase * 100));
+        const sp500Norm = sp500Candles.closes.map(v => ((v - sp500Base) / sp500Base * 100));
+
+        // Interpoler les données PEA sur les mêmes dates
+        const peaByDate = {};
+        peaData.forEach(p => { peaByDate[p.date] = p.valeur; });
+        const peaNorm = msciCandles.dates.map(t => {
+            const d = new Date(t * 1000).toISOString().split('T')[0];
+            // Trouver la valeur PEA la plus proche
+            const keys = Object.keys(peaByDate).sort();
+            const closest = keys.reduce((a, b) => Math.abs(new Date(b) - new Date(d)) < Math.abs(new Date(a) - new Date(d)) ? b : a);
+            return closest ? ((peaByDate[closest] - basePeaVal) / basePeaVal * 100) : null;
+        });
+
+        if (this.charts.benchmark) this.charts.benchmark.destroy();
+        const ctx = document.getElementById('chart-benchmark');
+        if (!ctx) return;
+
+        this.charts.benchmark = new Chart(ctx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Ton PEA',
+                        data: peaNorm,
+                        borderColor: c.primary,
+                        backgroundColor: c.bg1,
+                        tension: 0.3, fill: true, borderWidth: 3,
+                        spanGaps: true
+                    },
+                    {
+                        label: 'MSCI World (IWDA)',
+                        data: msciNorm,
+                        borderColor: c.secondary,
+                        backgroundColor: 'transparent',
+                        tension: 0.3, fill: false, borderWidth: 2,
+                        borderDash: [5,3]
+                    },
+                    {
+                        label: 'S&P 500 (SPY)',
+                        data: sp500Norm,
+                        borderColor: c.tertiary,
+                        backgroundColor: 'transparent',
+                        tension: 0.3, fill: false, borderWidth: 2,
+                        borderDash: [2,3]
+                    }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: this.getChartLegendOptions(),
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y !== null ? (ctx.parsed.y >= 0 ? '+' : '') + ctx.parsed.y.toFixed(2) + '%' : 'N/A'}`
+                        }
+                    }
+                },
+                scales: {
+                    ...this.getChartScaleOptions(),
+                    y: {
+                        ...this.getChartScaleOptions().y,
+                        ticks: {
+                            ...this.getChartScaleOptions().y.ticks,
+                            callback: (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`
+                        }
+                    }
+                }
+            }
+        });
     },
+
+    // ─── Guide Google Sheets ───────────────────────────────────────────────────
 
 
     ouvrirAllocationCible() {
