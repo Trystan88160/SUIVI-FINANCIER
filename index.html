@@ -5351,7 +5351,7 @@ const app = {
     // ─── Tester la clé Finnhub ────────────────────────────────────────────────
     async testerFinnhub() {
         const key = (document.getElementById('set-finnhub-key')?.value || '').trim();
-        if (!key) { this.notify('Entre d'abord ta clé API', 'error'); return; }
+        if (!key) { this.notify('Entre ta clé API en premier', 'error'); return; }
         this.data.parametres.finnhubKey = key;
         this.notify('Test en cours…', 'info');
         try {
