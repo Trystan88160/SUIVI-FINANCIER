@@ -1546,8 +1546,15 @@ const app = {
         this.checkBackupReminder();
         this.refresh();
         document.getElementById('overlay').onclick = () => {
+            // Fermer la modale de confirmation si active
             if (document.getElementById('confirmModal').classList.contains('active')) this.closeModal();
+            // Fermer la modale de saisie si active
             if (document.getElementById('inputModal').classList.contains('active')) this.closeInputModal();
+            // Fermer le panel settings s'il est ouvert
+            const settingsPanel = document.getElementById('settings');
+            if (settingsPanel && settingsPanel.classList.contains('open')) {
+                settingsPanel.classList.remove('open');
+            }
             document.getElementById('overlay').classList.remove('active');
         };
         document.getElementById('analyse-periode').onchange = () => this.toggleAnalyseFilters();
@@ -2094,7 +2101,7 @@ const app = {
         if (name === 'dashboard') { this.refreshDashboard(); this.refreshHeatmap(); }
         if (name === 'depenses') { this.analyseDepenses(); this.refreshRegle503020(); this.refreshPrediction(); this.refreshComparaison(); }
         if (name === 'objectifs') { this.refreshObjectifs(); this.refreshSimulateur(); }
-        if (name === 'bilan') { this.refreshNotes(); this.refreshBilanAnnuel(); this.initRapportSelect(); }
+        if (name === 'bilan') { this.refreshNotes(); this.refreshBilanAnnuel(); this.initRapportSelect(); this.initBilanSelect(); }
         if (name === 'pea') { this.refreshLignesPEA(); this.refreshAllocationPEA(); }
         if (name === 'abonnements') { this.refreshAbonnements(); }
         if (name === 'abonnements') { this.refreshAbonnements(); }
@@ -2370,8 +2377,10 @@ const app = {
         if (annees.length === 0) return;
         const sel = document.getElementById('bilan-annee');
         if (!sel) return;
-        const now = new Date().getFullYear();
-        sel.innerHTML = annees.map(a => `<option value="${a}" ${a === now ? 'selected' : ''}>${a}</option>`).join('');
+        // Garder l'année actuellement sélectionnée si elle existe dans la liste
+        const currentVal = parseInt(sel.value);
+        const defaultAnnee = annees.includes(currentVal) ? currentVal : (annees.includes(new Date().getFullYear()) ? new Date().getFullYear() : annees[0]);
+        sel.innerHTML = annees.map(a => `<option value="${a}" ${a === defaultAnnee ? 'selected' : ''}>${a}</option>`).join('');
     },
     refreshBilanAnnuel() {
         this.initBilanSelect();
@@ -2627,6 +2636,9 @@ const app = {
                 this.save();
                 this.updateBudgetsUI();
                 this.updateCategoriesSelects();
+                // Rafraîchir les stats et le dashboard immédiatement
+                this.refreshStatsDepenses();
+                this.refreshDashboard();
                 this.notify('Catégorie ajoutée', 'success');
             }
         );
@@ -4171,6 +4183,10 @@ const app = {
         this.refreshStatsPatrimoine();
         this.analyseDepenses();
         this.refreshDashboard();
+        this.refreshAbonnements();
+        this.refreshBilanAnnuel();
+        this.refreshHeatmap();
+        this.checkResumeHebdo();
     },
     
     saveSettings() {
@@ -6537,7 +6553,9 @@ const app = {
         });
         this.save();
         this.annulerImportCSV();
-        this.refreshDepenses();
+        // Tout rafraîchir après import : historique, stats, dashboard, bilan
+        this.refresh();
+        this.refreshBilanAnnuel();
         this.notify('✅ ' + added + ' dépenses importées', 'success');
     },
 
