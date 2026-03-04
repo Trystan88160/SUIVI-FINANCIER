@@ -606,66 +606,80 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 </div>
 
-<!-- 2c. Comparaison mois vs mois -->
-<div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleComparaison()" id="comp-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s" >
-  <div style="display:flex;align-items:center;gap:0.75rem">
-    <h2 class="card-title" style="margin:0">Comparaison mois à mois</h2>
-    <div id="comp-pills" style="display:flex;gap:0.4rem"></div>
-  </div>
-  <span id="comp-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;display:inline-block;line-height:1">›</span>
-</div>
-<div id="comparaison-body" style="display:none;padding:1.5rem 2rem">
-  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
-    <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Référence</span>
-    <select class="form-select" id="comp-mois-a" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
-    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:700;color:var(--text-tertiary);padding:0.2rem 0.5rem;background:var(--bg-primary);border-radius:6px">VS</span>
-    <select class="form-select" id="comp-mois-b" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
-    <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Actuel</span>
-  </div>
-  <div id="comparaison-container"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Ajoute des dépenses sur 2 mois différents pour comparer</div></div></div>
-</div>
-</div>
+<!-- Grille 3 boutons + contenu pleine largeur en dessous -->
+<div style="margin-bottom:2rem">
 
-<!-- 3. Règle 50/30/20 -->
-<div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleRegle503020()" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s" id="regle-trigger">
-  <div style="display:flex;align-items:center;gap:0.75rem">
-    <h2 class="card-title" style="margin:0">Règle 50 / 30 / 20</h2>
-    <span style="font-size:0.75rem;color:var(--text-tertiary)">Besoins · Envies · Épargne</span>
-  </div>
-  <span id="regle-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;display:inline-block;line-height:1">›</span>
-</div>
-<div id="regle-body" style="display:none;padding:0 2rem 1.5rem">
-  <div style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Idéal</div>
-  <div style="height:28px;border-radius:8px;overflow:hidden;display:flex;gap:2px;margin-bottom:0.5rem">
-    <div style="width:50%;background:rgba(63,81,181,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-primary);font-weight:600">50%</div>
-    <div style="width:30%;background:rgba(92,107,192,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-secondary);font-weight:600">30%</div>
-    <div style="width:20%;background:rgba(0,200,83,0.2);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--success);font-weight:600">20%</div>
-  </div>
-  <div id="regle-ce-mois-label" style="margin-bottom:0.5rem;font-size:0.72rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em">Ce mois</div>
-  <div style="height:28px;border-radius:8px;overflow:hidden;display:flex;gap:2px;margin-bottom:0.75rem" id="bar-503020"></div>
-  <div class="grid grid-3" id="comparaison-503020" style="gap:0.75rem;text-align:center"></div>
-</div>
-</div>
+  <!-- Rangée des 3 boutons -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:0">
 
-<!-- 4. Récurrences -->
-<div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleRecurrences()" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s" id="recurrences-trigger">
-  <h2 class="card-title" style="margin:0">🔄 Dépenses Récurrentes</h2>
-  <span id="recurrences-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;display:inline-block;line-height:1">›</span>
-</div>
-<div id="recurrences-body" style="display:none;padding:0 2rem 1.5rem">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
-    <button class="btn btn-small" onclick="app.ouvrirAjoutRecurrence()">+ Ajouter</button>
+    <!-- Bouton Comparaison -->
+    <div class="card" onclick="app.toggleTriPanel('comp')" id="comp-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center;transition:all .2s">
+      <h2 class="card-title" style="margin:0;font-size:.95rem">📊 Comparaison mois à mois</h2>
+      <span id="comp-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+    </div>
+
+    <!-- Bouton Règle 50/30/20 -->
+    <div class="card" onclick="app.toggleTriPanel('regle')" id="regle-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center;transition:all .2s">
+      <h2 class="card-title" style="margin:0;font-size:.95rem">⚖️ Règle 50 / 30 / 20</h2>
+      <span id="regle-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+    </div>
+
+    <!-- Bouton Récurrentes -->
+    <div class="card" onclick="app.toggleTriPanel('recurrences')" id="recurrences-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center;transition:all .2s">
+      <h2 class="card-title" style="margin:0;font-size:.95rem">🔄 Dépenses Récurrentes</h2>
+      <span id="recurrences-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+    </div>
+
   </div>
-  <div id="recurrences-list"><div class="empty-state"><div class="empty-state-icon">🔄</div><div>Aucune récurrence définie</div></div></div>
-  <div style="margin-top:1rem;padding:0.75rem;background:var(--bg-secondary);border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-color)" id="recurrences-total-wrap">
-    <span style="color:var(--text-secondary);font-size:0.85rem">Total mensuel récurrences</span>
-    <span class="stat-value" id="recurrences-total" style="font-size:1.2rem">0 €</span>
+
+  <!-- Contenu pleine largeur -->
+  <div id="tripanel-content" style="display:none;margin-top:1rem">
+    <div class="card" style="margin-bottom:0">
+
+      <!-- Contenu Comparaison -->
+      <div id="comparaison-body" style="display:none">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
+          <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Référence</span>
+          <select class="form-select" id="comp-mois-a" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
+          <span style="font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:700;color:var(--text-tertiary);padding:0.2rem 0.5rem;background:var(--bg-primary);border-radius:6px">VS</span>
+          <select class="form-select" id="comp-mois-b" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
+          <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Actuel</span>
+        </div>
+        <div id="comparaison-container"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Ajoute des dépenses sur 2 mois différents pour comparer</div></div></div>
+      </div>
+
+      <!-- Contenu Règle 50/30/20 -->
+      <div id="regle-body" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:1rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border-color)">
+          <div>
+            <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Dépenses ce mois</div>
+            <div id="regle-total-dep" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Salaire net</div>
+            <div id="regle-total-sal" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
+          </div>
+        </div>
+        <div class="grid grid-3" id="comparaison-503020" style="gap:.75rem;margin-bottom:1rem"></div>
+        <div id="regle-conseil" style="display:none;font-size:.75rem;color:var(--text-secondary);line-height:1.6;padding:.65rem .9rem;background:var(--bg-secondary);border-radius:12px;border-left:3px solid var(--success)"></div>
+      </div>
+
+      <!-- Contenu Récurrentes -->
+      <div id="recurrences-body" style="display:none">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+          <button class="btn btn-small" onclick="app.ouvrirAjoutRecurrence()">+ Ajouter</button>
+        </div>
+        <div id="recurrences-list"><div class="empty-state"><div class="empty-state-icon">🔄</div><div>Aucune récurrence définie</div></div></div>
+        <div style="margin-top:1rem;padding:0.75rem;background:var(--bg-secondary);border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-color)" id="recurrences-total-wrap">
+          <span style="color:var(--text-secondary);font-size:0.85rem">Total mensuel récurrences</span>
+          <span class="stat-value" id="recurrences-total" style="font-size:1.2rem">0 €</span>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
-</div>
+
+</div><!-- fin bloc tri-panel -->
 
 <!-- 5. Analyse -->
 <div class="card">
@@ -1648,6 +1662,7 @@ const app = {
             localStorage.setItem('suiviFinancier', JSON.stringify(this.data));
             localStorage.setItem('suiviFinancierTime', now.toString());
             this._lastChange = now;
+            this._lastSyncOk = false; // sera mis à true quand Supabase confirme
         } catch(e) { console.error('localStorage save error:', e); }
         // Sync Supabase en arrière-plan
         this._syncToSupabase();
@@ -1668,6 +1683,7 @@ const app = {
             });
             if (dot)   dot.style.background = 'var(--success)';
             if (label) label.textContent    = 'sauvé ✓';
+            this._lastSyncOk = true;
             setTimeout(() => {
                 if (dot)   dot.style.background = 'var(--text-tertiary)';
                 if (label) label.textContent    = 'cloud';
@@ -1675,6 +1691,7 @@ const app = {
         } catch(e) {
             if (dot)   dot.style.background = 'var(--danger)';
             if (label) label.textContent    = 'erreur';
+            this._lastSyncOk = false;
             console.error('Supabase sync error:', e.message);
             // Affiche l'erreur dans l'UI pour diagnostiquer
             this.notify(`☁️ Sync échouée : ${e.message}`, 'error');
@@ -2090,13 +2107,6 @@ const app = {
         const container = document.getElementById('comparaison-container');
         if (!container) return;
 
-        // Update pills in header
-        const pills = document.getElementById('comp-pills');
-        if (pills && moisA && moisB) {
-            const fmt = m => { const [y,mo] = m.split('-'); return new Date(y,mo-1).toLocaleDateString('fr-FR',{month:'short',year:'2-digit'}); };
-            pills.innerHTML = `<span style="background:rgba(var(--heatmap-rgb),.15);color:var(--accent-primary);font-family:'DM Mono',monospace;font-size:.65rem;padding:.18rem .55rem;border-radius:100px;font-weight:600">${fmt(moisA)}</span><span style="background:var(--bg-secondary);color:var(--text-tertiary);font-family:'DM Mono',monospace;font-size:.65rem;padding:.18rem .55rem;border-radius:100px;font-weight:600">${fmt(moisB)}</span>`;
-        }
-
         if (!moisA || !moisB || moisA === moisB) {
             container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div>Sélectionne deux mois différents</div></div>';
             return;
@@ -2444,37 +2454,49 @@ const app = {
         headerEl.classList.toggle('open', isOpen);
     },
 
-    toggleRegle503020() {
-        const body = document.getElementById('regle-body');
-        const arrow = document.getElementById('regle-arrow');
-        const trigger = document.getElementById('regle-trigger');
-        const isOpen = body.style.display === 'none';
-        body.style.display = isOpen ? 'block' : 'none';
-        arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
-        trigger.style.borderBottomColor = isOpen ? 'var(--border-color)' : 'transparent';
-        if (isOpen) this.refreshRegle503020();
+    toggleTriPanel(panel) {
+        const panels = ['comp', 'regle', 'recurrences'];
+        const bodyIds = { comp: 'comparaison-body', regle: 'regle-body', recurrences: 'recurrences-body' };
+        const arrowIds = { comp: 'comp-arrow', regle: 'regle-arrow', recurrences: 'recurrences-arrow' };
+        const triggerIds = { comp: 'comp-trigger', regle: 'regle-trigger', recurrences: 'recurrences-trigger' };
+        const tripanel = document.getElementById('tripanel-content');
+
+        const currentlyOpen = panels.find(p => document.getElementById(bodyIds[p])?.style.display !== 'none');
+        const clickingSame = currentlyOpen === panel;
+
+        // Fermer tous
+        panels.forEach(p => {
+            const body = document.getElementById(bodyIds[p]);
+            const arrow = document.getElementById(arrowIds[p]);
+            const trigger = document.getElementById(triggerIds[p]);
+            if (body) body.style.display = 'none';
+            if (arrow) arrow.style.transform = '';
+            if (trigger) trigger.style.boxShadow = '';
+        });
+
+        if (clickingSame) {
+            // Refermer
+            tripanel.style.display = 'none';
+            return;
+        }
+
+        // Ouvrir le nouveau
+        const body = document.getElementById(bodyIds[panel]);
+        const arrow = document.getElementById(arrowIds[panel]);
+        const trigger = document.getElementById(triggerIds[panel]);
+        if (body) body.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(90deg)';
+        if (trigger) trigger.style.boxShadow = '8px 8px 16px var(--shadow-light), -8px -8px 16px var(--shadow-dark), inset 0 -3px 0 var(--accent-primary)';
+        tripanel.style.display = 'block';
+
+        // Rafraîchir le contenu si besoin
+        if (panel === 'comp') this.refreshComparaison();
+        if (panel === 'regle') this.refreshRegle503020();
     },
 
-    toggleRecurrences() {
-        const body = document.getElementById('recurrences-body');
-        const arrow = document.getElementById('recurrences-arrow');
-        const trigger = document.getElementById('recurrences-trigger');
-        const isOpen = body.style.display === 'none';
-        body.style.display = isOpen ? 'block' : 'none';
-        arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
-        trigger.style.borderBottomColor = isOpen ? 'var(--border-color)' : 'transparent';
-    },
-
-    toggleComparaison() {
-        const body = document.getElementById('comparaison-body');
-        const arrow = document.getElementById('comp-arrow');
-        const trigger = document.getElementById('comp-trigger');
-        const isOpen = body.style.display === 'none';
-        body.style.display = isOpen ? 'block' : 'none';
-        arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
-        trigger.style.borderBottomColor = isOpen ? 'var(--border-color)' : 'transparent';
-        if (isOpen) this.refreshComparaison();
-    },
+    toggleRegle503020() { this.toggleTriPanel('regle'); },
+    toggleRecurrences() { this.toggleTriPanel('recurrences'); },
+    toggleComparaison() { this.toggleTriPanel('comp'); },
 
     toggleImportBancaire() {
         const panel = document.getElementById('import-bancaire-panel');
@@ -4851,7 +4873,6 @@ const app = {
         });
         const totalDepenses = depMois.reduce((s, d) => s + d.montant, 0);
         const salaire = this.data.parametres.salaire || 0;
-        // Base de calcul : salaire réel si dispo, sinon total dépenses
         const base = salaire > 0 ? salaire : totalDepenses;
         if (base === 0) return;
 
@@ -4863,45 +4884,60 @@ const app = {
             const cat = d.categorie.toUpperCase();
             if (besoinsKeys.some(k => cat.includes(k))) besoins += d.montant;
             else if (enviesKeys.some(k => cat.includes(k))) envies += d.montant;
-            else besoins += d.montant * 0.5, envies += d.montant * 0.5;
+            else { besoins += d.montant * 0.5; envies += d.montant * 0.5; }
         });
 
-        // Si salaire connu, l'épargne = ce qui n'est pas dépensé
         const epargne = salaire > 0 ? Math.max(0, salaire - totalDepenses) : 0;
-
         const pBesoins = Math.round((besoins / base) * 100);
         const pEnvies = Math.round((envies / base) * 100);
         const pEpargne = salaire > 0 ? Math.round((epargne / salaire) * 100) : Math.max(0, 100 - pBesoins - pEnvies);
-        const subtitle = salaire > 0 ? `sur ${this.formatCurrency(salaire)}/mois` : 'estimation sur dépenses';
 
-        const bar = document.getElementById('bar-503020');
-        if (bar) {
-            bar.innerHTML = `
-                <div style="width:${pBesoins}%;background:rgba(63,81,181,0.4);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-primary);font-weight:600;min-width:2rem">${pBesoins}%</div>
-                <div style="width:${pEnvies}%;background:rgba(92,107,192,0.4);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--accent-secondary);font-weight:600;min-width:2rem">${pEnvies}%</div>
-                <div style="flex:1;background:rgba(0,200,83,0.25);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--success);font-weight:600;min-width:1.5rem">${pEpargne}%</div>
-            `;
-        }
+        // Totaux header
+        const elDep = document.getElementById('regle-total-dep');
+        const elSal = document.getElementById('regle-total-sal');
+        if (elDep) elDep.textContent = this.formatCurrency(totalDepenses);
+        if (elSal) elSal.textContent = salaire > 0 ? this.formatCurrency(salaire) + '/mois' : 'Non renseigné';
 
+        // 3 cartes Option B
         const comp = document.getElementById('comparaison-503020');
         if (comp) {
-            const mkCol = (label, ideal, reel, good) => {
-                const cls = good ? 'positive' : 'negative';
-                return `<div class="stat-card" style="padding:0.75rem">
-                    <div class="stat-label">${label}</div>
-                    <div style="font-size:0.7rem;color:var(--text-tertiary)">cible ${ideal}%</div>
-                    <div class="stat-change ${cls}" style="font-size:1rem;font-weight:700;margin-top:0.25rem">${reel}%</div>
+            const mkCard = (emoji, label, cibleLabel, cible, reel, montant, okFn) => {
+                const ok = okFn(reel);
+                const couleurs = ok
+                    ? { bg: 'rgba(0,200,83,.1)', text: 'var(--success)', border: 'var(--success)' }
+                    : reel > 0 && Math.abs(reel - cible) <= 5
+                        ? { bg: 'rgba(255,152,0,.1)', text: 'var(--warning)', border: 'var(--warning)' }
+                        : { bg: 'rgba(244,67,54,.1)', text: 'var(--danger)', border: 'var(--danger)' };
+                return `
+                <div style="background:${couleurs.bg};border-radius:16px;padding:1rem .85rem;text-align:center;position:relative;overflow:hidden;border-bottom:3px solid ${couleurs.border}">
+                    <div style="font-size:1.5rem;margin-bottom:.25rem">${emoji}</div>
+                    <div style="font-size:.6rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:${couleurs.text};font-weight:600;margin-bottom:.3rem">${label}</div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.9rem;font-weight:800;color:${couleurs.text};line-height:1.1">${reel}%</div>
+                    <div style="font-size:.62rem;color:var(--text-tertiary);margin:.25rem 0">cible ${cibleLabel}</div>
+                    <div style="font-family:'DM Mono',monospace;font-size:.72rem;font-weight:600;color:${couleurs.text}">${this.formatCurrency(montant)}</div>
                 </div>`;
             };
             comp.innerHTML =
-                mkCol('Besoins', 50, pBesoins, pBesoins <= 55) +
-                mkCol('Envies', 30, pEnvies, pEnvies <= 33) +
-                mkCol('Épargne', 20, pEpargne, pEpargne >= 15);
+                mkCard('🏠', 'Besoins', '≤ 50%', 50, pBesoins, besoins, p => p <= 55) +
+                mkCard('🎉', 'Envies',  '≤ 30%', 30, pEnvies,  envies,  p => p <= 33) +
+                mkCard('💰', 'Épargne', '≥ 20%', 20, pEpargne, epargne, p => p >= 15);
         }
 
-        // Mettre à jour le sous-titre
-        const titleEl = document.getElementById('regle-ce-mois-label');
-        if (titleEl) titleEl.textContent = `Ce mois — ${subtitle}`;
+        // Conseil
+        const conseil = document.getElementById('regle-conseil');
+        if (conseil) {
+            const msgs = [];
+            if (pEpargne < 15 && salaire > 0) {
+                const manque = Math.round((salaire * 0.20) - epargne);
+                msgs.push(`💡 Épargne trop faible (${pEpargne}% vs 20% cible) — il te manque <strong>${this.formatCurrency(manque)}/mois</strong>.`);
+            }
+            if (pBesoins > 55) msgs.push(`⚠️ Tes besoins dépassent 50% de tes revenus — surveille les postes fixes.`);
+            if (pEnvies > 33) msgs.push(`⚠️ Tes envies dépassent 30% — essaie de réduire loisirs ou shopping.`);
+            if (msgs.length === 0) msgs.push(`✅ Tu respectes la règle 50/30/20 — continue comme ça !`);
+            conseil.style.display = 'block';
+            conseil.style.borderLeftColor = pEpargne >= 15 && pBesoins <= 55 && pEnvies <= 33 ? 'var(--success)' : 'var(--warning)';
+            conseil.innerHTML = msgs.join('<br>');
+        }
     },
 
     // ===================== RÉCURRENCES =====================
@@ -6354,14 +6390,16 @@ const app = {
 document.addEventListener('DOMContentLoaded', () => {
     app.init();
 
-    // Alerte si on ferme la page sans avoir sauvegardé
+    // Alerte si hors ligne avec modifications non syncées, OU si le dernier sync a échoué
     window.addEventListener('beforeunload', (e) => {
-        const lastSave = app.data?.parametres?.lastBackup;
-        const lastChange = app._lastChange;
-        if (lastChange && (!lastSave || lastChange > lastSave)) {
+        const hasUnsyncedChanges = app._lastChange && !app._lastSyncOk;
+        if (hasUnsyncedChanges) {
             e.preventDefault();
-            e.returnValue = 'Avez-vous enregistré vos modifications ?';
-            return 'Avez-vous enregistré vos modifications ?';
+            const msg = navigator.onLine
+                ? 'La synchronisation a échoué — vos modifications ne sont pas enregistrées sur le cloud.'
+                : 'Vous êtes hors ligne — vos modifications ne sont pas encore enregistrées sur le cloud.';
+            e.returnValue = msg;
+            return msg;
         }
     });
 });
