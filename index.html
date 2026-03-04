@@ -682,8 +682,12 @@ body[data-theme=dark] canvas { filter: none; }
 </div><!-- fin bloc tri-panel -->
 
 <!-- 5. Analyse -->
-<div class="card">
-<div class="card-header"><h2 class="card-title">Analyse des dépenses</h2></div>
+<div class="card" style="padding:0;overflow:hidden">
+<div onclick="app.toggleSection('analyse-body','analyse-arrow','analyse-trigger')" id="analyse-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
+  <h2 class="card-title" style="margin:0">🔍 Analyse des dépenses</h2>
+  <span id="analyse-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+</div>
+<div id="analyse-body" style="display:none;padding:1.5rem 2rem">
 <div class="filter-bar">
 <div class="form-group" style="margin:0">
 <label class="form-label">Période</label>
@@ -720,10 +724,15 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 <div id="analyse-results"></div>
 </div>
+</div>
 
 <!-- 6. Historique -->
-<div class="card">
-<div class="card-header"><h2 class="card-title">Historique</h2></div>
+<div class="card" style="padding:0;overflow:hidden">
+<div onclick="app.toggleSection('hist-dep-body','hist-dep-arrow','hist-dep-trigger')" id="hist-dep-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
+  <h2 class="card-title" style="margin:0">📋 Historique</h2>
+  <span id="hist-dep-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+</div>
+<div id="hist-dep-body" style="display:none;padding:1.5rem 2rem">
 <div id="depenses-table-wrapper" class="table-container">
 <table class="table">
 <thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead>
@@ -732,6 +741,7 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
+</div>
 </div>
 </div> <!-- fin tab-depenses -->
 
@@ -931,9 +941,13 @@ body[data-theme=dark] canvas { filter: none; }
   <button class="btn btn-secondary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur "Et si…"</button>
 </div>
 
-<!-- 5. Historique -->
-<div class="card">
-<div class="card-header"><h2 class="card-title">Historique PEA</h2></div>
+<!-- 5. Historique PEA -->
+<div class="card" style="padding:0;overflow:hidden">
+<div onclick="app.toggleSection('hist-pea-body','hist-pea-arrow','hist-pea-trigger')" id="hist-pea-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
+  <h2 class="card-title" style="margin:0">📋 Historique PEA</h2>
+  <span id="hist-pea-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+</div>
+<div id="hist-pea-body" style="display:none;padding:1.5rem 2rem">
 <div id="pea-table-wrapper" class="table-container">
 <table class="table">
 <thead><tr><th>Date</th><th>Valeur</th><th>Investi</th><th>Gain/Perte</th><th>Note</th><th></th></tr></thead>
@@ -942,6 +956,7 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 <div id="mobile-pea-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-pea" onclick="app.toggleShowMore('pea')" style="display:none">Afficher plus</button>
+</div>
 </div>
 </div>
 
@@ -989,9 +1004,13 @@ body[data-theme=dark] canvas { filter: none; }
 <div class="chart-container"><canvas id="chart-pat-evol"></canvas></div>
 </div>
 
-<!-- 4. Historique -->
-<div class="card">
-<div class="card-header"><h2 class="card-title">Historique Patrimoine</h2></div>
+<!-- 4. Historique Patrimoine -->
+<div class="card" style="padding:0;overflow:hidden">
+<div onclick="app.toggleSection('hist-pat-body','hist-pat-arrow','hist-pat-trigger')" id="hist-pat-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
+  <h2 class="card-title" style="margin:0">📋 Historique Patrimoine</h2>
+  <span id="hist-pat-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+</div>
+<div id="hist-pat-body" style="display:none;padding:1.5rem 2rem">
 <div id="patrimoine-table-wrapper" class="table-container">
 <table class="table">
 <thead>
@@ -1007,6 +1026,7 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 <div id="mobile-patrimoine-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-patrimoine" onclick="app.toggleShowMore('patrimoine')" style="display:none">Afficher plus</button>
+</div>
 </div>
 
 </div>
@@ -1052,26 +1072,29 @@ body[data-theme=dark] canvas { filter: none; }
 <!-- Bilan -->
 <div id="tab-bilan" class="tab-content">
 
-<!-- Rapport mensuel -->
-<div class="card">
-<div class="card-header">
-  <h2 class="card-title">📄 Rapport mensuel</h2>
-  <div style="display:flex;gap:0.5rem;align-items:center">
-    <select class="form-select" id="rapport-mois" style="padding:0.4rem 0.6rem;font-size:0.8rem;width:auto"></select>
-    <button class="btn btn-small" onclick="app.genererRapport()">Générer</button>
-    <button class="btn btn-small btn-secondary" onclick="app.imprimerRapport()" id="btn-imprimer" style="display:none">🖨 Imprimer</button>
-  </div>
-</div>
-<div id="rapport-container"><div class="empty-state"><div class="empty-state-icon">📄</div><div>Sélectionne un mois et génère ton rapport</div></div></div>
-</div>
-
-<!-- Bilan annuel -->
+<!-- Bilan annuel (en premier, toujours visible) -->
 <div class="card">
 <div class="card-header">
   <h2 class="card-title">🏅 Bilan annuel</h2>
   <select class="form-select" id="bilan-annee" style="padding:0.4rem 0.6rem;font-size:0.8rem;width:auto" onchange="app.refreshBilanAnnuel()"></select>
 </div>
 <div id="bilan-annuel-container"><div class="empty-state"><div class="empty-state-icon">🏅</div><div>Pas encore assez de données pour cette année</div></div></div>
+</div>
+
+<!-- Rapport mensuel (dépliant) -->
+<div class="card" style="padding:0;overflow:hidden">
+<div onclick="app.toggleSection('rapport-body','rapport-arrow','rapport-trigger')" id="rapport-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
+  <h2 class="card-title" style="margin:0">📄 Rapport mensuel</h2>
+  <span id="rapport-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+</div>
+<div id="rapport-body" style="display:none;padding:1.5rem 2rem">
+  <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:1.25rem">
+    <select class="form-select" id="rapport-mois" style="padding:0.4rem 0.6rem;font-size:0.8rem;width:auto"></select>
+    <button class="btn btn-small" onclick="app.genererRapport()">Générer</button>
+    <button class="btn btn-small btn-secondary" onclick="app.imprimerRapport()" id="btn-imprimer" style="display:none">🖨 Imprimer</button>
+  </div>
+  <div id="rapport-container"><div class="empty-state"><div class="empty-state-icon">📄</div><div>Sélectionne un mois et génère ton rapport</div></div></div>
+</div>
 </div>
 
 <!-- Notes mensuelles -->
@@ -2452,6 +2475,17 @@ const app = {
         const body = headerEl.nextElementSibling;
         const isOpen = body.classList.toggle('open');
         headerEl.classList.toggle('open', isOpen);
+    },
+
+    toggleSection(bodyId, arrowId, triggerId) {
+        const body = document.getElementById(bodyId);
+        const arrow = document.getElementById(arrowId);
+        const trigger = document.getElementById(triggerId);
+        if (!body) return;
+        const isOpen = body.style.display === 'none';
+        body.style.display = isOpen ? 'block' : 'none';
+        if (arrow) arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
+        if (trigger) trigger.style.borderBottomColor = isOpen ? 'var(--border-color)' : 'transparent';
     },
 
     toggleTriPanel(panel) {
