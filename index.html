@@ -384,6 +384,41 @@ body[data-theme=dark] canvas { filter: none; }
     </div>
 </div>
 
+<!-- Modal Gérer les catégories -->
+<div class="modal" id="budgetsModal" style="max-width:560px">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem 1rem">
+        <h2 class="modal-title">✦ Gérer les catégories</h2>
+        <button onclick="app.closeBudgetsModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg-primary);border:none;cursor:pointer;font-size:0.78rem;color:var(--text-secondary);display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.25rem 2rem">
+        <div id="budgets-container"></div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
+            <strong style="font-size:.85rem">Budget total alloué : <span id="budget-total-alloue">0 €</span></strong>
+            <button class="btn btn-primary btn-small" onclick="app.openAddCategoryModal()">+ Catégorie</button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="app.closeBudgetsModal()">Fermer</button>
+    </div>
+</div>
+
+<!-- Modal Gérer les comptes -->
+<div class="modal" id="comptesModal" style="max-width:480px">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem 1rem">
+        <h2 class="modal-title">✦ Gérer les comptes</h2>
+        <button onclick="app.closeComptesModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg-primary);border:none;cursor:pointer;font-size:0.78rem;color:var(--text-secondary);display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div class="modal-body" style="padding:1.25rem 2rem">
+        <div id="comptes-patrimoine-container"></div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color);text-align:right">
+            <button class="btn btn-primary btn-small" onclick="app.openAddCompteModal()">+ Compte</button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="app.closeComptesModal()">Fermer</button>
+    </div>
+</div>
+
 <div id="zoom-wrapper" style="display:none"><div class="container">
 <div class="header">
 <div class="header-left">
@@ -560,16 +595,6 @@ body[data-theme=dark] canvas { filter: none; }
 <div class="card-header">
   <h2 class="card-title">Ajouter une dépense</h2>
   <button class="btn-manage" onclick="app.toggleBudgetsPanel()">✦ Gérer les catégories</button>
-</div>
-<div id="budgets-panel" style="display:none;margin-bottom:1.5rem;padding:1.5rem;background:var(--bg-tertiary);border-radius:4px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-<strong>Budgets par catégorie</strong>
-<button class="btn btn-small" onclick="app.openAddCategoryModal()">+ Catégorie</button>
-</div>
-<div id="budgets-container"></div>
-<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)">
-<strong>Budget total alloué : <span id="budget-total-alloue">0 €</span></strong>
-</div>
 </div>
 <div class="grid grid-2">
 <div class="form-group">
@@ -1018,20 +1043,15 @@ body[data-theme=dark] canvas { filter: none; }
 </div>
 
 <!-- 1. Mise à jour -->
-<div class="card" style="position:relative">
-<div class="btn-gear" onclick="app.toggleComptesPanel()">⚙</div>
-<div class="card-header"><h2 class="card-title">Mise à jour</h2></div>
-<div id="comptes-panel" style="display:none;margin-bottom:1.5rem;padding:1.5rem;background:var(--bg-tertiary);border-radius:4px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-<strong>Gérer les comptes</strong>
-<button class="btn btn-small" onclick="app.openAddCompteModal()">+ Compte</button>
-</div>
-<div id="comptes-patrimoine-container"></div>
+<div class="card">
+<div class="card-header">
+  <h2 class="card-title">Mise à jour</h2>
+  <button class="btn-manage" onclick="app.toggleComptesPanel()">✦ Gérer les comptes</button>
 </div>
 <div class="grid grid-2">
 <div class="form-group">
-<label class="form-label">Mois</label>
-<input type="month" class="form-input" id="pat-mois">
+<label class="form-label">Date</label>
+<input type="date" class="form-input" id="pat-mois">
 </div>
 <div id="pat-inputs"></div>
 </div>
@@ -1549,6 +1569,12 @@ const app = {
             if (document.getElementById('inputModal').classList.contains('active')) {
                 this.closeInputModal();
             }
+            if (document.getElementById('budgetsModal').classList.contains('active')) {
+                this.closeBudgetsModal();
+            }
+            if (document.getElementById('comptesModal').classList.contains('active')) {
+                this.closeComptesModal();
+            }
         };
         document.getElementById('analyse-periode').onchange = () => this.toggleAnalyseFilters();
         this.initEmojiPicker();
@@ -1806,7 +1832,7 @@ const app = {
         XLSX.utils.book_append_sheet(wb, wsPEA, "PEA");
         
         const patrimoine = this.data.patrimoine.map(p => {
-            const obj = { Mois: p.mois, ID: p.id };
+            const obj = { Date: p.date || p.mois, Mois: p.mois, ID: p.id };
             this.data.comptes.forEach(compte => {
                 obj[compte] = p[compte] || 0;
             });
@@ -2077,7 +2103,7 @@ const app = {
         const month = today.slice(0, 7);
         document.getElementById('dep-date').value = today;
         document.getElementById('pea-date').value = today;
-        document.getElementById('pat-mois').value = month;
+        document.getElementById('pat-mois').value = today;
         document.getElementById('analyse-mois').value = month;
         document.getElementById('analyse-annee').value = new Date().getFullYear();
         document.getElementById('note-mois').value = month;
@@ -2591,15 +2617,27 @@ const app = {
     },
 
     toggleBudgetsPanel() {
-        const panel = document.getElementById('budgets-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        this.updateBudgetsUI();
+        document.getElementById('budgetsModal').classList.add('active');
+        document.getElementById('overlay').classList.add('active');
     },
-    
+
+    closeBudgetsModal() {
+        document.getElementById('budgetsModal').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    },
+
     toggleComptesPanel() {
-        const panel = document.getElementById('comptes-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        this.updateComptesUI();
+        document.getElementById('comptesModal').classList.add('active');
+        document.getElementById('overlay').classList.add('active');
     },
-    
+
+    closeComptesModal() {
+        document.getElementById('comptesModal').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+    },
+
     showModal(title, message, callback) {
         document.getElementById('confirmTitle').textContent = title;
         document.getElementById('confirmBody').textContent = message;
@@ -3490,7 +3528,8 @@ const app = {
     },
     
     ajouterPatrimoine() {
-        const mois = document.getElementById('pat-mois').value;
+        const dateVal = document.getElementById('pat-mois').value;
+        const mois = dateVal.substring(0, 7); // YYYY-MM pour graphiques
         const values = {};
         let total = 0;
         
@@ -3501,9 +3540,10 @@ const app = {
             total += val;
         });
         
-        this.data.patrimoine = this.data.patrimoine.filter(p => p.mois !== mois);
+        this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
         this.data.patrimoine.push({
             id: Date.now(),
+            date: dateVal,
             mois: mois,
             ...values,
             total: total
@@ -3554,7 +3594,7 @@ const app = {
                     </div>
                     <div class="mdc-note" style="display:flex;flex-wrap:wrap;gap:.3rem">${compteLines}</div>
                     <div class="mdc-bottom">
-                        <span class="mdc-date">${new Date(p.mois).toLocaleDateString('fr-FR', {year:'numeric',month:'long'})}</span>
+                        <span class="mdc-date">${new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day:'numeric', year:'numeric', month:'long'})}</span>
                         <div class="mdc-actions">
                             <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPatrimoine(${p.id})">🗑 Supprimer</button>
                         </div>
@@ -3564,7 +3604,7 @@ const app = {
         } else if (tbody) {
             tbody.innerHTML = toShow.map(p => {
                 let html = '<tr>';
-                html += `<td>${new Date(p.mois).toLocaleDateString('fr-FR', {year: 'numeric', month: 'long'})}</td>`;
+                html += `<td>${new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day: 'numeric', year: 'numeric', month: 'long'})}</td>`;
                 this.data.comptes.forEach(compte => {
                     html += `<td>${this.formatCurrency(p[compte] || 0)}</td>`;
                 });
@@ -4342,13 +4382,15 @@ const app = {
     },
     
     toggleBudgetsPanel() {
-        const panel = document.getElementById('budgets-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        this.updateBudgetsUI();
+        document.getElementById('budgetsModal').classList.add('active');
+        document.getElementById('overlay').classList.add('active');
     },
-    
+
     toggleComptesPanel() {
-        const panel = document.getElementById('comptes-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        this.updateComptesUI();
+        document.getElementById('comptesModal').classList.add('active');
+        document.getElementById('overlay').classList.add('active');
     },
     
     modifierNote(type, id) {
