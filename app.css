@@ -624,29 +624,28 @@ html{-webkit-text-size-adjust:100%}
   align-items:center;
   justify-content:space-between;
   gap:1rem;
-  padding:.55rem 1.25rem;
+  padding:.35rem 1.25rem;
   border-radius:100px;
   margin-bottom:1.25rem;
   background:var(--bg-card);
-  box-shadow:8px 8px 20px var(--shadow-light),-8px -8px 20px var(--shadow-dark);
+  box-shadow:6px 6px 16px var(--shadow-light),-6px -6px 16px var(--shadow-dark);
   position:sticky;top:0;z-index:100;
   will-change:transform;transform:translateZ(0);
+  min-height:48px;
 }
 
-/* Gauche : logo + nom */
+/* Gauche : logo seul */
 .topbar-left{
-  display:flex;align-items:center;gap:.55rem;flex-shrink:0;
+  display:flex;align-items:center;flex-shrink:0;
 }
-.topbar-name{
-  font-family:'Outfit',sans-serif;
-  font-size:1rem;font-weight:700;
-  color:var(--text-primary);
-  letter-spacing:.02em;
+.topbar-logo{
+  width:52px;height:35px;
+  display:block;
 }
 
 /* Centre : onglets */
 .topbar-nav{
-  display:flex;gap:.2rem;
+  display:flex;gap:.15rem;
   background:transparent !important;
   box-shadow:none !important;
   padding:0 !important;
@@ -656,8 +655,8 @@ html{-webkit-text-size-adjust:100%}
   overflow:visible;
 }
 .topbar-nav .nav-tab{
-  padding:.45rem .9rem;
-  font-size:.82rem;font-weight:500;
+  padding:.38rem .85rem;
+  font-size:.8rem;font-weight:500;
   letter-spacing:.01em;
   text-transform:none;
   border-radius:100px;
@@ -667,6 +666,7 @@ html{-webkit-text-size-adjust:100%}
   cursor:pointer;
   transition:color .2s,background .2s;
   display:flex;align-items:center;
+  font-family:'Inter',sans-serif;
 }
 .topbar-nav .nav-tab:hover{
   color:var(--text-primary);
@@ -678,55 +678,42 @@ html{-webkit-text-size-adjust:100%}
   font-weight:600;
 }
 
-/* Droite : sync + avatar + settings */
+/* Droite : avatar + settings */
 .topbar-right{
-  display:flex;align-items:center;gap:.5rem;flex-shrink:0;
+  display:flex;align-items:center;gap:.4rem;flex-shrink:0;
 }
-.topbar-sync{
-  display:flex;align-items:center;gap:.35rem;
-  font-family:'DM Mono',monospace;
-  font-size:.62rem;color:var(--text-tertiary);
-  padding:.35rem .7rem;
-  background:var(--bg-secondary);
-  border-radius:100px;
-}
-.sync-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--text-tertiary);
-  transition:background .3s;
-  flex-shrink:0;
-}
-.sync-label{font-size:.62rem;}
+.topbar-sync{ display:none !important; }
 .topbar-avatar{
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
 .topbar-settings{
-  padding:.38rem .55rem;
+  padding:.3rem .5rem;
   border-radius:100px;
-  font-size:.85rem;
+  font-size:.8rem;
 }
 
-/* Masquer le vieux header-left (absorbé dans topbar) */
+/* Masquer anciens éléments absorbés */
 .topbar .header-left{display:none;}
 .topbar .header-controls{display:contents;}
+.topbar-name{display:none;}
 
-/* ── Mobile : topbar scroll horizontal ── */
+/* ── Mobile ── */
 @media(max-width:700px){
   .topbar{
     border-radius:0;
-    padding:.45rem .75rem;
-    gap:.5rem;
+    padding:.3rem .75rem;
+    gap:.4rem;
     overflow-x:auto;
     scrollbar-width:none;
     flex-wrap:nowrap;
+    min-height:44px;
   }
-  .topbar-name{display:none;}
-  .topbar-nav{flex:0 0 auto;gap:.1rem;}
-  .topbar-nav .nav-tab{padding:.4rem .6rem;font-size:.72rem;}
-  .topbar-sync{display:none;}
+  .topbar-logo{width:40px;height:27px;}
+  .topbar-nav{flex:0 0 auto;gap:.05rem;}
+  .topbar-nav .nav-tab{padding:.32rem .55rem;font-size:.72rem;}
   .topbar-settings{display:none;}
 }
 @media(max-width:400px){
-  .topbar-nav .nav-tab{padding:.35rem .45rem;font-size:.68rem;}
+  .topbar-nav .nav-tab{padding:.28rem .42rem;font-size:.68rem;}
 }
