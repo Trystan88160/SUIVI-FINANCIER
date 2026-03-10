@@ -1,5 +1,5 @@
-/* ── Service Worker — Suivi Financier ── */
-const CACHE_NAME = 'suivi-financier-v1';
+/* ── Service Worker — Vault ── */
+const CACHE_NAME = 'vault-v1';
 
 /* Fichiers à mettre en cache dès l'installation */
 const STATIC_ASSETS = [
