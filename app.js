@@ -2451,7 +2451,7 @@ const app = {
     },
 
     applyTheme() {
-        const darkThemes = ['dark','abyss','obsidian','arctic'];
+        const darkThemes = ['dark','abyss','obsidian','arctic','vault'];
         const theme = this.data.parametres.theme || 'auto';
         if (theme === 'auto') {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
