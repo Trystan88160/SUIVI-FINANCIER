@@ -1203,13 +1203,13 @@ const app = {
         <!-- 4 stats -->
         <div class="grid grid-4 grid-stats" style="margin-bottom:1.25rem">
             ${[
-                {icon:'💚', label:'Revenus totaux',     val: totalRevenuAnnuel > 0 ? this.formatCurrency(totalRevenuAnnuel) : '—', color:'var(--success)',
+                {icon:'↑', label:'Revenus totaux',     val: totalRevenuAnnuel > 0 ? this.formatCurrency(totalRevenuAnnuel) : '—', color:'var(--success)',
                  delta: hasPrec && totalRevPrec > 0 && totalRevenuAnnuel > 0 ? ((totalRevenuAnnuel-totalRevPrec)/totalRevPrec*100) : null, inv: false},
-                {icon:'💳', label:'Dépenses effectives', val: this.formatCurrency(totalDepEff), color:'var(--accent-primary)',
+                {icon:'—', label:'Dépenses effectives', val: this.formatCurrency(totalDepEff), color:'var(--accent-primary)',
                  delta: hasPrec && totalDepEffPrec > 0 ? ((totalDepEff-totalDepEffPrec)/totalDepEffPrec*100) : null, inv: true},
-                {icon:'💰', label:'Épargne nette',       val: totalRevenuAnnuel > 0 ? this.formatCurrency(epargneNette) : '—', color: epargneNette > 0 ? 'var(--success)' : 'var(--danger)',
+                {icon:'€', label:'Épargne nette',       val: totalRevenuAnnuel > 0 ? this.formatCurrency(epargneNette) : '—', color: epargneNette > 0 ? 'var(--success)' : 'var(--danger)',
                  delta: hasPrec && epargnePrec > 0 && totalRevenuAnnuel > 0 ? ((epargneNette-epargnePrec)/epargnePrec*100) : null, inv: false},
-                {icon:'🎯', label:"Taux d'épargne",     val: txEpargne !== null ? txEpargne.toFixed(0)+'%' : '—', color: txEpargne === null ? 'var(--text-primary)' : txEpargne >= 20 ? 'var(--success)' : txEpargne >= 10 ? 'var(--warning)' : 'var(--danger)',
+                {icon:'◎', label:"Taux d'épargne",     val: txEpargne !== null ? txEpargne.toFixed(0)+'%' : '—', color: txEpargne === null ? 'var(--text-primary)' : txEpargne >= 20 ? 'var(--success)' : txEpargne >= 10 ? 'var(--warning)' : 'var(--danger)',
                  delta: hasPrec && txEpargnePrec !== null && txEpargne !== null ? (txEpargne - txEpargnePrec) : null, inv: false, isTx: true}
             ].map(k => {
                 const dStr = k.delta !== null ? (() => {
@@ -1250,7 +1250,7 @@ const app = {
                     + '</div>';
             });
             return '<div style="margin-bottom:1.25rem;background:var(--bg-secondary);border-radius:14px;padding:1rem 1.25rem;border:1px solid var(--border-color)">'
-                + '<div class="stat-label" style="margin-bottom:.75rem">📊 Comparaison ' + annee + ' vs ' + anneePrec + '</div>'
+                + '<div class="stat-label" style="margin-bottom:.75rem"> Comparaison ' + annee + ' vs ' + anneePrec + '</div>'
                 + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem">' + cards.join('') + '</div>'
                 + '</div>';
         })() : ''}
@@ -1272,7 +1272,7 @@ const app = {
             <div style="display:flex;flex-direction:column;gap:.45rem">
                 ${patAnnee.length >= 2 ? `
                 <div style="background:var(--bg-secondary);border-radius:12px;padding:.7rem 1rem;border:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
-                    <span class="stat-label" style="margin:0">📈 Croissance patrimoine</span>
+                    <span class="stat-label" style="margin:0"> Croissance patrimoine</span>
                     <strong style="color:${patDelta>=0?'var(--success)':'var(--danger)'}">${patDelta>=0?'+':''}${this.formatCurrency(patDelta)}</strong>
                 </div>` : ''}
                 <div style="background:var(--bg-secondary);border-radius:12px;padding:.7rem 1rem;border:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
@@ -1288,7 +1288,7 @@ const app = {
                     <strong>${catMax ? catMax[0]+' ('+this.formatCurrency(catMax[1])+')' : '—'}</strong>
                 </div>
                 <div style="background:var(--bg-secondary);border-radius:12px;padding:.7rem 1rem;border:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
-                    <span class="stat-label" style="margin:0">📊 Moy. dépenses/mois</span>
+                    <span class="stat-label" style="margin:0"> Moy. dépenses/mois</span>
                     <strong>${this.formatCurrency(totalDepEff / Math.max(1, nonZero.length))}</strong>
                 </div>
             </div>
@@ -1442,7 +1442,7 @@ const app = {
                 </div>
                 <div style="text-align:right">
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,#3f51b5,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${this.formatCurrency(total)}</div>
-                    <div style="font-family:DM Mono,monospace;font-size:0.7rem;color:${resteBudget >= 0 ? '#00c853' : '#f44336'}">${resteBudget >= 0 ? '✅' : '⚠️'} ${resteBudget >= 0 ? '+' : ''}${this.formatCurrency(resteBudget)} vs budget</div>
+                    <div style="font-family:DM Mono,monospace;font-size:0.7rem;color:var(--text-primary)">${resteBudget >= 0 ? '✅' : '⚠️'} ${resteBudget >= 0 ? '+' : ''}${this.formatCurrency(resteBudget)} vs budget</div>
                 </div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(${revenus>0?4:3},1fr);gap:0.6rem;margin-bottom:1.5rem">
@@ -1456,7 +1456,7 @@ const app = {
                     <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:${clr}">${v}</div>
                 </div>`).join('')}
             </div>
-            ${resteBudget !== null ? `<div style="margin-bottom:1.25rem;font-family:DM Mono,monospace;font-size:0.7rem;color:${resteBudget>=0?'#00c853':'#f44336'};text-align:right">${resteBudget>=0?'✅':'⚠️'} ${resteBudget>=0?'+':''}${this.formatCurrency(resteBudget)} vs budget alloué</div>` : ''}
+            ${resteBudget !== null ? `<div style="margin-bottom:1.25rem;font-family:DM Mono,monospace;font-size:0.7rem;color:var(--text-primary);text-align:right">${resteBudget>=0?'✅':'⚠️'} ${resteBudget>=0?'+':''}${this.formatCurrency(resteBudget)} vs budget alloué</div>` : ''}
             ${totalVirEp > 0 ? `<div style="background:#f0fdf4;border-radius:10px;padding:.65rem 1rem;margin-bottom:1.25rem;border:1px solid #bbf7d0;font-size:.8rem;color:#166534">
                 💰 Virements épargne ce mois : <strong>${this.formatCurrency(totalVirEp)}</strong>
             </div>` : ''}
@@ -1600,7 +1600,7 @@ const app = {
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📊 Comparaison mois à mois</div>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem"> Comparaison mois à mois</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> deux mois côte à côte pour comparer tes dépenses par catégorie.<br>
     <strong>Utilité :</strong> détecte les catégories qui dérivent dans le temps. Clique sur le titre pour déplier.</p>
   </div>
