@@ -1,0 +1,27 @@
+{
+  "name": "Suivi Financier",
+  "short_name": "Finances",
+  "description": "Suivi personnel de budget, PEA et patrimoine",
+  "start_url": "/SUIVI-FINANCIER/",
+  "scope": "/SUIVI-FINANCIER/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#3f51b5",
+  "background_color": "#e8f0f7",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"]
+}
