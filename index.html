@@ -146,44 +146,47 @@
 </div>
 
 <div id="zoom-wrapper" style="display:none"><div class="container">
-<div class="header">
-<div class="header-left">
-  <div class="header-logo">
-  <svg class="vault-logo-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="20" y1="64" x2="100" y2="64" stroke="var(--vault-accent)" stroke-width="1.5" opacity="0.35"/>
-    <path d="M35 64 L60 30 L85 64" stroke="var(--vault-accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-    <path d="M20 64 L60 16 L100 64" stroke="var(--vault-accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="60" cy="64" r="3" fill="var(--vault-accent)"/>
-  </svg>
-</div>
-  <h1>Vault</h1>
-</div>
-<div class="header-controls">
-<div id="backup-alert"></div>
-<div class="zoom-controls" style="display:none">
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80">XS</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90">S</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100">M</button>
-    <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110">L</button>
-</div>
-<div id="sync-indicator" title="Synchronisation cloud" style="display:flex;align-items:center;gap:0.35rem;font-family:DM Mono,monospace;font-size:0.65rem;color:var(--text-tertiary);padding:0.4rem 0.75rem;background:var(--bg-secondary);border-radius:10px;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
-  <span id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--text-tertiary);transition:background .3s"></span>
-  <span id="sync-label">cloud</span>
-</div>
-<div id="user-badge" onclick="app.toggleSettings()" title="Paramètres" style="cursor:pointer">
-  <div class="user-avatar" id="user-avatar">?</div>
-</div>
-<button class="btn btn-secondary btn-icon" onclick="app.toggleSettings()">⚙</button>
-</div>
-</div>
+<div class="header topbar">
+  <!-- Logo gauche -->
+  <div class="topbar-left">
+    <div class="header-logo">
+      <svg class="vault-logo-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="64" x2="100" y2="64" stroke="var(--vault-accent)" stroke-width="1.5" opacity="0.35"/>
+        <path d="M35 64 L60 30 L85 64" stroke="var(--vault-accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+        <path d="M20 64 L60 16 L100 64" stroke="var(--vault-accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="60" cy="64" r="3" fill="var(--vault-accent)"/>
+      </svg>
+    </div>
+    <span class="topbar-name">Vault</span>
+  </div>
 
-<div class="nav-tabs">
-<button class="nav-tab active" onclick="app.switchTab('dashboard')"><span class="tab-icon">🏠</span><span class="tab-label">Dashboard</span></button>
-<button class="nav-tab" onclick="app.switchTab('depenses')"><span class="tab-icon">💰</span><span class="tab-label">Budget</span></button>
-<button class="nav-tab" onclick="app.switchTab('pea')"><span class="tab-icon">📈</span><span class="tab-label">PEA</span></button>
-<button class="nav-tab" onclick="app.switchTab('patrimoine')"><span class="tab-icon">🏦</span><span class="tab-label">Patrimoine</span></button>
-<button class="nav-tab" onclick="app.switchTab('bilan')"><span class="tab-icon">📋</span><span class="tab-label">Bilan</span></button>
+  <!-- Onglets centre -->
+  <div class="nav-tabs topbar-nav" role="navigation" aria-label="Navigation principale">
+    <button class="nav-tab active" onclick="app.switchTab('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="app.switchTab('depenses')">Budget</button>
+    <button class="nav-tab" onclick="app.switchTab('pea')">PEA</button>
+    <button class="nav-tab" onclick="app.switchTab('patrimoine')">Patrimoine</button>
+    <button class="nav-tab" onclick="app.switchTab('bilan')">Bilan</button>
+  </div>
 
+  <!-- Contrôles droite -->
+  <div class="topbar-right header-controls">
+    <div id="backup-alert"></div>
+    <div class="zoom-controls" style="display:none">
+      <button class="btn btn-small zoom-btn" onclick="app.setZoom(80)" id="zoom-80">XS</button>
+      <button class="btn btn-small zoom-btn" onclick="app.setZoom(90)" id="zoom-90">S</button>
+      <button class="btn btn-small zoom-btn" onclick="app.setZoom(100)" id="zoom-100">M</button>
+      <button class="btn btn-small zoom-btn" onclick="app.setZoom(110)" id="zoom-110">L</button>
+    </div>
+    <div id="sync-indicator" class="topbar-sync" title="Synchronisation cloud">
+      <span id="sync-dot" class="sync-dot"></span>
+      <span id="sync-label" class="sync-label">cloud</span>
+    </div>
+    <div id="user-badge" onclick="app.toggleSettings()" title="Paramètres" class="topbar-avatar">
+      <div class="user-avatar" id="user-avatar">?</div>
+    </div>
+    <button class="btn btn-secondary btn-icon topbar-settings" onclick="app.toggleSettings()" title="Paramètres">⚙</button>
+  </div>
 </div>
 
 <!-- FAB mobile -->
