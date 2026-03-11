@@ -1,5 +1,5 @@
 /* ── Service Worker — Vault ── */
-const CACHE_NAME = 'vault-v1';
+const CACHE_NAME = 'vault-v2';
 
 /* Fichiers à mettre en cache dès l'installation */
 const STATIC_ASSETS = [
@@ -106,6 +106,20 @@ self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate' ||
       url.pathname.endsWith('.html') ||
       url.pathname.endsWith('/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  /* Icônes PNG → network first pour recevoir les mises à jour du logo */
+  if (url.pathname.endsWith('.png')) {
     event.respondWith(
       fetch(event.request)
         .then(response => {
