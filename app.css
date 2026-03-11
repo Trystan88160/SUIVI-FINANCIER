@@ -592,3 +592,7 @@ html{-webkit-text-size-adjust:100%}
 
 .tab-help-btn:hover{opacity:1;}
 
+
+/* ── Espacement entre les cartes de chaque onglet ── */
+[data-card-id]{margin-bottom:1rem;}
+[data-card-id]:last-child{margin-bottom:0;}
