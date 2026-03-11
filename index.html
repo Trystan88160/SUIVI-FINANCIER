@@ -323,62 +323,48 @@
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
 
 <!-- Card Revenus + Cashflow -->
-<div data-card-id="dep-revenus" data-tab="depenses"><div class="card" style="padding:1.25rem 1.5rem;margin-bottom:1rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem">
-    <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:var(--text-primary)">💰 Revenus & Cashflow</div>
-    <button class="btn-manage" onclick="app.toggleRevenusPanel()">+ Saisir revenu</button>
+<div data-card-id="dep-revenus" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
+  <div>
+    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Revenus</div>
+    <div class="card-title" style="margin:0">Ajouter un revenu</div>
   </div>
-  <div style="display:flex;gap:2rem;flex-wrap:wrap">
-    <div>
-      <div class="stat-label">Revenus du mois</div>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--success)" id="rev-total">— €</div>
-    </div>
-    <div>
-      <div class="stat-label">Dépenses effectives</div>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text-primary)" id="rev-depenses">— €</div>
-    </div>
-    <div>
-      <div class="stat-label">Cashflow net</div>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800" id="rev-cashflow">— €</div>
-    </div>
-    <div>
-      <div class="stat-label">Taux d'épargne</div>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800" id="rev-taux">— %</div>
-    </div>
-  </div>
-  <!-- Panel saisie revenus -->
-  <div id="revenus-panel" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-color)">
-    <div class="grid grid-2" style="margin-bottom:.75rem">
-      <div class="form-group">
-        <label class="form-label">Montant (€)</label>
-        <input type="number" class="form-input" id="rev-montant" placeholder="0.00" step="0.01">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Type</label>
-        <select class="form-select" id="rev-type">
-          <option value="Salaire">Salaire</option>
-          <option value="Prime">Prime / Bonus</option>
-          <option value="Locatif">Revenu locatif</option>
-          <option value="Dividende">Dividende</option>
-          <option value="Remboursement">Remboursement</option>
-          <option value="Autre">Autre</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="date" class="form-input" id="rev-date">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Note</label>
-        <input type="text" class="form-input" id="rev-note" placeholder="Source, employeur...">
-      </div>
-    </div>
-    <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="app.ajouterRevenu()">+ Enregistrer</button>
-    </div>
-    <div id="revenus-history" style="margin-top:.85rem"></div>
+  <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-primary btn-small" onclick="app.toggleRevenusPanel()" style="padding:.45rem 1rem;font-size:.72rem">+ Ajouter un revenu</button>
   </div>
 </div>
+<div id="revenus-panel" style="display:none;padding:.75rem 1.75rem 1.25rem">
+  <div class="grid grid-2" style="margin-bottom:.75rem">
+    <div class="form-group">
+      <label class="form-label">Montant (€)</label>
+      <input type="number" class="form-input" id="rev-montant" placeholder="0.00" step="0.01">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type</label>
+      <select class="form-select" id="rev-type">
+        <option value="Salaire">Salaire</option>
+        <option value="Prime">Prime / Bonus</option>
+        <option value="Locatif">Revenu locatif</option>
+        <option value="Dividende">Dividende</option>
+        <option value="Remboursement">Remboursement</option>
+        <option value="Autre">Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input type="date" class="form-input" id="rev-date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note</label>
+      <input type="text" class="form-input" id="rev-note" placeholder="Source, employeur...">
+    </div>
+  </div>
+  <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="app.ajouterRevenu()">+ Enregistrer</button>
+    <button class="btn btn-secondary" onclick="app.toggleRevenusPanel()">Annuler</button>
+  </div>
+  <div id="revenus-history" style="margin-top:.85rem"></div>
+</div></div>
+
 <div class="grid grid-3 grid-stats">
 <div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
   <div class="stat-label">Dépensé ce mois</div>
@@ -1058,8 +1044,20 @@
     <div style="margin-bottom:0.85rem">
       <div class="sp-mini-label">Thème</div>
       <select class="form-select" id="set-theme" onchange="app.changeTheme()" style="font-size:0.82rem;padding:0.5rem 0.75rem">
-          <option value="light">Vault Clair</option>
-        </select>
+        <optgroup label="── Thèmes clairs ──">
+          <option value="light">☀️ Clair (Aurora)</option>
+          <option value="mist">🌫️ Brume</option>
+          <option value="horizon">🌅 Horizon</option>
+          <option value="aqua">🌊 Aqua</option>
+        </optgroup>
+        <optgroup label="── Thèmes sombres ──">
+          <option value="dark">🌌 Aurora</option>
+          <option value="abyss">🌊 Abyss</option>
+          <option value="obsidian">🖤 Obsidian</option>
+          <option value="arctic">🧊 Arctic</option>
+        </optgroup>
+        <option value="auto">⚙️ Automatique</option>
+      </select>
     </div>
     <div>
       <div class="sp-mini-label">Salaire net mensuel (€)</div>
