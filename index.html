@@ -324,7 +324,7 @@
 
 <!-- Card Revenus + Cashflow -->
 
-<div class="grid grid-3 grid-stats">
+<div class="grid grid-3 grid-stats" style="margin-bottom:2rem">
 <div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
   <div class="stat-label">Dépensé ce mois</div>
   <div class="stat-value" id="s-depenses-mois">0 €</div>
@@ -340,7 +340,7 @@
   <div class="stat-value accent" id="s-budget-total">0 €</div>
   <div id="s-budget-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— catégories actives</div>
 </div>
-</div></div>
+</div>
 
 <div data-card-id="dep-revenus" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
   <div>
@@ -348,40 +348,8 @@
     <div class="card-title" style="margin:0">Ajouter un revenu</div>
   </div>
   <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn btn-primary btn-small" onclick="app.toggleRevenusPanel()" style="padding:.45rem 1rem;font-size:.72rem">+ Ajouter un revenu</button>
+    <button class="btn btn-primary btn-small" onclick="app.openBsRevenus()" style="padding:.45rem 1rem;font-size:.72rem">+ Ajouter un revenu</button>
   </div>
-</div>
-<div id="revenus-panel" style="display:none;padding:.75rem 1.75rem 1.25rem">
-  <div class="grid grid-2" style="margin-bottom:.75rem">
-    <div class="form-group">
-      <label class="form-label">Montant (€)</label>
-      <input type="number" class="form-input" id="rev-montant" placeholder="0.00" step="0.01">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Type</label>
-      <select class="form-select" id="rev-type">
-        <option value="Salaire">Salaire</option>
-        <option value="Prime">Prime / Bonus</option>
-        <option value="Locatif">Revenu locatif</option>
-        <option value="Dividende">Dividende</option>
-        <option value="Remboursement">Remboursement</option>
-        <option value="Autre">Autre</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Date</label>
-      <input type="date" class="form-input" id="rev-date">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Note</label>
-      <input type="text" class="form-input" id="rev-note" placeholder="Source, employeur...">
-    </div>
-  </div>
-  <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-    <button class="btn btn-primary" onclick="app.ajouterRevenu()">+ Enregistrer</button>
-    <button class="btn btn-secondary" onclick="app.toggleRevenusPanel()">Annuler</button>
-  </div>
-  <div id="revenus-history" style="margin-top:.85rem"></div>
 </div></div>
 
 
@@ -613,7 +581,7 @@
 <div id="tab-pea" class="tab-content">
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓ Aide</button></div>
 
-<div data-card-id="pea-stats" data-tab="pea"><div class="grid grid-3 grid-stats">
+<div data-card-id="pea-stats" data-tab="pea" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
 <div class="stat-card stat-card-main">
 <div class="stat-label">Valeur PEA</div>
 <div class="stat-value accent" id="pea-valeur">0 €</div>
@@ -812,7 +780,7 @@
 <div id="tab-patrimoine" class="tab-content">
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('patrimoine')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('patrimoine')" title="Aide">❓ Aide</button></div>
 
-<div data-card-id="pat-stats" data-tab="patrimoine"><div class="grid grid-3 grid-stats">
+<div data-card-id="pat-stats" data-tab="patrimoine" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
 <div class="stat-card stat-card-main">
   <div class="stat-label">Total</div>
   <div class="stat-value accent" id="pat-total">0 €</div>
@@ -1046,19 +1014,7 @@
     <div style="margin-bottom:0.85rem">
       <div class="sp-mini-label">Thème</div>
       <select class="form-select" id="set-theme" onchange="app.changeTheme()" style="font-size:0.82rem;padding:0.5rem 0.75rem">
-        <optgroup label="── Thèmes clairs ──">
-          <option value="light">☀️ Clair (Aurora)</option>
-          <option value="mist">🌫️ Brume</option>
-          <option value="horizon">🌅 Horizon</option>
-          <option value="aqua">🌊 Aqua</option>
-        </optgroup>
-        <optgroup label="── Thèmes sombres ──">
-          <option value="dark">🌌 Aurora</option>
-          <option value="abyss">🌊 Abyss</option>
-          <option value="obsidian">🖤 Obsidian</option>
-          <option value="arctic">🧊 Arctic</option>
-        </optgroup>
-        <option value="auto">⚙️ Automatique</option>
+        <option value="light" selected>Vault Clair</option>
       </select>
     </div>
     <div>
@@ -1122,6 +1078,52 @@
 
 
 <script src="app.js" defer></script>
+<!-- ── Bottom Sheet : Ajouter un revenu ─────────────────── -->
+<div id="bs-rev-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsRevenus()">
+  <div class="bs-sheet">
+    <div class="bs-handle"><div class="bs-handle-bar"></div></div>
+    <div class="bs-header">
+      <div>
+        <div class="bs-subtitle">Saisie</div>
+        <div class="bs-title">Revenu</div>
+      </div>
+      <button onclick="app.closeBsRevenus()" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;color:var(--text-secondary);font-size:.8rem">✕</button>
+    </div>
+    <div class="bs-body">
+      <div class="grid grid-2" style="gap:.75rem;margin-bottom:.75rem">
+        <div class="form-group">
+          <label class="form-label">Montant (€)</label>
+          <input type="number" class="form-input" id="rev-montant" placeholder="0.00" step="0.01" style="font-size:1rem">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="rev-type">
+            <option value="Salaire">Salaire</option>
+            <option value="Prime">Prime / Bonus</option>
+            <option value="Locatif">Revenu locatif</option>
+            <option value="Dividende">Dividende</option>
+            <option value="Remboursement">Remboursement</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" id="rev-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Note</label>
+          <input type="text" class="form-input" id="rev-note" placeholder="Source, employeur...">
+        </div>
+      </div>
+      <div id="revenus-history" style="margin-top:.5rem"></div>
+    </div>
+    <div class="bs-footer">
+      <button class="bs-btn-cancel" onclick="app.closeBsRevenus()">Annuler</button>
+      <button class="bs-btn-save" id="bs-rev-save-btn" onclick="app.ajouterRevenu()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Bottom Sheet : Ajout multiple dépenses ───────────── -->
 <div id="bs-dep-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsDepenses()">
   <div class="bs-sheet">

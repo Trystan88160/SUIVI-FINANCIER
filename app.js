@@ -2916,9 +2916,29 @@ const app = {
         }).reduce((s, d) => s + d.montant, 0);
     },
 
-    toggleRevenusPanel() {
-        const panel = document.getElementById('revenus-panel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    toggleRevenusPanel() { this.openBsRevenus(); },
+
+    openBsRevenus() {
+        // Réinitialiser les champs
+        const montant = document.getElementById('rev-montant');
+        const note = document.getElementById('rev-note');
+        const date = document.getElementById('rev-date');
+        if (montant) montant.value = '';
+        if (note) note.value = '';
+        if (date) {
+            const now = new Date();
+            date.value = now.toISOString().split('T')[0];
+        }
+        // Afficher l'historique récent
+        this.refreshHistoriqueRevenus();
+        // Ouvrir le bottom sheet
+        const overlay = document.getElementById('bs-rev-overlay');
+        if (overlay) overlay.classList.add('open');
+    },
+
+    closeBsRevenus() {
+        const overlay = document.getElementById('bs-rev-overlay');
+        if (overlay) overlay.classList.remove('open');
     },
 
     ajouterRevenu() {
@@ -2936,6 +2956,7 @@ const app = {
         document.getElementById('rev-montant').value = '';
         document.getElementById('rev-note').value = '';
         this.notify('Revenu enregistré', 'success');
+        this.closeBsRevenus();
     },
 
     supprimerRevenu(id) {
