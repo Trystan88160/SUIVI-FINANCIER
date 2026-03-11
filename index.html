@@ -323,6 +323,25 @@
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
 
 <!-- Card Revenus + Cashflow -->
+
+<div class="grid grid-3 grid-stats">
+<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+  <div class="stat-label">Dépensé ce mois</div>
+  <div class="stat-value" id="s-depenses-mois">0 €</div>
+  <div id="s-depenses-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— vs budget</div>
+</div>
+<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+  <div class="stat-label">Budget restant</div>
+  <div class="stat-value" id="s-budget-restant">0 €</div>
+  <div class="progress-bar" style="margin:.4rem 0 0"><div class="progress-fill" id="s-progress-global"></div></div>
+</div>
+<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+  <div class="stat-label">Budget total</div>
+  <div class="stat-value accent" id="s-budget-total">0 €</div>
+  <div id="s-budget-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— catégories actives</div>
+</div>
+</div></div>
+
 <div data-card-id="dep-revenus" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
   <div>
     <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Revenus</div>
@@ -365,23 +384,6 @@
   <div id="revenus-history" style="margin-top:.85rem"></div>
 </div></div>
 
-<div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Dépensé ce mois</div>
-  <div class="stat-value" id="s-depenses-mois">0 €</div>
-  <div id="s-depenses-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— vs budget</div>
-</div>
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Budget restant</div>
-  <div class="stat-value" id="s-budget-restant">0 €</div>
-  <div class="progress-bar" style="margin:.4rem 0 0"><div class="progress-fill" id="s-progress-global"></div></div>
-</div>
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Budget total</div>
-  <div class="stat-value accent" id="s-budget-total">0 €</div>
-  <div id="s-budget-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— catégories actives</div>
-</div>
-</div></div>
 
 <!-- 1. Ajouter une dépense -->
 <div data-card-id="dep-saisie" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
