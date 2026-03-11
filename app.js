@@ -5009,11 +5009,11 @@ const app = {
                     {
                         label: 'PEA Réel',
                         data: dataReel,
-                        borderColor: '#00c853',
-                        backgroundColor: 'rgba(0, 200, 83, 0.2)',
+                        borderColor: c.success,
+                        backgroundColor: _selfPC._toRgba(c.success, 0.2),
                         tension: 0.4,
                         pointRadius: 6,
-                        pointBackgroundColor: '#00c853',
+                        pointBackgroundColor: c.success,
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2
                     }
@@ -5908,10 +5908,10 @@ const app = {
         let totalMensuel = 0;
         let calcHtml = '';
         const gradients = [
-            'linear-gradient(135deg,#1e3a5f,#3f51b5)',
+            'linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end))',
             'linear-gradient(135deg,#4a1a6b,#7c4dff)',
-            'linear-gradient(135deg,#0a3d2e,#00c853)',
-            'linear-gradient(135deg,#5c2000,#ff9800)',
+            'linear-gradient(135deg,#0a3d2e,var(--success))',
+            'linear-gradient(135deg,#5c2000,var(--warning))',
             'linear-gradient(135deg,#1a0a3d,#3949ab)',
             'linear-gradient(135deg,#3d0a0a,#e53935)',
         ];
@@ -5928,7 +5928,7 @@ const app = {
             const mensuel = Math.ceil((o.cible - o.actuel) / moisRestants);
             totalMensuel += done ? 0 : Math.max(0, mensuel);
             const dateLabel = o.dateTarget ? new Date(o.dateTarget + '-01').toLocaleDateString('fr-FR', {month:'short', year:'numeric'}) : '—';
-            const grad = done ? 'linear-gradient(135deg,#006b2e,#00c853)' : gradients[idx % gradients.length];
+            const grad = done ? 'linear-gradient(135deg,#006b2e,var(--success))' : gradients[idx % gradients.length];
 
             const salaire = this.data.parametres.salaire || 0;
             const epMensuelle = salaire > 0 ? salaire * 0.2 : 150;
@@ -5938,11 +5938,11 @@ const app = {
                 const projDate = new Date(); projDate.setMonth(projDate.getMonth() + moisProj);
                 const projLabel = projDate.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
                 projText = moisProj <= (moisRestants||999)
-                    ? `<div style="background:rgba(0,200,83,.12);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:#00a344;margin-top:.6rem">📊 Au rythme actuel → <strong>${projLabel}</strong></div>`
-                    : `<div style="background:rgba(255,152,0,.1);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:#e07800;margin-top:.6rem">⚡ Augmenter l'épargne pour respecter l'échéance</div>`;
+                    ? `<div style="background:rgba(0,200,83,.12);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:var(--success);margin-top:.6rem">📊 Au rythme actuel → <strong>${projLabel}</strong></div>`
+                    : `<div style="background:rgba(255,152,0,.1);border-radius:8px;padding:.45rem .65rem;font-size:.68rem;color:var(--warning);margin-top:.6rem">⚡ Augmenter l'épargne pour respecter l'échéance</div>`;
             }
-            const progressColor = done ? '#00c853' : pct >= 60 ? 'var(--accent-primary)' : pct >= 30 ? '#ff9800' : '#f44336';
-            const doneTag = done ? '<span style="background:rgba(0,200,83,.15);color:#00a344;border:1px solid rgba(0,200,83,.3);border-radius:20px;font-size:.6rem;font-family:DM Mono,monospace;padding:.1rem .5rem;font-weight:600">ATTEINT ✓</span>' : '';
+            const progressColor = done ? 'var(--success)' : pct >= 60 ? 'var(--accent-primary)' : pct >= 30 ? 'var(--warning)' : 'var(--danger)';
+            const doneTag = done ? '<span style="background:rgba(0,200,83,.15);color:var(--success);border:1px solid rgba(0,200,83,.3);border-radius:20px;font-size:.6rem;font-family:DM Mono,monospace;padding:.1rem .5rem;font-weight:600">ATTEINT ✓</span>' : '';
 
             gridHtml += `
             <div style="background:var(--bg-card);border-radius:18px;overflow:hidden;box-shadow:8px 8px 20px var(--shadow-light),-8px -8px 20px var(--shadow-dark);transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">

@@ -6,8 +6,8 @@
   "scope": "/SUIVI-FINANCIER/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "theme_color": "#C9A84C",
-  "background_color": "#0A0A0F",
+  "theme_color": "#3f51b5",
+  "background_color": "#e8f0f7",
   "lang": "fr",
   "icons": [
     {
