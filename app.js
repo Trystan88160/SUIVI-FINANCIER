@@ -2451,8 +2451,8 @@ const app = {
     },
 
     applyTheme() {
-        const darkThemes = ['dark','abyss','obsidian','arctic','vault'];
-        const theme = this.data.parametres.theme || 'auto';
+        const darkThemes = [];
+        const theme = this.data.parametres.theme || 'light';
         if (theme === 'auto') {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -4037,12 +4037,12 @@ const app = {
     },
 
     getChartCustomColors(chartId) {
-        const theme = this.data.parametres.theme || 'auto';
+        const theme = this.data.parametres.theme || 'light';
         return this.data.chartColors?.[theme]?.[chartId] || null;
     },
 
     setChartCustomColors(chartId, colors) {
-        const theme = this.data.parametres.theme || 'auto';
+        const theme = this.data.parametres.theme || 'light';
         if (!this.data.chartColors) this.data.chartColors = {};
         if (!this.data.chartColors[theme]) this.data.chartColors[theme] = {};
         this.data.chartColors[theme][chartId] = colors;
@@ -4171,7 +4171,7 @@ const app = {
     resetChartColors() {
         const chartId = this._currentPickerChartId;
         if (!chartId) return;
-        const theme = this.data.parametres.theme || 'auto';
+        const theme = this.data.parametres.theme || 'light';
         if (this.data.chartColors?.[theme]?.[chartId]) {
             delete this.data.chartColors[theme][chartId];
             this.save();
