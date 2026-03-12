@@ -4116,6 +4116,34 @@ const app = {
 
     _currentPickerChartId: null,
 
+    // Convertit n'importe quel format couleur (hex, rgb, rgba, css var) en hex 6 chiffres valide pour input[type=color]
+    _toHexColor(color) {
+        if (!color) return '#3f51b5';
+        const c = color.trim();
+        // Déjà un hex court ou long
+        if (/^#[0-9a-fA-F]{6}$/.test(c)) return c;
+        if (/^#[0-9a-fA-F]{3}$/.test(c)) {
+            return '#' + c[1]+c[1]+c[2]+c[2]+c[3]+c[3];
+        }
+        // rgb() ou rgba() — on ignore le canal alpha
+        const m = c.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+        if (m) {
+            return '#' + [m[1],m[2],m[3]].map(n => parseInt(n).toString(16).padStart(2,'0')).join('');
+        }
+        // CSS variable ou autre format non supporté → on lit la valeur calculée via un élément temporaire
+        try {
+            const tmp = document.createElement('div');
+            tmp.style.display = 'none';
+            tmp.style.color = c;
+            document.body.appendChild(tmp);
+            const computed = getComputedStyle(tmp).color;
+            document.body.removeChild(tmp);
+            const m2 = computed.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+            if (m2) return '#' + [m2[1],m2[2],m2[3]].map(n => parseInt(n).toString(16).padStart(2,'0')).join('');
+        } catch(e) {}
+        return '#3f51b5'; // fallback indigo
+    },
+
     openChartColorPicker(chartId) {
         this._currentPickerChartId = chartId;
         const seriesConfig = chartId === 'chart-pat-evol'
@@ -4123,11 +4151,13 @@ const app = {
             : (this._chartSeriesConfig[chartId] || [{label:'Couleur'}]);
         const custom   = this.getChartCustomColors(chartId);
         const fallback = this._getChartFallbackColors(chartId, seriesConfig.length);
-        const palette  = this.getThemePalette().concat([
+        // Toutes les couleurs de la palette converties en hex valide pour input[type=color]
+        const rawPalette = this.getThemePalette().concat([
             '#f472b6','#fb923c','#34d399','#818cf8','#f87171',
             '#00ffff','#ffff00','#00ff88','#ff6600','#c084fc','#e879f9',
             '#38bdf8','#4ade80','#fbbf24','#f43f5e','#a78bfa','#2dd4bf'
         ]);
+        const palette = rawPalette.map(c => this._toHexColor(c));
 
         let modal = document.getElementById('chartColorModal');
         if (!modal) {
@@ -4150,7 +4180,7 @@ const app = {
                     Clique sur une pastille pour choisir parmi la palette ou utilise le sélecteur personnalisé.
                 </p>
                 ${seriesConfig.map((s, i) => {
-                    const currentColor = custom?.[i] || fallback[i] || palette[i % palette.length];
+                    const currentColor = this._toHexColor(custom?.[i] || fallback[i] || palette[i % palette.length]);
                     return `
                     <div style="margin-bottom:1.25rem;padding:1rem;background:var(--bg-primary);border-radius:14px;border:1px solid var(--border-color)">
                         <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
