@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700;800&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="app.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
@@ -25,39 +25,75 @@
 
 <!-- ═══ ÉCRAN DE CONNEXION ═══════════════════════════════════════════════ -->
 <div id="auth-screen" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo">
-  <svg class="vault-logo-svg" style="width:64px;height:44px" viewBox="0 0 120 80" fill="none">
+
+  <!-- Arche SVG décorative fond -->
+  <svg class="auth-bg-arch" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
-      <linearGradient id="vaultGradAuth" x1="20" y1="64" x2="100" y2="16" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="var(--accent-gradient-start)"/>
-        <stop offset="100%" stop-color="var(--accent-gradient-end)"/>
+      <linearGradient id="authGD1" x1="100" y1="450" x2="600" y2="50" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.1"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.18"/>
+      </linearGradient>
+      <linearGradient id="authGD2" x1="150" y1="450" x2="550" y2="80" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.06"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.1"/>
+      </linearGradient>
+      <linearGradient id="authGD3" x1="200" y1="450" x2="500" y2="100" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.13"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.22"/>
       </linearGradient>
     </defs>
-    <line x1="20" y1="64" x2="100" y2="64" stroke="var(--vault-accent)" stroke-width="1.5" opacity="0.25"/>
-    <path d="M35 64 L60 30 L85 64" stroke="url(#vaultGradAuth)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
-    <path d="M20 64 L60 16 L100 64" stroke="url(#vaultGradAuth)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="60" cy="64" r="3" fill="url(#vaultGradAuth)"/>
+    <path d="M60 450 L350 40 L640 450"   stroke="url(#authGD1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M140 450 L350 100 L560 450" stroke="url(#authGD2)" stroke-width="1"   stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 8"/>
+    <path d="M210 450 L350 160 L490 450" stroke="url(#authGD3)" stroke-width="3"   stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="60" y1="450" x2="640" y2="450" stroke="#3f51b5" stroke-width="1" opacity="0.1"/>
+    <circle cx="350" cy="450" r="5"   fill="#3f51b5" opacity="0.2"/>
+    <circle cx="350" cy="40"  r="3"   fill="#7c4dff" opacity="0.28"/>
+    <circle cx="350" cy="100" r="2"   fill="#7c4dff" opacity="0.18"/>
+    <circle cx="350" cy="160" r="4"   fill="#3f51b5" opacity="0.38"/>
   </svg>
-</div>
-    <h2>Vault</h2>
-    <p class="auth-subtitle" id="auth-subtitle">Connectez-vous pour accéder à vos données</p>
 
-    <div id="auth-error" class="auth-error"></div>
+  <!-- Halos lumineux -->
+  <div class="auth-halo auth-halo-1"></div>
+  <div class="auth-halo auth-halo-2"></div>
+
+  <!-- Carte -->
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="vaultGradAuth" x1="20" y1="64" x2="100" y2="16" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#3f51b5"/>
+            <stop offset="100%" stop-color="#7c4dff"/>
+          </linearGradient>
+        </defs>
+        <line x1="20" y1="64" x2="100" y2="64" stroke="#3f51b5" stroke-width="1.5" opacity="0.2"/>
+        <path d="M35 64 L60 30 L85 64" stroke="url(#vaultGradAuth)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+        <path d="M20 64 L60 16 L100 64" stroke="url(#vaultGradAuth)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="60" cy="64" r="3" fill="#7c4dff"/>
+      </svg>
+    </div>
+
+    <h2>Vault</h2>
+    <p class="auth-subtitle" id="auth-subtitle">Ce que l'on protège révèle ce que l'on aime.</p>
+
+    <div id="auth-error"   class="auth-error"></div>
     <div id="auth-success" class="auth-success"></div>
 
-    <input type="email" class="auth-input" id="auth-email" placeholder="Email" autocomplete="email" onkeydown="if(event.key==='Enter')app.authSubmit()">
-    <input type="password" class="auth-input" id="auth-password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
-    <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none" autocomplete="new-password">
-
-    <button class="auth-btn" id="auth-submit" onclick="app.authSubmit()">Se connecter</button>
+    <div class="auth-form-inner">
+      <input type="email"    class="auth-input" id="auth-email"     placeholder="Adresse e-mail"            autocomplete="email"            onkeydown="if(event.key==='Enter')app.authSubmit()">
+      <input type="password" class="auth-input" id="auth-password"  placeholder="Mot de passe"              autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
+      <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none"            autocomplete="new-password">
+      <button class="auth-btn" id="auth-submit" onclick="app.authSubmit()">Se connecter</button>
+    </div>
 
     <div class="auth-switch" id="auth-switch-login">
-      Pas encore de compte ? <a onclick="app.showSignup()">Créer un compte</a>
+      Pas encore de compte ? <a onclick="app.showSignup()">Créer un accès</a>
     </div>
     <div class="auth-switch" id="auth-switch-signup" style="display:none">
       Déjà un compte ? <a onclick="app.showLogin()">Se connecter</a>
     </div>
+
   </div>
 </div>
 
