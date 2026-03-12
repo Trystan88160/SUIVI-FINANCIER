@@ -324,7 +324,10 @@
 <div data-card-id="dash-heatmap" data-tab="dashboard"><div class="card">
 <div class="card-header">
   <h2 class="card-title">🌡 Heatmap annuelle</h2>
-  <span style="font-size:0.78rem;color:var(--text-tertiary)" id="heatmap-annee"></span>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span style="font-size:0.78rem;color:var(--text-tertiary)" id="heatmap-annee"></span>
+    <button class="chart-color-btn" id="ccbtn-chart-heatmap" onclick="app.openChartColorPicker('chart-heatmap')" title="Personnaliser la couleur">🎨</button>
+  </div>
 </div>
 <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:4px" id="heatmap-months-labels"></div>
 <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px" id="heatmap-grid"></div>
@@ -889,8 +892,6 @@
 <button class="show-more-btn" id="show-more-patrimoine" onclick="app.toggleShowMore('patrimoine')" style="display:none">Afficher plus</button>
 </div>
 </div></div>
-
-</div>
 
 <!-- Objectifs (fusionné dans Bilan) -->
 <div id="tab-objectifs" style="display:none"></div>

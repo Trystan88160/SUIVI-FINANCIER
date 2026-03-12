@@ -873,7 +873,22 @@ const app = {
         document.getElementById('overlay').classList.toggle('active');
     },
 
+    applyHeatmapColor() {
+        const custom = this.getChartCustomColors('chart-heatmap');
+        const hex = (custom && custom[0]) ? custom[0] : '#3f51b5';
+        const r = parseInt(hex.substr(1,2),16), g = parseInt(hex.substr(3,2),16), b = parseInt(hex.substr(5,2),16);
+        document.documentElement.style.setProperty('--heatmap-rgb', `${r},${g},${b}`);
+        this.refreshHeatmap();
+    },
+
     refreshHeatmap() {
+        // Appliquer la couleur custom si elle existe
+        const custom = this.getChartCustomColors('chart-heatmap');
+        if (custom && custom[0]) {
+            const hex = custom[0];
+            const r = parseInt(hex.substr(1,2),16), g = parseInt(hex.substr(3,2),16), b = parseInt(hex.substr(5,2),16);
+            document.documentElement.style.setProperty('--heatmap-rgb', `${r},${g},${b}`);
+        }
         const now = new Date();
         const annee = now.getFullYear();
         const el = document.getElementById('heatmap-annee');
@@ -4049,7 +4064,7 @@ const app = {
         'chart-benchmark':     [{label:'Mon PEA'},{label:'MSCI World'},{label:'S&P 500'}],
         'chart-prev-compare':  [{label:'Objectif (prévisionnel)'},{label:'PEA Réel'}],
         'chart-proj-realiste': [{label:'Projection réelle'},{label:'Objectif'},{label:'Optimiste'}],
-
+        'chart-heatmap':       [{label:'Couleur de la heatmap'}],
     },
 
     _chartNames: {
@@ -4060,6 +4075,7 @@ const app = {
         'chart-prev-compare':  'Comparaison PEA',
         'chart-proj-realiste': 'Projection réaliste',
         'chart-pat-evol':      'Évolution par compte',
+        'chart-heatmap':       '🌡 Heatmap annuelle',
     },
 
     getChartCustomColors(chartId) {
@@ -4085,6 +4101,7 @@ const app = {
             'chart-benchmark':       () => this.refreshBenchmark(),
             'chart-prev-compare':    () => { this.calculerPrevisionsPEA && this.calculerPrevisionsPEA(); },
             'chart-proj-realiste':   () => { this.calculerPrevisionsPEA && this.calculerPrevisionsPEA(); },
+            'chart-heatmap':         () => this.applyHeatmapColor(),
         };
         const fn = map[chartId];
         if (fn) fn(); else this.refreshCharts();
@@ -4217,6 +4234,7 @@ const app = {
             'chart-benchmark':     [c.primary, c.secondary, c.tertiary],
             'chart-prev-compare':  [c.primary, c.success],
             'chart-proj-realiste': [c.warning, c.primary, c.success],
+            'chart-heatmap':       ['#3f51b5'],
         };
         if (map[chartId]) return map[chartId];
 
@@ -4225,7 +4243,7 @@ const app = {
 
     _refreshAllChartColorBtns() {
         const ids = ['chart-patrimoine','chart-depenses-budget','chart-pea','chart-benchmark',
-                     'chart-pat-evol','chart-prev-compare','chart-proj-realiste'];
+                     'chart-pat-evol','chart-prev-compare','chart-proj-realiste','chart-heatmap'];
         ids.forEach(id => this._updateChartColorBtn(id));
     },
 
