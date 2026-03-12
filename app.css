@@ -165,13 +165,13 @@ body
     position:absolute;
     width:min(88vw, 700px);
     top:50%; left:50%;
-    transform:translate(-50%, -56%);
+    transform:translate(-50%, -52%);
     pointer-events:none;
     animation:authArchIn 1.2s cubic-bezier(.34,1.15,.64,1) both;
 }
 @keyframes authArchIn {
-    from { opacity:0; transform:translate(-50%,-46%); }
-    to   { opacity:1; transform:translate(-50%,-56%); }
+    from { opacity:0; transform:translate(-50%,-44%); }
+    to   { opacity:1; transform:translate(-50%,-52%); }
 }
 
 /* halos lumineux */
@@ -181,25 +181,26 @@ body
 #auth-screen .auth-halo-1 {
     width:550px; height:550px;
     background:radial-gradient(circle, rgba(63,81,181,0.1) 0%, transparent 65%);
-    top:50%; left:50%; transform:translate(-50%,-62%);
+    top:50%; left:50%; transform:translate(-50%,-58%);
     animation:authHaloBreath 7s ease-in-out infinite alternate;
 }
 #auth-screen .auth-halo-2 {
     width:360px; height:360px;
     background:radial-gradient(circle, rgba(124,77,255,0.07) 0%, transparent 65%);
-    top:50%; left:50%; transform:translate(-38%,-42%);
+    top:50%; left:50%; transform:translate(-38%,-40%);
     animation:authHaloBreath 11s ease-in-out infinite alternate-reverse;
 }
 @keyframes authHaloBreath {
-    from { transform:translate(-50%,-62%) scale(1); }
-    to   { transform:translate(-50%,-62%) scale(1.12); }
+    from { transform:translate(-50%,-58%) scale(1); }
+    to   { transform:translate(-50%,-58%) scale(1.12); }
 }
 
-/* carte */
+/* carte — remontée pour que le titre soit dans l'arche */
 #auth-screen .auth-card {
     position:relative; z-index:1;
     width:100%; max-width:380px;
     text-align:center;
+    margin-top:-80px;
     animation:authCardIn .75s ease both;
 }
 @keyframes authCardIn {
