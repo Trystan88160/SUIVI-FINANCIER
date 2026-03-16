@@ -295,8 +295,8 @@ const app = {
             setTimeout(() => this._startOnboarding(), 900);
         }
 
-        // Soft & Floating — pre-titres modals
-        this._initSoftModals();
+        // Système popup unifié
+        this._initVaultPopups();
     },
 
     /* ── Onboarding ─────────────────────────────────────── */
@@ -515,72 +515,177 @@ const app = {
         this._obOverlay = null;
     },
 
-    /* ── Soft & Floating — pre-titres automatiques ────────── */
-    _initSoftModals() {
-        // Mapping : mots-clés dans le titre → pre-titre affiché
-        const PRE = [
-            [/(objectif|goal)/i,       'Bilan · Objectifs'],
-            [/(récurrence|recurrence)/i,'Budget · Récurrences'],
-            [/(revenu|salaire)/i,       'Budget · Revenus'],
-            [/(dépense|depense)/i,      'Budget · Dépenses'],
-            [/(pea|ligne|portefeuille)/i,'Investissements · PEA'],
-            [/(patrimoine)/i,           'Patrimoine'],
-            [/(compte|bancaire)/i,      'Comptes bancaires'],
-            [/(catégorie|categorie)/i,  'Budget · Catégories'],
-            [/(note|bilan)/i,           'Bilan mensuel'],
-            [/(rapport)/i,              'Rapport financier'],
-            [/(retraite)/i,             'Projection · Retraite'],
-            [/(simulat|scénario|scenario)/i,'Simulateur'],
-            [/(confirm|supprimer|annuler|danger)/i, 'Confirmation'],
-            [/(personnalis|couleur|thème)/i, 'Paramètres'],
-        ];
+    /* ── Système popup unifié — retire les styles inline ─── */
+    _initVaultPopups() {
 
-        const inject = (header) => {
-            if (header.querySelector('.sf-pretitle')) return; // déjà injecté
-            const titleEl = header.querySelector('.modal-title, h2, h3');
-            if (!titleEl) return;
-            const text = titleEl.textContent || '';
-            let label = '';
-            for (const [re, l] of PRE) { if (re.test(text)) { label = l; break; } }
-            if (!label) return;
-            const pre = document.createElement('div');
-            pre.className = 'sf-pretitle';
-            pre.textContent = label;
-            pre.style.cssText = `
-                font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-                color:var(--accent-gradient-end);margin-bottom:.3rem;
-                font-family:'DM Mono',monospace;opacity:.9;
-            `;
-            // Wrapper le titre dans un div pour la mise en page
-            const wrap = document.createElement('div');
-            wrap.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0;';
-            titleEl.parentNode.insertBefore(wrap, titleEl);
-            wrap.appendChild(pre);
-            wrap.appendChild(titleEl);
-        };
+        // 1. Créer l'overlay global unique pour les .modal
+        const globalOverlay = document.createElement('div');
+        globalOverlay.id = 'vp-global-overlay';
+        globalOverlay.className = 'vp-overlay-bg';
+        document.body.appendChild(globalOverlay);
+        // Clic sur l'overlay ferme le modal actif
+        globalOverlay.addEventListener('click', () => {
+            const active = document.querySelector('.modal.active');
+            if (active) {
+                const closeBtn = active.querySelector('[onclick*="close"], [onclick*="Close"], [onclick*="Modal"]');
+                if (closeBtn) closeBtn.click();
+                else active.classList.remove('active');
+                this._vpHideOverlay();
+            }
+        });
 
-        // Observer les modals qui deviennent actifs
+        // 2. Intercepter l'ouverture/fermeture des .modal via MutationObserver
         const obs = new MutationObserver(muts => {
             for (const m of muts) {
-                if (m.type === 'attributes' && m.attributeName === 'class') {
-                    const el = m.target;
-                    if (el.classList.contains('modal') && el.classList.contains('active')) {
-                        const h = el.querySelector('.modal-header');
-                        if (h) inject(h);
-                    }
+                if (m.type !== 'attributes' || m.attributeName !== 'class') continue;
+                const el = m.target;
+                if (!el.classList.contains('modal')) continue;
+                if (el.classList.contains('active')) {
+                    this._vpShowOverlay();
+                    this._vpPatchModal(el);
+                } else {
+                    // Vérifier s'il reste un autre modal ouvert
+                    if (!document.querySelector('.modal.active')) this._vpHideOverlay();
                 }
-                // Modals injectés dynamiquement
-                for (const node of m.addedNodes) {
+            }
+            // Modals créés dynamiquement (objectif, récurrence, etc.)
+            for (const m of muts) {
+                for (const node of (m.addedNodes || [])) {
                     if (node.nodeType !== 1) continue;
-                    node.querySelectorAll?.('.modal-header').forEach(inject);
-                    if (node.classList?.contains('modal-header')) inject(node);
+                    if (node.classList?.contains('modal')) this._vpPatchModal(node);
+                    node.querySelectorAll?.('.modal').forEach(n => this._vpPatchModal(n));
                 }
             }
         });
-        obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+        obs.observe(document.body, {
+            childList: true, subtree: true,
+            attributes: true, attributeFilter: ['class']
+        });
 
-        // Patch les modals déjà présents dans le DOM
-        document.querySelectorAll('.modal.active .modal-header, .modal-header').forEach(inject);
+        // 3. Patcher les .bs-sheet (bottom sheets) dès le départ
+        document.querySelectorAll('.bs-sheet').forEach(sheet => this._vpPatchSheet(sheet));
+
+        // 4. Patcher les .modal déjà dans le DOM
+        document.querySelectorAll('.modal').forEach(m => this._vpPatchModal(m));
+    },
+
+    _vpShowOverlay() {
+        const o = document.getElementById('vp-global-overlay');
+        if (!o) return;
+        o.classList.add('vp-active');
+        requestAnimationFrame(() => o.classList.add('vp-visible'));
+    },
+
+    _vpHideOverlay() {
+        const o = document.getElementById('vp-global-overlay');
+        if (!o) return;
+        o.classList.remove('vp-visible');
+        setTimeout(() => o.classList.remove('vp-active'), 260);
+    },
+
+    // Patch un .modal : retire styles inline, ajoute classes VP
+    _vpPatchModal(modal) {
+        if (modal.dataset.vpDone) return;
+        modal.dataset.vpDone = '1';
+
+        // Boutons ✕ : retirer tous les styles inline et ajouter .vp-close
+        modal.querySelectorAll('button').forEach(btn => {
+            const txt = btn.textContent.trim();
+            const onclick = btn.getAttribute('onclick') || '';
+            if (txt === '✕' || txt === '×' || onclick.includes('close') || onclick.includes('Close')) {
+                btn.removeAttribute('style');
+                btn.classList.add('vp-close');
+            }
+        });
+
+        // Boutons footer
+        this._vpPatchButtons(modal);
+
+        // Pré-titre dans le header
+        this._vpInjectPretitle(modal);
+    },
+
+    // Patch un .bs-sheet : retire styles inline, ajoute classes VP
+    _vpPatchSheet(sheet) {
+        if (sheet.dataset.vpDone) return;
+        sheet.dataset.vpDone = '1';
+
+        // Boutons ✕
+        sheet.querySelectorAll('button').forEach(btn => {
+            const txt = btn.textContent.trim();
+            const onclick = btn.getAttribute('onclick') || '';
+            if (txt === '✕' || txt === '×' || onclick.includes('close') || onclick.includes('Close')) {
+                btn.removeAttribute('style');
+                btn.classList.add('vp-close');
+            }
+        });
+
+        // Boutons footer
+        this._vpPatchButtons(sheet);
+    },
+
+    _vpPatchButtons(container) {
+        // bs-btn-save / bs-btn-cancel → classes VP
+        container.querySelectorAll('.bs-btn-save').forEach(b => {
+            b.classList.add('vp-btn-save');
+        });
+        container.querySelectorAll('.bs-btn-cancel').forEach(b => {
+            b.classList.add('vp-btn-cancel');
+        });
+
+        // Boutons modal-footer
+        container.querySelectorAll('.modal-footer button, .modal-footer .btn').forEach(btn => {
+            const onclick = btn.getAttribute('onclick') || '';
+            const cls = btn.className || '';
+            const txt = btn.textContent.trim().toLowerCase();
+            if (
+                cls.includes('btn-secondary') ||
+                onclick.includes('close') || onclick.includes('Close') ||
+                onclick.includes('annuler') || onclick.includes('cancel') ||
+                txt === 'annuler' || txt === 'fermer'
+            ) {
+                btn.classList.add('vp-btn-cancel');
+            } else if (btn.id === 'confirmBtn' || onclick.includes('supprimer') || txt.includes('supprimer') || txt.includes('réinit')) {
+                btn.classList.add('vp-btn-save', 'vp-btn-danger');
+            } else {
+                btn.classList.add('vp-btn-save');
+            }
+        });
+    },
+
+    _vpInjectPretitle(modal) {
+        const header = modal.querySelector('.modal-header');
+        if (!header || header.querySelector('.vp-pretitle')) return;
+        const titleEl = header.querySelector('.modal-title, h2');
+        if (!titleEl) return;
+
+        const PRE = [
+            [/(objectif)/i,             'Bilan · Objectifs'],
+            [/(récurrence|recurrence)/i, 'Budget · Récurrences'],
+            [/(ligne.*pea|pea.*ligne|nouveau.*pea)/i, 'PEA · Portefeuille'],
+            [/(retraite)/i,             'Projection · Retraite'],
+            [/(simulat|scénario)/i,     'Simulateur PEA'],
+            [/(confirm|supprimer)/i,    'Confirmation'],
+            [/(personnalis|couleur)/i,  'Paramètres'],
+            [/(calculat)/i,             'Outils PEA'],
+            [/(catégorie|categorie)/i,  'Budget · Catégories'],
+        ];
+
+        const text = titleEl.textContent || '';
+        let label = '';
+        for (const [re, l] of PRE) { if (re.test(text)) { label = l; break; } }
+        if (!label) return;
+
+        const pre = document.createElement('div');
+        pre.className = 'vp-pretitle';
+        pre.textContent = label;
+        pre.style.cssText = 'font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-gradient-end);margin-bottom:.2rem;font-family:"DM Mono",monospace;display:block';
+
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0';
+        titleEl.parentNode.insertBefore(wrap, titleEl);
+        wrap.appendChild(pre);
+        wrap.appendChild(titleEl);
     },
 
     _showLoader() {
