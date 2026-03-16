@@ -161,14 +161,14 @@ body
 }
 #auth-screen .auth-bg-arch {
     position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-68%);
+    transform:translate(-50%,-55%);
     width:min(85vw, 700px);
     pointer-events:none;
     animation:authArchIn 1.2s cubic-bezier(.34,1.2,.64,1) both;
 }
 @keyframes authArchIn {
-    from { opacity:0; transform:translate(-50%,-58%); }
-    to   { opacity:1; transform:translate(-50%,-68%); }
+    from { opacity:0; transform:translate(-50%,-45%); }
+    to   { opacity:1; transform:translate(-50%,-55%); }
 }
 #auth-screen .auth-halo-1 {
     position:absolute; width:600px; height:600px; border-radius:50%;
@@ -192,6 +192,7 @@ body
     position:relative; z-index:1;
     width:380px; max-width:calc(100vw - 2rem);
     text-align:center;
+    margin-top:-120px;
     animation:authCardIn .8s ease both;
 }
 @keyframes authCardIn {
