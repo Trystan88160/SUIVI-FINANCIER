@@ -807,14 +807,16 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── 5. MODALS — entrée springy ─────────────────────────── */
-.modal.active, .bs-sheet {
-  animation: vModalIn .3s cubic-bezier(.34,1.56,.64,1) both !important;
+/* ── 5. MODALS — entrée springy centrée ─────────────────── */
+/* Les modals sont centrés via translate(-50%,-50%) — l'animation DOIT le préserver */
+.modal.active {
+  animation: vModalInCentered .32s cubic-bezier(.34,1.56,.64,1) both !important;
 }
-@keyframes vModalIn {
-  from { opacity: 0; transform: scale(.94) translateY(14px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes vModalInCentered {
+  from { opacity: 0; transform: translate(-50%, -47%) scale(.95); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
+/* .bs-sheet utilise une transition CSS (translateY) — on ne touche pas */
 
 /* ── 6. FOCUS INPUTS ─────────────────────────────────────── */
 .form-input:focus, .form-select:focus, .auth-input:focus, .bs-input:focus {
@@ -933,7 +935,11 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
   text-align: center;
   position: relative;
   box-shadow: 0 28px 64px rgba(0,0,0,.28);
-  animation: vModalIn .38s cubic-bezier(.34,1.56,.64,1) both;
+  animation: vObCardIn .38s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes vObCardIn {
+  from { opacity: 0; transform: scale(.94) translateY(14px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 .v-ob-skip {
   position: absolute;
@@ -994,4 +1000,66 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
 /* ── 11. ACCESSIBILITÉ ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* ── 12. ONBOARDING — pill de reprise & bouton action ────── */
+.v-ob-resume-pill {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: .6rem 1.1rem .6rem .85rem;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(124,77,255,.4);
+  font-family: 'Inter', sans-serif;
+  animation: vObPillIn .3s cubic-bezier(.34,1.56,.64,1) both;
+  transition: transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s;
+}
+.v-ob-resume-pill:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 26px rgba(124,77,255,.5);
+}
+.v-ob-resume-pill .v-ob-pill-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.7);
+  animation: vObPulseDot 1.4s ease-in-out infinite;
+}
+@keyframes vObPulseDot {
+  0%,100% { transform: scale(1); opacity: .7; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+@keyframes vObPillIn {
+  from { opacity: 0; transform: translateY(20px) scale(.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Bouton "Faire maintenant" dans l'onboarding */
+.v-ob-btn-action {
+  display: block;
+  width: 100%;
+  background: var(--bg-secondary);
+  color: var(--accent-gradient-end);
+  border: 1.5px solid var(--accent-gradient-end);
+  border-radius: 50px;
+  padding: .6rem 1.2rem;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: .65rem;
+  transition: background .15s, transform .15s cubic-bezier(.34,1.56,.64,1);
+  font-family: 'Inter', sans-serif;
+}
+.v-ob-btn-action:hover {
+  background: var(--bg-primary);
+  transform: translateY(-1px);
 }

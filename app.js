@@ -298,6 +298,7 @@ const app = {
 
     /* ── Onboarding ─────────────────────────────────────── */
     _startOnboarding() {
+        // 6 étapes : welcome, compte, revenu, catégories, dépense, done
         const STEPS = [
             {
                 key: 'welcome',
@@ -308,44 +309,59 @@ const app = {
             },
             {
                 key: 'account',
-                label: 'Étape 1 / 3',
-                title: 'Crée ton premier compte',
+                label: 'Étape 1 / 4',
+                title: 'Crée ton compte bancaire',
                 desc: 'Ajoute ton compte courant avec son solde actuel. Vault calculera tes mouvements à partir de cette date.',
-                cta: '🏦 Créer un compte',
-                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openAddComptePointage"], .btn-add-compte')?.click(), 200); },
+                cta: 'Suivant →',
+                actionLabel: '🏦 Ouvrir maintenant',
+                actionFn: () => document.querySelector('[onclick*="openAddComptePointage"]')?.click(),
             },
             {
                 key: 'income',
-                label: 'Étape 2 / 3',
-                title: 'Saisis ton revenu',
-                desc: 'Entre ton salaire mensuel. Vault s\'en sert pour calculer ton taux d\'épargne et tes capacités budgétaires.',
-                cta: '💰 Ajouter un revenu',
-                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openBsRevenu"], [onclick*="openRevenu"]')?.click(), 200); },
+                label: 'Étape 2 / 4',
+                title: 'Saisis ton revenu mensuel',
+                desc: 'Entre ton salaire net. Vault s\'en sert pour calculer ton taux d\'épargne et tes capacités budgétaires.',
+                cta: 'Suivant →',
+                actionLabel: '💰 Saisir mon revenu',
+                actionFn: () => document.querySelector('[onclick*="openBsRevenu"], [onclick*="openRevenu"]')?.click(),
+            },
+            {
+                key: 'categories',
+                label: 'Étape 3 / 4',
+                title: 'Configure tes catégories',
+                desc: 'Crée tes catégories de dépenses (Alimentation, Transport, Loyer…) pour organiser ton budget. Tu peux en ajouter autant que tu veux.',
+                cta: 'Suivant →',
+                actionLabel: '🏷 Gérer les catégories',
+                actionFn: () => document.querySelector('[onclick*="openBudgetsModal"], [onclick*="budgetsModal"]')?.click(),
             },
             {
                 key: 'expense',
-                label: 'Étape 3 / 3',
+                label: 'Étape 4 / 4',
                 title: 'Première dépense',
                 desc: 'Ajoute ta première dépense ou importe un relevé CSV bancaire pour remplir tout ton historique d\'un coup.',
-                cta: '➕ Ajouter une dépense',
-                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openBsDep"], [onclick*="openDep"]')?.click(), 200); },
+                cta: 'Suivant →',
+                actionLabel: '➕ Ajouter une dépense',
+                actionFn: () => document.querySelector('[onclick*="openBsDep"], [onclick*="openDep"]')?.click(),
             },
             {
                 key: 'done',
                 label: 'Prêt !',
                 title: 'Tu es prêt 🎉',
-                desc: 'Explore les onglets Budget, PEA, Patrimoine et Bilan au fur et à mesure que tu enrichis tes données.',
+                desc: 'Explore les onglets Budget, PEA, Patrimoine et Bilan au fur et à mesure que tu enrichis tes données. Bonne gestion !',
                 cta: 'Explorer Vault',
             },
         ];
 
         const ILLU = {
-            welcome: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><rect x="24" y="36" width="60" height="44" rx="8" fill="#fff" stroke="#7c4dff" stroke-width="1.5"/><rect x="30" y="46" width="22" height="4" rx="2" fill="#7c4dff" opacity=".6"/><rect x="30" y="54" width="16" height="3" rx="1.5" fill="#c5cae9"/><rect x="30" y="61" width="20" height="3" rx="1.5" fill="#c5cae9"/><circle cx="70" cy="55" r="10" fill="#3f51b5"/><path d="M65 55l3.5 3.5L76 51" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-            account: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8eaf6"/><rect x="18" y="40" width="72" height="42" rx="10" fill="#3f51b5"/><rect x="18" y="48" width="72" height="12" fill="#283593" opacity=".5"/><rect x="26" y="66" width="20" height="4" rx="2" fill="#fff" opacity=".5"/><rect x="26" y="74" width="28" height="3" rx="1.5" fill="#fff" opacity=".3"/><circle cx="76" cy="70" r="9" fill="#7c4dff"/><path d="M73 70h6M76 67v6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
-            income: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8f5e9"/><path d="M22 78L40 52l14 13 15-24 12 10" stroke="#43a047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="52" r="3.5" fill="#43a047"/><circle cx="54" cy="65" r="3.5" fill="#43a047"/><circle cx="69" cy="41" r="3.5" fill="#43a047"/><circle cx="54" cy="30" r="12" fill="#43a047"/><path d="M54 24v10M50 27h5a2 2 0 010 4h-4a2 2 0 010 4h5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-            expense: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#fce4ec"/><rect x="24" y="46" width="60" height="34" rx="8" fill="#fff" stroke="#e53935" stroke-width="1.5"/><path d="M24 58h60" stroke="#e53935" stroke-width="1" opacity=".3"/><rect x="32" y="63" width="12" height="8" rx="3" fill="#e53935" opacity=".7"/><rect x="48" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><rect x="64" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><circle cx="54" cy="36" r="12" fill="#e53935"/><path d="M54 31v6M51 34h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
-            done: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><circle cx="54" cy="54" r="26" fill="#7c4dff"/><path d="M42 54l8.5 8.5 16-17" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="54" cy="54" r="33" stroke="#7c4dff" stroke-width="1.5" stroke-dasharray="4 3" opacity=".35"/><circle cx="82" cy="24" r="7" fill="#43a047"/><path d="M79 24l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            welcome:    `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><rect x="24" y="36" width="60" height="44" rx="8" fill="#fff" stroke="#7c4dff" stroke-width="1.5"/><rect x="30" y="46" width="22" height="4" rx="2" fill="#7c4dff" opacity=".6"/><rect x="30" y="54" width="16" height="3" rx="1.5" fill="#c5cae9"/><rect x="30" y="61" width="20" height="3" rx="1.5" fill="#c5cae9"/><circle cx="70" cy="55" r="10" fill="#3f51b5"/><path d="M65 55l3.5 3.5L76 51" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            account:    `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8eaf6"/><rect x="18" y="40" width="72" height="42" rx="10" fill="#3f51b5"/><rect x="18" y="48" width="72" height="12" fill="#283593" opacity=".5"/><rect x="26" y="66" width="20" height="4" rx="2" fill="#fff" opacity=".5"/><rect x="26" y="74" width="28" height="3" rx="1.5" fill="#fff" opacity=".3"/><circle cx="76" cy="70" r="9" fill="#7c4dff"/><path d="M73 70h6M76 67v6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+            income:     `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8f5e9"/><path d="M22 78L40 52l14 13 15-24 12 10" stroke="#43a047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="52" r="3.5" fill="#43a047"/><circle cx="54" cy="65" r="3.5" fill="#43a047"/><circle cx="69" cy="41" r="3.5" fill="#43a047"/><circle cx="54" cy="30" r="12" fill="#43a047"/><path d="M54 24v10M50 27h5a2 2 0 010 4h-4a2 2 0 010 4h5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+            categories: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#fff8e1"/><rect x="20" y="32" width="32" height="20" rx="6" fill="#ffb300" opacity=".8"/><rect x="56" y="32" width="32" height="20" rx="6" fill="#7c4dff" opacity=".8"/><rect x="20" y="58" width="32" height="20" rx="6" fill="#3f51b5" opacity=".7"/><rect x="56" y="58" width="32" height="20" rx="6" fill="#43a047" opacity=".7"/><text x="36" y="46" text-anchor="middle" fill="#fff" font-size="8" font-family="sans-serif">🍔</text><text x="72" y="46" text-anchor="middle" fill="#fff" font-size="8" font-family="sans-serif">🚗</text><text x="36" y="72" text-anchor="middle" fill="#fff" font-size="8" font-family="sans-serif">🏠</text><text x="72" y="72" text-anchor="middle" fill="#fff" font-size="8" font-family="sans-serif">🎮</text></svg>`,
+            expense:    `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#fce4ec"/><rect x="24" y="46" width="60" height="34" rx="8" fill="#fff" stroke="#e53935" stroke-width="1.5"/><path d="M24 58h60" stroke="#e53935" stroke-width="1" opacity=".3"/><rect x="32" y="63" width="12" height="8" rx="3" fill="#e53935" opacity=".7"/><rect x="48" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><rect x="64" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><circle cx="54" cy="36" r="12" fill="#e53935"/><path d="M54 31v6M51 34h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+            done:       `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><circle cx="54" cy="54" r="26" fill="#7c4dff"/><path d="M42 54l8.5 8.5 16-17" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="54" cy="54" r="33" stroke="#7c4dff" stroke-width="1.5" stroke-dasharray="4 3" opacity=".35"/><circle cx="82" cy="24" r="7" fill="#43a047"/><path d="M79 24l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         };
+        // Stocker pour que _obPause puisse y accéder
+        this._obIllu = ILLU;
 
         // Empty state illustrations (pour usage dans refreshes)
         this._emptyIllus = {
@@ -367,6 +383,7 @@ const app = {
               <h2 class="v-ob-title" id="_ob_title"></h2>
               <p class="v-ob-desc" id="_ob_desc"></p>
               <div class="v-ob-dots" id="_ob_dots"></div>
+              <div id="_ob_action_wrap"></div>
               <div class="v-ob-actions">
                 <button class="v-ob-btn-back" id="_ob_back" style="display:none">← Retour</button>
                 <button class="v-ob-btn-next" id="_ob_next"></button>
@@ -375,6 +392,7 @@ const app = {
           </div>`;
         document.body.appendChild(overlay);
         this._obOverlay = overlay;
+        this._obStep = () => step; // expose pour reprise
 
         const render = (idx, dir = 1) => {
             const body = document.getElementById('_ob_body');
@@ -389,6 +407,18 @@ const app = {
                 document.getElementById('_ob_back').style.display = idx > 0 && idx < STEPS.length - 1 ? '' : 'none';
                 document.getElementById('_ob_dots').innerHTML = STEPS.map((_,i) =>
                     `<span class="v-ob-dot${i===idx?' active':''}"></span>`).join('');
+                // Bouton "Faire maintenant" si l'étape a une action
+                const aw = document.getElementById('_ob_action_wrap');
+                if (s.actionLabel && s.actionFn) {
+                    aw.innerHTML = `<button class="v-ob-btn-action" id="_ob_action">${s.actionLabel}</button>`;
+                    document.getElementById('_ob_action').onclick = () => {
+                        // Masquer l'overlay sans marquer comme terminé
+                        this._obPause(step, STEPS);
+                        setTimeout(() => { try { s.actionFn(); } catch(e){} }, 150);
+                    };
+                } else {
+                    aw.innerHTML = '';
+                }
                 body.classList.remove('exit');
                 body.classList.add('enter');
                 requestAnimationFrame(() => body.classList.remove('enter'));
@@ -396,20 +426,85 @@ const app = {
         };
 
         document.getElementById('_ob_next').onclick = () => {
-            const s = STEPS[step];
-            if (s.action) { s.action(); return; }
             if (step < STEPS.length - 1) { step++; render(step, 1); }
             else this._closeOnboarding();
         };
-        document.getElementById('_ob_back').onclick = () => { if (step > 0) { step--; render(step, -1); } };
+        document.getElementById('_ob_back').onclick = () => {
+            if (step > 0) { step--; render(step, -1); }
+        };
         overlay.querySelector('.v-ob-skip').onclick = () => this._closeOnboarding();
         overlay.addEventListener('click', e => { if (e.target === overlay) this._closeOnboarding(); });
 
         render(0);
     },
 
+    // Pause : masque l'overlay, affiche le pill "reprendre", ne marque PAS comme terminé
+    _obPause(currentStep, steps) {
+        const o = this._obOverlay;
+        if (!o) return;
+        o.style.opacity = '0';
+        o.style.pointerEvents = 'none';
+
+        // Supprimer un éventuel pill existant
+        document.getElementById('_ob_resume_pill')?.remove();
+
+        const pill = document.createElement('button');
+        pill.id = '_ob_resume_pill';
+        pill.className = 'v-ob-resume-pill';
+        pill.innerHTML = `<span class="v-ob-pill-dot"></span> Reprendre le guide`;
+        pill.onclick = () => {
+            pill.remove();
+            if (o) {
+                // Avancer d'une étape si ce n'est pas la dernière
+                const nextStep = Math.min(currentStep + 1, steps.length - 1);
+                o.style.opacity = '';
+                o.style.pointerEvents = '';
+                // Re-render à l'étape suivante
+                const body = o.querySelector('#_ob_body');
+                if (body) {
+                    const s = steps[nextStep];
+                    body.classList.add('exit');
+                    setTimeout(() => {
+                        o.querySelector('#_ob_illu').innerHTML = this._obIllu?.[s.key] || '';
+                        o.querySelector('#_ob_label').textContent = s.label;
+                        o.querySelector('#_ob_title').textContent = s.title;
+                        o.querySelector('#_ob_desc').textContent = s.desc;
+                        o.querySelector('#_ob_next').textContent = s.cta;
+                        o.querySelector('#_ob_back').style.display = nextStep > 0 && nextStep < steps.length - 1 ? '' : 'none';
+                        o.querySelector('#_ob_dots').innerHTML = steps.map((_,i) =>
+                            `<span class="v-ob-dot${i===nextStep?' active':''}"></span>`).join('');
+                        const aw = o.querySelector('#_ob_action_wrap');
+                        if (s.actionLabel && s.actionFn && aw) {
+                            aw.innerHTML = `<button class="v-ob-btn-action">${s.actionLabel}</button>`;
+                            aw.querySelector('button').onclick = () => {
+                                this._obPause(nextStep, steps);
+                                setTimeout(() => { try { s.actionFn(); } catch(e){} }, 150);
+                            };
+                        } else if (aw) { aw.innerHTML = ''; }
+                        // Update next button handler for new step
+                        const nextBtn = o.querySelector('#_ob_next');
+                        nextBtn.onclick = () => {
+                            if (nextStep < steps.length - 1) {
+                                // Simple increment — on reuse pill mechanism
+                                this._obPause(nextStep, steps);
+                                setTimeout(() => {
+                                    document.getElementById('_ob_resume_pill')?.click();
+                                }, 10);
+                            } else { this._closeOnboarding(); }
+                        };
+                        body.classList.remove('exit');
+                        body.classList.add('enter');
+                        requestAnimationFrame(() => body.classList.remove('enter'));
+                    }, 180);
+                }
+            }
+        };
+        document.body.appendChild(pill);
+    },
+
     _closeOnboarding() {
         localStorage.setItem('vault_ob_done', '1');
+        document.getElementById('_ob_resume_pill')?.remove();
         const o = this._obOverlay;
         if (!o) return;
         o.classList.add('closing');
