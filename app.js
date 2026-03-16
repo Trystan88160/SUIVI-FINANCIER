@@ -2082,7 +2082,7 @@ const app = {
         row.className = 'bs-dep-row';
         row.id = 'bs-dep-row-' + id;
         const hasComptes = (this.data.comptesPointage || []).length > 0;
-        const comptesOpts = (this.data.comptesPointage || []).map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+        const comptesOpts = (this.data.comptesPointage || []).map((c, i) => `<option value="${c.id}" ${i===0?'selected':''}>${c.nom}</option>`).join('');
         row.innerHTML = `
             <div class="bs-dep-row-label"># ${id}</div>
             ${id > 1 ? `<button class="bs-remove-btn" onclick="app._bsRemoveDepRow(${id})">✕</button>` : ''}
@@ -2096,7 +2096,7 @@ const app = {
                 <input type="text" class="bs-input" id="bs-dep-note-${id}" placeholder="Note…">
                 <input type="date" class="bs-input" id="bs-dep-date-${id}" value="${today}" style="width:140px">
             </div>
-            ${hasComptes ? `<div style="margin-top:.35rem"><select class="bs-input" id="bs-dep-compte-${id}" style="width:100%;font-size:.75rem"><option value="">💳 Compte — (optionnel)</option>${comptesOpts}</select></div>` : ''}
+            ${hasComptes ? `<div style="margin-top:.35rem"><select class="bs-input" id="bs-dep-compte-${id}" style="width:100%;font-size:.75rem"><option value="">— Aucun compte —</option>${comptesOpts}</select></div>` : ''}
         `;
         const body = document.getElementById('bs-dep-rows');
 
@@ -2139,7 +2139,7 @@ const app = {
             const note = document.getElementById('bs-dep-note-' + id)?.value || '';
             const compteId = document.getElementById('bs-dep-compte-' + id)?.value || null;
             if (!montant || montant <= 0) return;
-            this.data.depenses.push({ id: Date.now() + added, categorie: cat, montant, date, note, compteId });
+            this.data.depenses.push({ id: Date.now() + added, categorie: cat, montant, date, note, compteId: compteId || null });
             added++;
         });
         if (added === 0) { this.notify('Aucun montant saisi', 'error'); return; }
@@ -2756,9 +2756,9 @@ const app = {
 
     supprimerComptePointage(id) {
         this.showModal('Supprimer ce compte', 'Toutes les liaisons de transactions seront perdues.', () => {
-            this.data.comptesPointage = (this.data.comptesPointage || []).filter(c => c.id !== id);
-            this.data.depenses.forEach(d => { if (d.compteId === id) d.compteId = null; });
-            this.data.revenus.forEach(r => { if (r.compteId === id) r.compteId = null; });
+            this.data.comptesPointage = (this.data.comptesPointage || []).filter(c => String(c.id) !== String(id));
+            this.data.depenses.forEach(d => { if (d.compteId && String(d.compteId) === String(id)) d.compteId = null; });
+            this.data.revenus.forEach(r => { if (r.compteId && String(r.compteId) === String(id)) r.compteId = null; });
             this.save();
             this.refreshPointage();
             this.notify('Compte supprimé', 'success');
@@ -2767,11 +2767,12 @@ const app = {
 
     _calcSoldeCompte(compte) {
         const ref = new Date(compte.dateSoldeInitial + 'T00:00:00');
+        const cid = String(compte.id);
         const deps = (this.data.depenses || [])
-            .filter(d => d.compteId === compte.id && new Date(d.date + 'T00:00:00') >= ref)
+            .filter(d => d.compteId && String(d.compteId) === cid && new Date(d.date + 'T00:00:00') >= ref)
             .reduce((s, d) => s + d.montant, 0);
         const revs = (this.data.revenus || [])
-            .filter(r => r.compteId === compte.id && new Date(r.date + 'T00:00:00') >= ref)
+            .filter(r => r.compteId && String(r.compteId) === cid && new Date(r.date + 'T00:00:00') >= ref)
             .reduce((s, r) => s + r.montant, 0);
         return compte.soldeInitial - deps + revs;
     },
@@ -2814,8 +2815,9 @@ const app = {
             const ecartLabel = ecart === null ? '—'
                              : ecartAbs < 0.01 ? 'Parfait !'
                              : (ecart >= 0 ? '+' : '') + this.formatCurrency(ecart);
-            const nbDep = (this.data.depenses || []).filter(d => d.compteId === c.id).length;
-            const nbRev = (this.data.revenus  || []).filter(r => r.compteId === c.id).length;
+            const cid    = String(c.id);
+            const nbDep = (this.data.depenses || []).filter(d => d.compteId && String(d.compteId) === cid).length;
+            const nbRev = (this.data.revenus  || []).filter(r => r.compteId && String(r.compteId) === cid).length;
             return `<div class="pointage-compte-card">
                 <div class="pointage-compte-header">
                     <div style="display:flex;align-items:center;gap:.6rem">
@@ -3128,8 +3130,8 @@ const app = {
         const comptes = this.data.comptesPointage || [];
         if (compteGroup && compteSelect) {
             if (comptes.length > 0) {
-                compteSelect.innerHTML = '<option value="">— Aucun —</option>' +
-                    comptes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+                compteSelect.innerHTML = '<option value="">— Aucun compte —</option>' +
+                    comptes.map((c, i) => `<option value="${c.id}" ${i===0?'selected':''}>${c.nom}</option>`).join('');
                 compteGroup.style.display = '';
             } else {
                 compteGroup.style.display = 'none';
@@ -3156,7 +3158,7 @@ const app = {
         if (!montant || montant <= 0) { this.notify('Montant invalide', 'error'); return; }
         if (!date) { this.notify('Date requise', 'error'); return; }
         const mois = date.substring(0, 7);
-        this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note, compteId });
+        this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note, compteId: compteId || null });
         this.save();
         this.refreshRevenus();
         this.refreshDashboard();
