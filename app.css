@@ -161,14 +161,14 @@ body
 }
 #auth-screen .auth-bg-arch {
     position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-55%);
+    transform:translate(-50%,-68%);
     width:min(85vw, 700px);
     pointer-events:none;
     animation:authArchIn 1.2s cubic-bezier(.34,1.2,.64,1) both;
 }
 @keyframes authArchIn {
-    from { opacity:0; transform:translate(-50%,-45%); }
-    to   { opacity:1; transform:translate(-50%,-55%); }
+    from { opacity:0; transform:translate(-50%,-58%); }
+    to   { opacity:1; transform:translate(-50%,-68%); }
 }
 #auth-screen .auth-halo-1 {
     position:absolute; width:600px; height:600px; border-radius:50%;
