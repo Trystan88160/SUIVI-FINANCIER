@@ -289,6 +289,132 @@ const app = {
         if (this.data.objectifs.length === 0 && !localStorage.getItem('suiviFinancier')) {
             this.chargerDonneesExemple();
         }
+
+        // Onboarding premier lancement
+        if (!localStorage.getItem('vault_ob_done')) {
+            setTimeout(() => this._startOnboarding(), 900);
+        }
+    },
+
+    /* ── Onboarding ─────────────────────────────────────── */
+    _startOnboarding() {
+        const STEPS = [
+            {
+                key: 'welcome',
+                label: 'Bienvenue',
+                title: 'Vault, ton espace financier',
+                desc: 'Suis tes dépenses, gère ton budget et visualise ton patrimoine. Tout est synchronisé sur le cloud, privé et gratuit.',
+                cta: 'Commencer →',
+            },
+            {
+                key: 'account',
+                label: 'Étape 1 / 3',
+                title: 'Crée ton premier compte',
+                desc: 'Ajoute ton compte courant avec son solde actuel. Vault calculera tes mouvements à partir de cette date.',
+                cta: '🏦 Créer un compte',
+                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openAddComptePointage"], .btn-add-compte')?.click(), 200); },
+            },
+            {
+                key: 'income',
+                label: 'Étape 2 / 3',
+                title: 'Saisis ton revenu',
+                desc: 'Entre ton salaire mensuel. Vault s\'en sert pour calculer ton taux d\'épargne et tes capacités budgétaires.',
+                cta: '💰 Ajouter un revenu',
+                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openBsRevenu"], [onclick*="openRevenu"]')?.click(), 200); },
+            },
+            {
+                key: 'expense',
+                label: 'Étape 3 / 3',
+                title: 'Première dépense',
+                desc: 'Ajoute ta première dépense ou importe un relevé CSV bancaire pour remplir tout ton historique d\'un coup.',
+                cta: '➕ Ajouter une dépense',
+                action: () => { this._closeOnboarding(); setTimeout(() => document.querySelector('[onclick*="openBsDep"], [onclick*="openDep"]')?.click(), 200); },
+            },
+            {
+                key: 'done',
+                label: 'Prêt !',
+                title: 'Tu es prêt 🎉',
+                desc: 'Explore les onglets Budget, PEA, Patrimoine et Bilan au fur et à mesure que tu enrichis tes données.',
+                cta: 'Explorer Vault',
+            },
+        ];
+
+        const ILLU = {
+            welcome: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><rect x="24" y="36" width="60" height="44" rx="8" fill="#fff" stroke="#7c4dff" stroke-width="1.5"/><rect x="30" y="46" width="22" height="4" rx="2" fill="#7c4dff" opacity=".6"/><rect x="30" y="54" width="16" height="3" rx="1.5" fill="#c5cae9"/><rect x="30" y="61" width="20" height="3" rx="1.5" fill="#c5cae9"/><circle cx="70" cy="55" r="10" fill="#3f51b5"/><path d="M65 55l3.5 3.5L76 51" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            account: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8eaf6"/><rect x="18" y="40" width="72" height="42" rx="10" fill="#3f51b5"/><rect x="18" y="48" width="72" height="12" fill="#283593" opacity=".5"/><rect x="26" y="66" width="20" height="4" rx="2" fill="#fff" opacity=".5"/><rect x="26" y="74" width="28" height="3" rx="1.5" fill="#fff" opacity=".3"/><circle cx="76" cy="70" r="9" fill="#7c4dff"/><path d="M73 70h6M76 67v6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+            income: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#e8f5e9"/><path d="M22 78L40 52l14 13 15-24 12 10" stroke="#43a047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="40" cy="52" r="3.5" fill="#43a047"/><circle cx="54" cy="65" r="3.5" fill="#43a047"/><circle cx="69" cy="41" r="3.5" fill="#43a047"/><circle cx="54" cy="30" r="12" fill="#43a047"/><path d="M54 24v10M50 27h5a2 2 0 010 4h-4a2 2 0 010 4h5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+            expense: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#fce4ec"/><rect x="24" y="46" width="60" height="34" rx="8" fill="#fff" stroke="#e53935" stroke-width="1.5"/><path d="M24 58h60" stroke="#e53935" stroke-width="1" opacity=".3"/><rect x="32" y="63" width="12" height="8" rx="3" fill="#e53935" opacity=".7"/><rect x="48" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><rect x="64" y="63" width="12" height="8" rx="3" fill="#ef9a9a"/><circle cx="54" cy="36" r="12" fill="#e53935"/><path d="M54 31v6M51 34h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
+            done: `<svg viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="54" cy="54" r="48" fill="#ede7f6"/><circle cx="54" cy="54" r="26" fill="#7c4dff"/><path d="M42 54l8.5 8.5 16-17" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="54" cy="54" r="33" stroke="#7c4dff" stroke-width="1.5" stroke-dasharray="4 3" opacity=".35"/><circle cx="82" cy="24" r="7" fill="#43a047"/><path d="M79 24l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        };
+
+        // Empty state illustrations (pour usage dans refreshes)
+        this._emptyIllus = {
+            depenses: `<svg viewBox="0 0 110 110" fill="none"><circle cx="55" cy="55" r="50" fill="#f0f4ff"/><rect x="22" y="38" width="66" height="12" rx="5" fill="#c5cae9"/><rect x="22" y="56" width="66" height="12" rx="5" fill="#dce0f0"/><rect x="22" y="74" width="66" height="12" rx="5" fill="#c5cae9"/><rect x="22" y="38" width="8" height="12" rx="4" fill="#7c4dff" opacity=".7"/><rect x="22" y="74" width="8" height="12" rx="4" fill="#3f51b5" opacity=".5"/></svg>`,
+            pea:      `<svg viewBox="0 0 110 110" fill="none"><circle cx="55" cy="55" r="50" fill="#f0f4ff"/><path d="M18 88L36 66l15 12L68 44l16 18" stroke="#c5cae9" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 3"/><circle cx="36" cy="66" r="4" fill="#c5cae9"/><circle cx="68" cy="44" r="4" fill="#c5cae9"/><circle cx="55" cy="72" r="16" fill="none" stroke="#7c4dff" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M55 64v8M51 68h8" stroke="#7c4dff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+            patrimoine: `<svg viewBox="0 0 110 110" fill="none"><circle cx="55" cy="55" r="50" fill="#f0f4ff"/><path d="M55 22L96 88H14Z" fill="#e8eaf6" stroke="#c5cae9" stroke-width="1.5"/><path d="M55 22L76 63H34Z" fill="#c5cae9" stroke="#7c4dff" stroke-width="1" opacity=".6"/><circle cx="55" cy="22" r="5" fill="#7c4dff"/></svg>`,
+            bilan:    `<svg viewBox="0 0 110 110" fill="none"><circle cx="55" cy="55" r="50" fill="#f0f4ff"/><rect x="20" y="36" width="70" height="52" rx="8" fill="#e8eaf6"/><rect x="28" y="50" width="30" height="4" rx="2" fill="#c5cae9"/><rect x="28" y="60" width="22" height="4" rx="2" fill="#c5cae9"/><rect x="28" y="70" width="26" height="4" rx="2" fill="#c5cae9"/><circle cx="73" cy="60" r="12" fill="#7c4dff" opacity=".15"/><path d="M69 60h8M73 56v8" stroke="#7c4dff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+        };
+
+        let step = 0;
+        const overlay = document.createElement('div');
+        overlay.className = 'v-ob-overlay';
+        overlay.innerHTML = `
+          <div class="v-ob-card">
+            <button class="v-ob-skip">Passer</button>
+            <div class="v-ob-body" id="_ob_body">
+              <div class="v-ob-illu" id="_ob_illu"></div>
+              <div class="v-ob-label" id="_ob_label"></div>
+              <h2 class="v-ob-title" id="_ob_title"></h2>
+              <p class="v-ob-desc" id="_ob_desc"></p>
+              <div class="v-ob-dots" id="_ob_dots"></div>
+              <div class="v-ob-actions">
+                <button class="v-ob-btn-back" id="_ob_back" style="display:none">← Retour</button>
+                <button class="v-ob-btn-next" id="_ob_next"></button>
+              </div>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        this._obOverlay = overlay;
+
+        const render = (idx, dir = 1) => {
+            const body = document.getElementById('_ob_body');
+            body.classList.add('exit');
+            setTimeout(() => {
+                const s = STEPS[idx];
+                document.getElementById('_ob_illu').innerHTML = ILLU[s.key] || '';
+                document.getElementById('_ob_label').textContent = s.label;
+                document.getElementById('_ob_title').textContent = s.title;
+                document.getElementById('_ob_desc').textContent = s.desc;
+                document.getElementById('_ob_next').textContent = s.cta;
+                document.getElementById('_ob_back').style.display = idx > 0 && idx < STEPS.length - 1 ? '' : 'none';
+                document.getElementById('_ob_dots').innerHTML = STEPS.map((_,i) =>
+                    `<span class="v-ob-dot${i===idx?' active':''}"></span>`).join('');
+                body.classList.remove('exit');
+                body.classList.add('enter');
+                requestAnimationFrame(() => body.classList.remove('enter'));
+            }, 180);
+        };
+
+        document.getElementById('_ob_next').onclick = () => {
+            const s = STEPS[step];
+            if (s.action) { s.action(); return; }
+            if (step < STEPS.length - 1) { step++; render(step, 1); }
+            else this._closeOnboarding();
+        };
+        document.getElementById('_ob_back').onclick = () => { if (step > 0) { step--; render(step, -1); } };
+        overlay.querySelector('.v-ob-skip').onclick = () => this._closeOnboarding();
+        overlay.addEventListener('click', e => { if (e.target === overlay) this._closeOnboarding(); });
+
+        render(0);
+    },
+
+    _closeOnboarding() {
+        localStorage.setItem('vault_ob_done', '1');
+        const o = this._obOverlay;
+        if (!o) return;
+        o.classList.add('closing');
+        setTimeout(() => o.remove(), 260);
+        this._obOverlay = null;
     },
 
     _showLoader() {
@@ -3095,7 +3221,9 @@ const app = {
 
         if (depenses.length === 0) {
             const msg = filtersActive ? 'Aucune dépense ne correspond aux filtres' : 'Aucune dépense enregistrée';
-            if (mobileContainer) mobileContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div>' + msg + '</div></div>';
+            const _illuDep = (this._emptyIllus||{}).depenses||'';
+            const _emptyDep = `<div class="v-empty">${_illuDep}<div class="v-empty-title">${msg}</div><p class="v-empty-desc">Utilise ＋ ou importe un relevé CSV pour démarrer.</p></div>`;
+            if (mobileContainer) mobileContainer.innerHTML = _emptyDep;
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
@@ -3682,9 +3810,10 @@ const app = {
         }
 
         if (historique.length === 0) {
-            const emptyHtml = '<div class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune entrée PEA</div></div>';
+            const _illuPea = (this._emptyIllus||{}).pea||'';
+        const emptyHtml = `<div class="v-empty">${_illuPea}<div class="v-empty-title">Aucune entrée PEA</div><p class="v-empty-desc">Commence par renseigner la valeur et le montant investi dans ton PEA.</p></div>`;
             if (isMobile && mobileContainer) mobileContainer.innerHTML = emptyHtml;
-            else if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune entrée PEA</div></td></tr>';
+            else if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="padding:0"><div class="v-empty" style="padding:2rem 1rem">${(this._emptyIllus||{}).pea||''}<div class="v-empty-title">Aucune entrée PEA</div><p class="v-empty-desc">Commence par renseigner la valeur et le montant investi.</p></div></td></tr>`;
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
@@ -3863,7 +3992,8 @@ const app = {
         }
 
         if (historique.length === 0) {
-            const emptyHtml = '<div class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></div>';
+            const _illuPat = (this._emptyIllus||{}).patrimoine||'';
+        const emptyHtml = `<div class="v-empty">${_illuPat}<div class="v-empty-title">Aucune entrée patrimoine</div><p class="v-empty-desc">Saisis ton premier point de patrimoine pour démarrer le suivi.</p></div>`;
             if (isMobile && mobileContainer) mobileContainer.innerHTML = emptyHtml;
             else if (tbody) tbody.innerHTML = '<tr><td colspan="' + (this.data.comptes.length + 2) + '" class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></td></tr>';
             if (btnShowMore) btnShowMore.style.display = 'none';
@@ -6144,7 +6274,7 @@ const app = {
         if (!container) return;
         const recs = this.data.recurrences;
         if (recs.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔄</div><div>Aucune récurrence définie</div></div>';
+            container.innerHTML = `<div class="v-empty" style="padding:1.5rem 1rem"><div class="v-empty-title">Aucune récurrence</div><p class="v-empty-desc">Ajoute tes dépenses fixes (loyer, abonnements…) pour les suivre automatiquement.</p></div>`;
             const tot = document.getElementById('recurrences-total-wrap');
             if (tot) tot.style.display = 'none';
             return;
@@ -6254,7 +6384,7 @@ const app = {
         document.getElementById('obj-total-cible').textContent = this.formatCurrency(objs.reduce((s, o) => s + o.cible, 0));
 
         if (objs.length === 0) {
-            list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div>Aucun objectif. Clique sur + Nouvel objectif !</div></div>';
+            list.innerHTML = `<div class="v-empty">${(this._emptyIllus||{}).bilan||''}<div class="v-empty-title">Aucun objectif</div><p class="v-empty-desc">Définis tes premiers objectifs d'épargne pour te motiver au quotidien.</p></div>`;
             if (calcCard) calcCard.style.display = 'none';
             document.getElementById('obj-mensuel-total').textContent = '0 €';
 
@@ -6409,7 +6539,7 @@ const app = {
         if (!container) return;
         const notes = [...this.data.notes].sort((a, b) => b.mois.localeCompare(a.mois));
         if (notes.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div>Aucune note enregistrée</div></div>';
+            container.innerHTML = `<div class="v-empty" style="padding:1.5rem 1rem"><div class="v-empty-title">Aucune note</div><p class="v-empty-desc">Ajoute des notes mensuelles pour garder une trace de tes moments financiers.</p></div>`;
             return;
         }
         const tagColors = {
@@ -6492,7 +6622,7 @@ const app = {
         if (!tbody) return;
         const lignes = this.data.lignesPEA;
         if (lignes.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📈</div><div>Ajouter vos lignes PEA</div></td></tr>';
+            tbody.innerHTML = `<tr><td colspan="8" style="padding:0"><div class="v-empty" style="padding:2rem 1rem">${(this._emptyIllus||{}).pea||''}<div class="v-empty-title">Aucune ligne PEA</div><p class="v-empty-desc">Ajoute tes ETF et actions pour suivre ta performance.</p></div></td></tr>`;
             document.getElementById('pv-latente-total').textContent = this.formatCurrency(0);
             return;
         }
@@ -7494,11 +7624,19 @@ const app = {
     },
 
     notify(msg, type = 'success') {
-        const notif = document.createElement('div');
-        notif.className = 'notification ' + type;
-        notif.textContent = msg;
-        document.body.appendChild(notif);
-        setTimeout(() => notif.remove(), 3000);
+        // Toast amélioré — remplace l'ancien système .notification
+        let toast = document.getElementById('v-toast-singleton');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'v-toast-singleton';
+            toast.className = 'v-toast';
+            document.body.appendChild(toast);
+        }
+        clearTimeout(this._toastTimer);
+        toast.className = `v-toast ${type}`;
+        toast.textContent = msg;
+        requestAnimationFrame(() => toast.classList.add('show'));
+        this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
     }
 };
 
