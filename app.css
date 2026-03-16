@@ -156,7 +156,7 @@ body
     position:fixed; inset:0; z-index:10000;
     background:#f0f4ff;
     display:flex; align-items:center; justify-content:center;
-    position:relative; overflow:hidden;
+    overflow:hidden;
 }
 #auth-screen .auth-bg-arch {
     position:absolute; top:50%; left:50%;
