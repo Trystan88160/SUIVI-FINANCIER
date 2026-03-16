@@ -1063,3 +1063,216 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
   background: var(--bg-primary);
   transform: translateY(-1px);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   STYLE SOFT & FLOATING — overrides modals & boutons
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Overlay backdrop ────────────────────────────────────── */
+.overlay.active,
+#confirm-overlay.active,
+#input-overlay.active {
+  background: rgba(20, 30, 80, .48) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* ── Fenêtre modale — forme Soft & Floating ─────────────── */
+.modal {
+  border-radius: 28px !important;
+  border: none !important;
+  background: var(--bg-card) !important;
+  box-shadow:
+    0 32px 80px rgba(63, 81, 181, .22),
+    0 2px 0 rgba(255,255,255,.9) inset !important;
+  overflow: hidden !important;
+}
+
+/* Animation spring — préserve le centrage translate(-50%,-50%) */
+.modal.active {
+  animation: sfModalIn .38s cubic-bezier(.34, 1.4, .64, 1) both !important;
+}
+@keyframes sfModalIn {
+  from { opacity: 0; transform: translate(-50%, -47%) scale(.88); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ── Header — pre-titre + titre Outfit ───────────────────── */
+.modal-header {
+  padding: 1.5rem 1.75rem 1rem !important;
+  border-bottom: none !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+}
+.modal-title {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  font-family: 'Outfit', sans-serif !important;
+  color: var(--text-primary) !important;
+  line-height: 1.25 !important;
+}
+
+/* Pre-titre automatique via data-context */
+.modal-header::before {
+  display: none; /* désactivé par défaut, activé via JS */
+}
+
+/* Bouton fermeture ✕ */
+.modal-header > button[onclick*="close"],
+.modal-header > button[onclick*="Close"],
+.modal-header > button[style*="border-radius:50%"],
+.modal-header > button:last-child:not(.btn) {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 50% !important;
+  background: var(--bg-primary) !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: .8rem !important;
+  color: var(--text-tertiary) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: background .15s, color .15s !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 2px !important;
+}
+.modal-header > button[onclick*="close"]:hover,
+.modal-header > button[onclick*="Close"]:hover,
+.modal-header > button:last-child:not(.btn):hover {
+  background: var(--bg-secondary) !important;
+  color: var(--accent-primary) !important;
+  transform: none !important;
+}
+
+/* ── Body ────────────────────────────────────────────────── */
+.modal-body {
+  padding: .5rem 1.75rem 1rem !important;
+  line-height: 1.7 !important;
+}
+
+/* ── Footer — boutons pilule ─────────────────────────────── */
+.modal-footer {
+  padding: .75rem 1.75rem 1.75rem !important;
+  border-top: none !important;
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: flex-end !important;
+}
+
+/* ── Inputs dans les modals ──────────────────────────────── */
+.modal .form-input,
+.modal .form-select,
+.modal input[type="text"],
+.modal input[type="number"],
+.modal input[type="email"],
+.modal input[type="date"],
+.modal input[type="month"],
+.modal select,
+.modal textarea {
+  border-radius: 14px !important;
+  border: 1.5px solid var(--border-color) !important;
+  background: var(--bg-secondary) !important;
+  padding: .72rem 1rem !important;
+  font-size: .92rem !important;
+  transition: border-color .15s, box-shadow .15s, background .15s !important;
+}
+.modal .form-input:focus,
+.modal .form-select:focus,
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+  border-color: var(--accent-gradient-end) !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 0 0 4px rgba(124, 77, 255, .1) !important;
+  outline: none !important;
+}
+
+/* ── Boutons dans les modals — pilule ────────────────────── */
+.modal-footer .btn,
+.modal-footer button {
+  border-radius: 50px !important;
+  font-size: .875rem !important;
+  padding: .68rem 1.4rem !important;
+  box-shadow: none !important;
+  font-family: 'Inter', sans-serif !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  transition: opacity .15s, transform .18s cubic-bezier(.34,1.56,.64,1), background .15s !important;
+}
+.modal-footer .btn:hover,
+.modal-footer button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: none !important;
+}
+.modal-footer .btn-secondary,
+.modal-footer button.btn-secondary {
+  background: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+.modal-footer .btn-secondary:hover,
+.modal-footer button.btn-secondary:hover {
+  background: var(--bg-primary) !important;
+}
+.modal-footer .btn:not(.btn-secondary):not([class*="cancel"]),
+.modal-footer button:not(.btn-secondary):not([onclick*="close"]):not([onclick*="Close"]):not([onclick*="cancel"]):not([onclick*="Cancel"]) {
+  background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end)) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 18px rgba(124, 77, 255, .28) !important;
+}
+.modal-footer .btn:not(.btn-secondary):hover {
+  opacity: .92 !important;
+  box-shadow: 0 10px 26px rgba(124, 77, 255, .38) !important;
+}
+
+/* ── Bouton Confirmer rouge (suppression) ────────────────── */
+#confirmBtn {
+  background: linear-gradient(135deg, #c62828, #ef5350) !important;
+  box-shadow: 0 6px 18px rgba(198, 40, 40, .28) !important;
+}
+#confirmBtn:hover {
+  box-shadow: 0 10px 26px rgba(198, 40, 40, .38) !important;
+}
+
+/* ── Tailles adaptatives selon le contenu ────────────────── */
+/* Petite (confirmation, input simple) */
+#confirmModal,
+#inputModal {
+  max-width: 400px !important;
+}
+/* Moyenne (catégories, comptes) */
+#budgetsModal,
+#comptesModal {
+  max-width: 560px !important;
+}
+/* Grande (rapport, analyse) */
+.modal[style*="max-width:700"],
+.modal[style*="max-width: 700"] {
+  max-width: 700px !important;
+}
+
+/* ── Mobile : modals plein écran bas ─────────────────────── */
+@media (max-width: 600px) {
+  .modal {
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 24px 24px 0 0 !important;
+    max-height: 92vh !important;
+  }
+  .modal.active {
+    animation: sfModalInMobile .36s cubic-bezier(.34, 1.4, .64, 1) both !important;
+  }
+  @keyframes sfModalInMobile {
+    from { opacity: 0; transform: translateY(40px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}

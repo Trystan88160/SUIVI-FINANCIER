@@ -294,6 +294,9 @@ const app = {
         if (!localStorage.getItem('vault_ob_done')) {
             setTimeout(() => this._startOnboarding(), 900);
         }
+
+        // Soft & Floating — pre-titres modals
+        this._initSoftModals();
     },
 
     /* ── Onboarding ─────────────────────────────────────── */
@@ -510,6 +513,74 @@ const app = {
         o.classList.add('closing');
         setTimeout(() => o.remove(), 260);
         this._obOverlay = null;
+    },
+
+    /* ── Soft & Floating — pre-titres automatiques ────────── */
+    _initSoftModals() {
+        // Mapping : mots-clés dans le titre → pre-titre affiché
+        const PRE = [
+            [/(objectif|goal)/i,       'Bilan · Objectifs'],
+            [/(récurrence|recurrence)/i,'Budget · Récurrences'],
+            [/(revenu|salaire)/i,       'Budget · Revenus'],
+            [/(dépense|depense)/i,      'Budget · Dépenses'],
+            [/(pea|ligne|portefeuille)/i,'Investissements · PEA'],
+            [/(patrimoine)/i,           'Patrimoine'],
+            [/(compte|bancaire)/i,      'Comptes bancaires'],
+            [/(catégorie|categorie)/i,  'Budget · Catégories'],
+            [/(note|bilan)/i,           'Bilan mensuel'],
+            [/(rapport)/i,              'Rapport financier'],
+            [/(retraite)/i,             'Projection · Retraite'],
+            [/(simulat|scénario|scenario)/i,'Simulateur'],
+            [/(confirm|supprimer|annuler|danger)/i, 'Confirmation'],
+            [/(personnalis|couleur|thème)/i, 'Paramètres'],
+        ];
+
+        const inject = (header) => {
+            if (header.querySelector('.sf-pretitle')) return; // déjà injecté
+            const titleEl = header.querySelector('.modal-title, h2, h3');
+            if (!titleEl) return;
+            const text = titleEl.textContent || '';
+            let label = '';
+            for (const [re, l] of PRE) { if (re.test(text)) { label = l; break; } }
+            if (!label) return;
+            const pre = document.createElement('div');
+            pre.className = 'sf-pretitle';
+            pre.textContent = label;
+            pre.style.cssText = `
+                font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                color:var(--accent-gradient-end);margin-bottom:.3rem;
+                font-family:'DM Mono',monospace;opacity:.9;
+            `;
+            // Wrapper le titre dans un div pour la mise en page
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'display:flex;flex-direction:column;flex:1;min-width:0;';
+            titleEl.parentNode.insertBefore(wrap, titleEl);
+            wrap.appendChild(pre);
+            wrap.appendChild(titleEl);
+        };
+
+        // Observer les modals qui deviennent actifs
+        const obs = new MutationObserver(muts => {
+            for (const m of muts) {
+                if (m.type === 'attributes' && m.attributeName === 'class') {
+                    const el = m.target;
+                    if (el.classList.contains('modal') && el.classList.contains('active')) {
+                        const h = el.querySelector('.modal-header');
+                        if (h) inject(h);
+                    }
+                }
+                // Modals injectés dynamiquement
+                for (const node of m.addedNodes) {
+                    if (node.nodeType !== 1) continue;
+                    node.querySelectorAll?.('.modal-header').forEach(inject);
+                    if (node.classList?.contains('modal-header')) inject(node);
+                }
+            }
+        });
+        obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+        // Patch les modals déjà présents dans le DOM
+        document.querySelectorAll('.modal.active .modal-header, .modal-header').forEach(inject);
     },
 
     _showLoader() {
