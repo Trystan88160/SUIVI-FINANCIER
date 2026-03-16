@@ -2812,67 +2812,31 @@ const app = {
         if (!container) return;
         const comptes = this.data.comptesPointage || [];
         if (comptes.length === 0) {
-            container.innerHTML = `<div style="text-align:center;padding:2rem 1rem;color:var(--text-tertiary)">
-                <div style="font-size:2rem;margin-bottom:.5rem">🏦</div>
-                <div style="font-size:.85rem">Aucun compte bancaire. Ajoutez-en un pour commencer le pointage.</div>
-            </div>`;
+            container.innerHTML = '<div style="text-align:center;padding:.5rem 0;color:var(--text-tertiary);font-size:.8rem">Aucun compte — cliquez sur &quot;+ Compte&quot; pour commencer.</div>';
             return;
         }
         const typeIcon = { courant: '💳', épargne: '🏦', autre: '📁' };
-        container.innerHTML = comptes.map(c => {
-            const soldeVault = this._calcSoldeCompte(c);
-            const hasReel    = typeof c.soldeReel === 'number';
-            const ecart      = hasReel ? (c.soldeReel - soldeVault) : null;
-            const ecartAbs   = ecart !== null ? Math.abs(ecart) : null;
-            const ecartColor = ecart === null ? 'var(--text-tertiary)'
-                             : ecartAbs < 0.01 ? 'var(--success)'
-                             : ecartAbs < 20   ? 'var(--warning, #f59e0b)'
-                             : 'var(--danger)';
-            const ecartIcon  = ecart === null ? '' : ecartAbs < 0.01 ? '✅' : ecartAbs < 20 ? '⚠️' : '🔴';
-            const ecartLabel = ecart === null ? '—'
-                             : ecartAbs < 0.01 ? 'Parfait !'
-                             : (ecart >= 0 ? '+' : '') + this.formatCurrency(ecart);
-            const cid    = String(c.id);
-            const nbDep = (this.data.depenses || []).filter(d => d.compteId && String(d.compteId) === cid).length;
-            const nbRev = (this.data.revenus  || []).filter(r => r.compteId && String(r.compteId) === cid).length;
-            return `<div class="pointage-compte-card">
-                <div class="pointage-compte-header">
-                    <div style="display:flex;align-items:center;gap:.6rem">
-                        <span style="font-size:1.3rem">${typeIcon[c.type] || '💳'}</span>
-                        <div>
-                            <div style="font-weight:600;color:var(--text-primary);font-size:.95rem">${c.nom}</div>
-                            <div style="font-size:.68rem;color:var(--text-tertiary);text-transform:capitalize">${c.type} · ${nbDep} dépense${nbDep>1?'s':''} · ${nbRev} revenu${nbRev>1?'s':''} liés</div>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:.4rem">
-                        <button class="btn btn-small btn-secondary" onclick="app.openAddComptePointage('${c.id}')" style="font-size:.65rem;padding:.3rem .6rem">✏️</button>
-                        <button class="btn btn-small btn-secondary" onclick="app.supprimerComptePointage('${c.id}')" style="font-size:.65rem;padding:.3rem .6rem">✕</button>
-                    </div>
-                </div>
-                <div class="pointage-soldes-grid">
-                    <div class="pointage-solde-bloc">
-                        <div class="pointage-solde-label">Solde Vault</div>
-                        <div class="pointage-solde-val" style="color:var(--accent-primary)">${this.formatCurrency(soldeVault)}</div>
-                        <div style="font-size:.65rem;color:var(--text-tertiary)">depuis le ${new Date(c.dateSoldeInitial+'T00:00:00').toLocaleDateString('fr-FR')}</div>
-                    </div>
-                    <div class="pointage-solde-bloc">
-                        <div class="pointage-solde-label">Solde réel</div>
-                        <div style="display:flex;gap:.4rem;align-items:center;margin-top:.25rem">
-                            <input type="number" id="pointage-solde-reel-${c.id}" class="form-input" step="0.01"
-                                value="${hasReel ? c.soldeReel : ''}" placeholder="Saisir…"
-                                style="width:110px;padding:.3rem .5rem;font-size:.82rem;text-align:right">
-                            <button class="btn btn-primary btn-small" onclick="app.saisirSoldeReel('${c.id}')" style="font-size:.7rem;padding:.3rem .7rem;white-space:nowrap">OK</button>
-                        </div>
-                        ${hasReel ? `<div style="font-size:.65rem;color:var(--text-tertiary)">saisi le ${new Date(c.dateSoldeReel+'T00:00:00').toLocaleDateString('fr-FR')}</div>` : ''}
-                    </div>
-                    <div class="pointage-solde-bloc pointage-ecart">
-                        <div class="pointage-solde-label">Écart</div>
-                        <div class="pointage-solde-val" style="color:${ecartColor}">${ecartIcon} ${ecartLabel}</div>
-                        ${ecart !== null && ecartAbs >= 0.01 ? `<div style="font-size:.65rem;color:var(--text-tertiary)">${ecart > 0 ? 'Dépenses manquantes ?' : 'Revenus manquants ?'}</div>` : ''}
-                    </div>
-                </div>
-            </div>`;
+        const chips = comptes.map(c => {
+            const solde = this._calcSoldeCompte(c);
+            const cid   = String(c.id);
+            const nbTx  = (this.data.depenses || []).filter(d => d.compteId && String(d.compteId) === cid).length
+                        + (this.data.revenus  || []).filter(r => r.compteId && String(r.compteId) === cid).length;
+            return '<div class="pointage-solde-chip">'
+                 +   '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem">'
+                 +     '<div>'
+                 +       '<span style="font-size:.9rem;margin-right:.3rem">' + (typeIcon[c.type] || '💳') + '</span>'
+                 +       '<span style="font-size:.78rem;font-weight:600;color:var(--text-primary)">' + c.nom + '</span>'
+                 +     '</div>'
+                 +     '<div style="display:flex;gap:.2rem">'
+                 +       '<button onclick="app.openAddComptePointage(\'' + c.id + '\')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:.65rem;padding:.1rem .25rem" title="Modifier">✏️</button>'
+                 +       '<button onclick="app.supprimerComptePointage(\'' + c.id + '\')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:.65rem;padding:.1rem .25rem" title="Supprimer">✕</button>'
+                 +     '</div>'
+                 +   '</div>'
+                 +   '<div style="font-size:1.45rem;font-weight:800;letter-spacing:-.04em;color:var(--accent-primary);line-height:1.1">' + this.formatCurrency(solde) + '</div>'
+                 +   '<div style="font-size:.63rem;color:var(--text-tertiary);margin-top:.25rem">' + nbTx + ' transaction' + (nbTx > 1 ? 's' : '') + ' liée' + (nbTx > 1 ? 's' : '') + '</div>'
+                 + '</div>';
         }).join('');
+        container.innerHTML = '<div class="pointage-comptes-row">' + chips + '</div>';
     },
 
     updatePatInputs() {
@@ -4128,6 +4092,7 @@ const app = {
             { id: 'dash-heatmap',       label: '🌡 Heatmap annuelle',     sub: 'Intensité des dépenses' },
         ],
         'depenses': [
+            { id: 'dep-pointage',    label: '💳 Soldes bancaires',        sub: 'Pointage de vos comptes' },
             { id: 'dep-revenus',     label: '💰 Revenus & Cashflow',      sub: 'Saisie & stats du mois' },
             { id: 'dep-saisie',      label: '➕ Ajouter une dépense',     sub: 'Formulaire de saisie' },
             { id: 'dep-etat-cat',    label: 'État des catégories',        sub: 'Budget par catégorie' },
@@ -4137,7 +4102,6 @@ const app = {
             { id: 'dep-analyse',     label: '🔍 Analyse des dépenses',    sub: 'Graphique par période' },
             { id: 'dep-historique',  label: '📋 Historique',              sub: 'Toutes les transactions' },
             { id: 'dep-hist-revenus',label: '📊 Historique Revenus',      sub: 'Cashflow mensuel' },
-            { id: 'dep-pointage',    label: '💳 Pointage bancaire',       sub: 'Soldes & vérification' },
         ],
         'pea': [
             { id: 'pea-stats',      label: 'Stats PEA',                    sub: 'Valeur, investi, gain' },
