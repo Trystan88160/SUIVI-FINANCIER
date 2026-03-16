@@ -2082,7 +2082,12 @@ const app = {
         row.className = 'bs-dep-row';
         row.id = 'bs-dep-row-' + id;
         const hasComptes = (this.data.comptesPointage || []).length > 0;
-        const comptesOpts = (this.data.comptesPointage || []).map((c, i) => `<option value="${c.id}" ${i===0?'selected':''}>${c.nom}</option>`).join('');
+        const comptesSingle = (this.data.comptesPointage || []).length === 1;
+        const mostUsedCompteId = this._getMostUsedCompteId();
+        const comptesOpts = (this.data.comptesPointage || []).map(c => `<option value="${c.id}" ${String(c.id) === mostUsedCompteId ? 'selected' : ''}>${c.nom}</option>`).join('');
+        const compteSelectHtml = hasComptes
+            ? `<div style="margin-top:.35rem"><select class="bs-input" id="bs-dep-compte-${id}" style="width:100%;font-size:.75rem">${comptesSingle ? '' : '<option value="">— Aucun compte —</option>'}${comptesOpts}</select></div>`
+            : '';
         row.innerHTML = `
             <div class="bs-dep-row-label"># ${id}</div>
             ${id > 1 ? `<button class="bs-remove-btn" onclick="app._bsRemoveDepRow(${id})">✕</button>` : ''}
@@ -2096,7 +2101,7 @@ const app = {
                 <input type="text" class="bs-input" id="bs-dep-note-${id}" placeholder="Note…">
                 <input type="date" class="bs-input" id="bs-dep-date-${id}" value="${today}" style="width:140px">
             </div>
-            ${hasComptes ? `<div style="margin-top:.35rem"><select class="bs-input" id="bs-dep-compte-${id}" style="width:100%;font-size:.75rem"><option value="">— Aucun compte —</option>${comptesOpts}</select></div>` : ''}
+            ${compteSelectHtml}
         `;
         const body = document.getElementById('bs-dep-rows');
 
@@ -2765,6 +2770,18 @@ const app = {
         });
     },
 
+    _getMostUsedCompteId() {
+        const comptes = this.data.comptesPointage || [];
+        if (comptes.length === 0) return null;
+        if (comptes.length === 1) return String(comptes[0].id);
+        const counts = {};
+        (this.data.depenses || []).forEach(d => { if (d.compteId) counts[String(d.compteId)] = (counts[String(d.compteId)] || 0) + 1; });
+        (this.data.revenus  || []).forEach(r => { if (r.compteId) counts[String(r.compteId)] = (counts[String(r.compteId)] || 0) + 1; });
+        let best = String(comptes[0].id), max = 0;
+        comptes.forEach(c => { const n = counts[String(c.id)] || 0; if (n > max) { max = n; best = String(c.id); } });
+        return best;
+    },
+
     _calcSoldeCompte(compte) {
         const ref = new Date(compte.dateSoldeInitial + 'T00:00:00');
         const cid = String(compte.id);
@@ -3130,8 +3147,10 @@ const app = {
         const comptes = this.data.comptesPointage || [];
         if (compteGroup && compteSelect) {
             if (comptes.length > 0) {
-                compteSelect.innerHTML = '<option value="">— Aucun compte —</option>' +
-                    comptes.map((c, i) => `<option value="${c.id}" ${i===0?'selected':''}>${c.nom}</option>`).join('');
+                const mostUsed = this._getMostUsedCompteId();
+                const emptyOpt = comptes.length === 1 ? '' : '<option value="">— Aucun compte —</option>';
+                compteSelect.innerHTML = emptyOpt +
+                    comptes.map(c => `<option value="${c.id}" ${String(c.id) === mostUsed ? 'selected' : ''}>${c.nom}</option>`).join('');
                 compteGroup.style.display = '';
             } else {
                 compteGroup.style.display = 'none';
