@@ -2008,11 +2008,17 @@ const app = {
     toggleImportBancaire() { this.openBsImport(); },
 
     openBsImport() {
-
         const preview = document.getElementById('import-preview');
         if (preview) preview.style.display = 'none';
         const dz = document.getElementById('import-drop-zone');
         if (dz) { dz.style.borderColor = 'var(--border-color)'; dz.style.background = 'var(--bg-secondary)'; }
+        // Peupler le select compte
+        const compteSelect = document.getElementById('import-compte-select');
+        if (compteSelect) {
+            const comptes = this.data.comptesPointage || [];
+            compteSelect.innerHTML = '<option value="">💳 Compte — (optionnel)</option>' +
+                comptes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+        }
         document.getElementById('bs-import-overlay').classList.add('open');
         document.body.style.overflow = 'hidden';
     },
@@ -2762,12 +2768,12 @@ const app = {
     _calcSoldeCompte(compte) {
         const ref = new Date(compte.dateSoldeInitial + 'T00:00:00');
         const deps = (this.data.depenses || [])
-            .filter(d => d.compteId === compte.id && new Date(d.date + 'T00:00:00') > ref)
+            .filter(d => d.compteId === compte.id && new Date(d.date + 'T00:00:00') >= ref)
             .reduce((s, d) => s + d.montant, 0);
         const revs = (this.data.revenus || [])
-            .filter(r => r.compteId === compte.id && new Date(r.date + 'T00:00:00') > ref)
+            .filter(r => r.compteId === compte.id && new Date(r.date + 'T00:00:00') >= ref)
             .reduce((s, r) => s + r.montant, 0);
-        return compte.soldeInitial + revs - deps;
+        return compte.soldeInitial - deps + revs;
     },
 
     saisirSoldeReel(id) {
@@ -2900,6 +2906,7 @@ const app = {
         this.refreshStatsDepenses();
         this.analyseDepenses();
         this.refreshCharts();
+        this.refreshPointage();
 
         document.getElementById('dep-montant').value = '';
         const ul = document.getElementById('dep-amount-underline');
@@ -3076,6 +3083,7 @@ const app = {
                 this.refreshStatsDepenses();
                 this.analyseDepenses();
                 this.refreshCharts();
+                this.refreshPointage();
                 this.notify('Dépense supprimée', 'success');
             }
         );
@@ -3165,6 +3173,7 @@ const app = {
             this.save();
             this.refreshRevenus();
             this.refreshDashboard();
+            this.refreshPointage();
             this.notify('Revenu supprimé', 'success');
         });
     },
@@ -7290,6 +7299,14 @@ const app = {
         const title   = document.getElementById('import-preview-title');
         if (!preview || !body) return;
 
+        // Peupler le select compte
+        const importCompteSelect = document.getElementById('import-compte-select');
+        if (importCompteSelect) {
+            const comptes = this.data.comptesPointage || [];
+            importCompteSelect.innerHTML = '<option value="">💳 Compte — (optionnel)</option>' +
+                comptes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+        }
+
         const cats  = this.data.budgets ? Object.keys(this.data.budgets) : ['AUTRE'];
         const total = this._importRows.length;
         const nd    = this._importRows.filter(r=>r.type==='debit').length;
@@ -7339,6 +7356,7 @@ const app = {
     validerImportCSV() {
         const selected = (this._importRows||[]).filter(r => r.selected);
         if (selected.length === 0) { this.notify('Aucune transaction sélectionnée', 'error'); return; }
+        const compteId = document.getElementById('import-compte-select')?.value || null;
         let added = 0;
         selected.forEach(row => {
             this.data.depenses.push({
@@ -7346,13 +7364,13 @@ const app = {
                 categorie: row.categorie,
                 montant: row.montant,
                 date: row.date,
-                note: row.note || row.libelleNettoye || row.libelle
+                note: row.note || row.libelleNettoye || row.libelle,
+                compteId: compteId || null
             });
             added++;
         });
         this.save();
         this.annulerImportCSV();
-        // Tout rafraîchir après import : historique, stats, dashboard, bilan
         this.refresh();
         this.refreshBilanAnnuel();
         this.notify('✅ ' + added + ' dépenses importées', 'success');
