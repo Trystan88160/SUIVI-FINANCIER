@@ -1065,39 +1065,36 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STYLE SOFT & FLOATING — overrides modals & boutons
+   STYLE SOFT & FLOATING — MODALS + BOTTOM SHEETS unifiés
+   S'applique à TOUS les popups : .modal ET .bs-sheet
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Overlay backdrop ────────────────────────────────────── */
+/* ═══ 1. OVERLAYS ═══════════════════════════════════════════ */
 .overlay.active,
 #confirm-overlay.active,
-#input-overlay.active {
-  background: rgba(20, 30, 80, .48) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
+#input-overlay.active,
+.bs-overlay.open {
+  background: rgba(20, 30, 80, .50) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
 }
 
-/* ── Fenêtre modale — forme Soft & Floating ─────────────── */
+/* ═══ 2. MODAL (.modal) — popup centré ═════════════════════ */
 .modal {
   border-radius: 28px !important;
   border: none !important;
   background: var(--bg-card) !important;
-  box-shadow:
-    0 32px 80px rgba(63, 81, 181, .22),
-    0 2px 0 rgba(255,255,255,.9) inset !important;
+  box-shadow: 0 32px 80px rgba(63,81,181,.22), 0 2px 0 rgba(255,255,255,.9) inset !important;
   overflow: hidden !important;
 }
-
-/* Animation spring — préserve le centrage translate(-50%,-50%) */
 .modal.active {
-  animation: sfModalIn .38s cubic-bezier(.34, 1.4, .64, 1) both !important;
+  animation: sfModalIn .38s cubic-bezier(.34,1.4,.64,1) both !important;
 }
 @keyframes sfModalIn {
-  from { opacity: 0; transform: translate(-50%, -47%) scale(.88); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity:0; transform:translate(-50%,-47%) scale(.88); }
+  to   { opacity:1; transform:translate(-50%,-50%) scale(1);  }
 }
 
-/* ── Header — pre-titre + titre Outfit ───────────────────── */
 .modal-header {
   padding: 1.5rem 1.75rem 1rem !important;
   border-bottom: none !important;
@@ -1107,56 +1104,15 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
   gap: 1rem !important;
 }
 .modal-title {
-  font-size: 1.25rem !important;
+  font-size: 1.2rem !important;
   font-weight: 700 !important;
   font-family: 'Outfit', sans-serif !important;
   color: var(--text-primary) !important;
   line-height: 1.25 !important;
 }
-
-/* Pre-titre automatique via data-context */
-.modal-header::before {
-  display: none; /* désactivé par défaut, activé via JS */
-}
-
-/* Bouton fermeture ✕ */
-.modal-header > button[onclick*="close"],
-.modal-header > button[onclick*="Close"],
-.modal-header > button[style*="border-radius:50%"],
-.modal-header > button:last-child:not(.btn) {
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  border-radius: 50% !important;
-  background: var(--bg-primary) !important;
-  border: none !important;
-  cursor: pointer !important;
-  font-size: .8rem !important;
-  color: var(--text-tertiary) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-  transition: background .15s, color .15s !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin-top: 2px !important;
-}
-.modal-header > button[onclick*="close"]:hover,
-.modal-header > button[onclick*="Close"]:hover,
-.modal-header > button:last-child:not(.btn):hover {
-  background: var(--bg-secondary) !important;
-  color: var(--accent-primary) !important;
-  transform: none !important;
-}
-
-/* ── Body ────────────────────────────────────────────────── */
 .modal-body {
   padding: .5rem 1.75rem 1rem !important;
-  line-height: 1.7 !important;
 }
-
-/* ── Footer — boutons pilule ─────────────────────────────── */
 .modal-footer {
   padding: .75rem 1.75rem 1.75rem !important;
   border-top: none !important;
@@ -1165,98 +1121,169 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
   justify-content: flex-end !important;
 }
 
-/* ── Inputs dans les modals ──────────────────────────────── */
-.modal .form-input,
-.modal .form-select,
-.modal input[type="text"],
-.modal input[type="number"],
-.modal input[type="email"],
-.modal input[type="date"],
-.modal input[type="month"],
-.modal select,
-.modal textarea {
+/* ═══ 3. BOTTOM SHEET (.bs-sheet) — slide depuis le bas ════ */
+.bs-sheet {
+  border-radius: 28px 28px 0 0 !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 -16px 60px rgba(63,81,181,.18), 0 -2px 0 rgba(255,255,255,.8) inset !important;
+  border: none !important;
+}
+
+.bs-header {
+  padding: 1.25rem 1.5rem 1rem !important;
+  border-bottom: none !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+
+/* Titre du BS : .bs-title + .bs-subtitle (déjà dans le HTML) */
+.bs-subtitle {
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+  color: var(--accent-gradient-end) !important;
+  font-family: 'DM Mono', monospace !important;
+  margin-bottom: .25rem !important;
+  opacity: .9 !important;
+}
+.bs-title {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  font-family: 'Outfit', sans-serif !important;
+  color: var(--text-primary) !important;
+  line-height: 1.25 !important;
+}
+
+.bs-footer {
+  padding: 1rem 1.5rem 1.5rem !important;
+  border-top: none !important;
+  gap: 10px !important;
+}
+
+/* Séparateur subtil à la place de la border */
+.bs-body {
+  padding: .75rem 1.5rem !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+/* ═══ 4. INPUTS — partout dans les popups ═══════════════════ */
+.modal .form-input, .modal .form-select,
+.modal input:not([type=checkbox]):not([type=radio]),
+.modal select, .modal textarea,
+.bs-input, .bs-input-amount {
   border-radius: 14px !important;
   border: 1.5px solid var(--border-color) !important;
   background: var(--bg-secondary) !important;
-  padding: .72rem 1rem !important;
-  font-size: .92rem !important;
+  padding: .7rem 1rem !important;
+  font-size: .9rem !important;
   transition: border-color .15s, box-shadow .15s, background .15s !important;
 }
-.modal .form-input:focus,
-.modal .form-select:focus,
-.modal input:focus,
-.modal select:focus,
-.modal textarea:focus {
+.modal .form-input:focus, .modal .form-select:focus,
+.modal input:focus, .modal select:focus, .modal textarea:focus,
+.bs-input:focus {
   border-color: var(--accent-gradient-end) !important;
   background: var(--bg-card) !important;
-  box-shadow: 0 0 0 4px rgba(124, 77, 255, .1) !important;
+  box-shadow: 0 0 0 4px rgba(124,77,255,.1) !important;
   outline: none !important;
 }
 
-/* ── Boutons dans les modals — pilule ────────────────────── */
-.modal-footer .btn,
-.modal-footer button {
-  border-radius: 50px !important;
-  font-size: .875rem !important;
-  padding: .68rem 1.4rem !important;
-  box-shadow: none !important;
-  font-family: 'Inter', sans-serif !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  transition: opacity .15s, transform .18s cubic-bezier(.34,1.56,.64,1), background .15s !important;
-}
-.modal-footer .btn:hover,
-.modal-footer button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: none !important;
-}
+/* ═══ 5. BOUTONS PILULE — modal-footer ET bs-footer ════════ */
+
+/* Bouton annuler / cancel — dans les deux */
 .modal-footer .btn-secondary,
-.modal-footer button.btn-secondary {
+.modal-footer button[onclick*="close"],
+.modal-footer button[onclick*="Close"],
+.modal-footer button[onclick*="annuler"],
+.modal-footer button[onclick*="cancel"],
+.bs-btn-cancel {
+  border-radius: 50px !important;
+  padding: .72rem 1.35rem !important;
+  font-size: .875rem !important;
+  font-weight: 600 !important;
+  font-family: 'Inter', sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
   background: var(--bg-secondary) !important;
   color: var(--text-secondary) !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: background .15s, transform .15s cubic-bezier(.34,1.56,.64,1) !important;
 }
 .modal-footer .btn-secondary:hover,
-.modal-footer button.btn-secondary:hover {
+.modal-footer button[onclick*="close"]:hover,
+.bs-btn-cancel:hover {
   background: var(--bg-primary) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
 }
-.modal-footer .btn:not(.btn-secondary):not([class*="cancel"]),
-.modal-footer button:not(.btn-secondary):not([onclick*="close"]):not([onclick*="Close"]):not([onclick*="cancel"]):not([onclick*="Cancel"]) {
+
+/* Bouton principal save/confirm — dans les deux */
+.modal-footer .btn:not(.btn-secondary),
+.bs-btn-save {
+  border-radius: 50px !important;
+  padding: .72rem 1.5rem !important;
+  font-size: .875rem !important;
+  font-weight: 700 !important;
+  font-family: 'Inter', sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
   background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end)) !important;
   color: #fff !important;
-  box-shadow: 0 6px 18px rgba(124, 77, 255, .28) !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(124,77,255,.28) !important;
+  cursor: pointer !important;
+  transition: opacity .15s, transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .15s !important;
+  flex: unset !important;
 }
-.modal-footer .btn:not(.btn-secondary):hover {
+.modal-footer .btn:not(.btn-secondary):hover,
+.bs-btn-save:hover {
   opacity: .92 !important;
-  box-shadow: 0 10px 26px rgba(124, 77, 255, .38) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 26px rgba(124,77,255,.38) !important;
 }
 
-/* ── Bouton Confirmer rouge (suppression) ────────────────── */
-#confirmBtn {
+/* Bouton Confirmer suppression — rouge */
+#confirmBtn,
+button[id*="confirm"]:not([class*="cancel"]) {
   background: linear-gradient(135deg, #c62828, #ef5350) !important;
-  box-shadow: 0 6px 18px rgba(198, 40, 40, .28) !important;
+  box-shadow: 0 6px 18px rgba(198,40,40,.28) !important;
 }
-#confirmBtn:hover {
-  box-shadow: 0 10px 26px rgba(198, 40, 40, .38) !important;
+#confirmBtn:hover { box-shadow: 0 10px 26px rgba(198,40,40,.38) !important; }
+
+/* ═══ 6. BOUTON FERMETURE ✕ — modal header ═════════════════ */
+.modal-header > button:last-child,
+.modal-header button[style*="border-radius:50%"],
+.modal-header button[onclick*="close"],
+.modal-header button[onclick*="Close"] {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  border-radius: 50% !important;
+  background: var(--bg-primary) !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-size: .8rem !important;
+  color: var(--text-tertiary) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: background .15s, color .15s !important;
+  margin-top: 2px !important;
+}
+.modal-header > button:last-child:hover,
+.modal-header button:hover {
+  background: var(--bg-secondary) !important;
+  color: var(--accent-primary) !important;
+  transform: none !important;
 }
 
-/* ── Tailles adaptatives selon le contenu ────────────────── */
-/* Petite (confirmation, input simple) */
-#confirmModal,
-#inputModal {
-  max-width: 400px !important;
-}
-/* Moyenne (catégories, comptes) */
-#budgetsModal,
-#comptesModal {
-  max-width: 560px !important;
-}
-/* Grande (rapport, analyse) */
-.modal[style*="max-width:700"],
-.modal[style*="max-width: 700"] {
-  max-width: 700px !important;
-}
-
-/* ── Mobile : modals plein écran bas ─────────────────────── */
+/* ═══ 7. MOBILE — BS full width déjà géré, modal en bas ════ */
 @media (max-width: 600px) {
   .modal {
     top: auto !important;
@@ -1265,14 +1292,26 @@ tbody tr:nth-child(n+6){ animation-delay: .17s; }
     transform: none !important;
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: 24px 24px 0 0 !important;
+    border-radius: 28px 28px 0 0 !important;
     max-height: 92vh !important;
   }
   .modal.active {
-    animation: sfModalInMobile .36s cubic-bezier(.34, 1.4, .64, 1) both !important;
+    animation: sfModalInMobile .36s cubic-bezier(.34,1.4,.64,1) both !important;
   }
   @keyframes sfModalInMobile {
-    from { opacity: 0; transform: translateY(40px) scale(.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity:0; transform:translateY(40px) scale(.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
   }
+}
+
+/* ═══ 8. FOCUS INPUTS global ════════════════════════════════ */
+.form-input:focus, .form-select:focus, .auth-input:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 4px rgba(124,77,255,.1) !important;
+  border-color: var(--accent-gradient-end) !important;
+}
+
+/* ═══ 9. ACCESSIBILITÉ ══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .modal.active, .bs-sheet { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
