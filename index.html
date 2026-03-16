@@ -616,15 +616,20 @@
 </div></div>
 <!-- Historique mensuel Revenus & Cashflow -->
 <div data-card-id="dep-hist-revenus" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden;margin-top:.5rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.75rem;flex-wrap:wrap;gap:.75rem">
+  <div onclick="app.toggleSection('hist-rev-body','hist-rev-arrow','hist-rev-trigger')" id="hist-rev-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.75rem;cursor:pointer;user-select:none;flex-wrap:wrap;gap:.75rem">
     <h2 class="card-title" style="margin:0;font-size:1.2rem">📊 Historique Revenus &amp; Cashflow</h2>
-    <div class="hist-rev-switcher">
-      <button onclick="app.setHistRevMode('tableau')" id="hist-rev-btn-tableau" class="hist-rev-mode-btn active" title="Tableau">⊞</button>
-      <button onclick="app.setHistRevMode('timeline')" id="hist-rev-btn-timeline" class="hist-rev-mode-btn" title="Timeline">☰</button>
-      <button onclick="app.setHistRevMode('cards')" id="hist-rev-btn-cards" class="hist-rev-mode-btn" title="Cartes">⊟</button>
+    <div style="display:flex;align-items:center;gap:.75rem" onclick="event.stopPropagation()">
+      <div class="hist-rev-switcher">
+        <button onclick="app.setHistRevMode('tableau')" id="hist-rev-btn-tableau" class="hist-rev-mode-btn active" title="Tableau">⊞</button>
+        <button onclick="app.setHistRevMode('timeline')" id="hist-rev-btn-timeline" class="hist-rev-mode-btn" title="Timeline">☰</button>
+        <button onclick="app.setHistRevMode('cards')" id="hist-rev-btn-cards" class="hist-rev-mode-btn" title="Cartes">⊟</button>
+      </div>
+      <span id="hist-rev-arrow" style="font-size:1.3rem;color:var(--text-tertiary);line-height:1">›</span>
     </div>
   </div>
-  <div id="historique-revenus-container" style="padding:0 1.5rem 1.5rem"></div>
+  <div id="hist-rev-body" style="display:none;padding:0 1.5rem 1.5rem">
+    <div id="historique-revenus-container"></div>
+  </div>
 </div></div>
 
 </div> <!-- fin tab-depenses -->
