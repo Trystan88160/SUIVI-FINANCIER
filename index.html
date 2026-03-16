@@ -26,7 +26,6 @@
 <!-- ═══ ÉCRAN DE CONNEXION ═══════════════════════════════════════════════ -->
 <div id="auth-screen" style="display:none">
 
-  <!-- Grande arche SVG décorative — concept D exact -->
   <svg class="auth-bg-arch" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="authGD1" x1="100" y1="450" x2="600" y2="50" gradientUnits="userSpaceOnUse">
@@ -62,7 +61,6 @@
     <div class="auth-form-inner">
       <div id="auth-error"   class="auth-error"></div>
       <div id="auth-success" class="auth-success"></div>
-
       <input type="email"    class="auth-input" id="auth-email"     placeholder="Adresse e-mail"            autocomplete="email"            onkeydown="if(event.key==='Enter')app.authSubmit()">
       <input type="password" class="auth-input" id="auth-password"  placeholder="Mot de passe"              autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
       <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none"            autocomplete="new-password">

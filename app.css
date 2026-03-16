@@ -151,13 +151,12 @@ body
   .modal-body{padding:1rem 1.25rem}
 }
 
-/* ── AUTH SCREEN — Aurora Minimal (concept D exact) ── */
+/* ── AUTH SCREEN — Aurora Minimal ── */
 #auth-screen {
     position:fixed; inset:0; z-index:10000;
     background:#f0f4ff;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Inter',sans-serif;
-    overflow:hidden;
+    position:relative; overflow:hidden;
 }
 #auth-screen .auth-bg-arch {
     position:absolute; top:50%; left:50%;
@@ -192,7 +191,6 @@ body
     position:relative; z-index:1;
     width:380px; max-width:calc(100vw - 2rem);
     text-align:center;
-    margin-top:-120px;
     animation:authCardIn .8s ease both;
 }
 @keyframes authCardIn {
