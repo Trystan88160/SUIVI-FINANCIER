@@ -26,62 +26,58 @@
 <!-- ═══ ÉCRAN DE CONNEXION ═══════════════════════════════════════════════ -->
 <div id="auth-screen" style="display:none">
 
-  <!-- Arche SVG décorative fond -->
+  <!-- Grande arche SVG décorative — concept D exact -->
   <svg class="auth-bg-arch" viewBox="0 0 700 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="authGD1" x1="100" y1="450" x2="600" y2="50" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.1"/>
-        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.18"/>
+        <stop offset="0%"   stop-color="#3f51b5" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.2"/>
       </linearGradient>
       <linearGradient id="authGD2" x1="150" y1="450" x2="550" y2="80" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.06"/>
-        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.1"/>
+        <stop offset="0%"   stop-color="#3f51b5" stop-opacity="0.07"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.12"/>
       </linearGradient>
       <linearGradient id="authGD3" x1="200" y1="450" x2="500" y2="100" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#3f51b5" stop-opacity="0.13"/>
-        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.22"/>
+        <stop offset="0%"   stop-color="#5c6bc0" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#7c4dff" stop-opacity="0.25"/>
       </linearGradient>
     </defs>
-    <path d="M60 450 L350 120 L640 450"   stroke="url(#authGD1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M140 450 L350 160 L560 450" stroke="url(#authGD2)" stroke-width="1"   stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 8"/>
-    <path d="M210 450 L350 200 L490 450" stroke="url(#authGD3)" stroke-width="3"   stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 450 L350 40 L640 450"   stroke="url(#authGD1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M140 450 L350 100 L560 450" stroke="url(#authGD2)" stroke-width="1"   stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="4 8"/>
+    <path d="M210 450 L350 160 L490 450" stroke="url(#authGD3)" stroke-width="3"   stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     <line x1="60" y1="450" x2="640" y2="450" stroke="#3f51b5" stroke-width="1" opacity="0.1"/>
-    <circle cx="350" cy="450" r="5" fill="#3f51b5" opacity="0.2"/>
-    <circle cx="350" cy="200" r="4" fill="#3f51b5" opacity="0.35"/>
+    <circle cx="350" cy="450" r="5" fill="#3f51b5" opacity="0.25"/>
+    <circle cx="350" cy="40"  r="3" fill="#7c4dff" opacity="0.3"/>
+    <circle cx="350" cy="100" r="2" fill="#7c4dff" opacity="0.2"/>
+    <circle cx="350" cy="160" r="4" fill="#3f51b5" opacity="0.4"/>
   </svg>
 
-  <!-- Halos lumineux -->
-  <div class="auth-halo auth-halo-1"></div>
-  <div class="auth-halo auth-halo-2"></div>
+  <div class="auth-halo-1"></div>
+  <div class="auth-halo-2"></div>
 
-  <!-- Carte -->
   <div class="auth-card">
+    <h2>Vault</h2>
+    <p class="auth-subtitle" id="auth-subtitle">Ce que l'on protège révèle ce que l'on aime.</p>
 
-    <div class="auth-top">
-      <h2>Vault</h2>
-      <p class="auth-subtitle" id="auth-subtitle">Ce que l'on protège révèle ce que l'on aime.</p>
-    </div>
-
-    <div class="auth-bottom">
+    <div class="auth-form-inner">
       <div id="auth-error"   class="auth-error"></div>
       <div id="auth-success" class="auth-success"></div>
 
-      <div class="auth-form-inner">
-        <input type="email"    class="auth-input" id="auth-email"     placeholder="Adresse e-mail"            autocomplete="email"            onkeydown="if(event.key==='Enter')app.authSubmit()">
-        <input type="password" class="auth-input" id="auth-password"  placeholder="Mot de passe"              autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
-        <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none"            autocomplete="new-password">
-        <button class="auth-btn" id="auth-submit" onclick="app.authSubmit()">Se connecter</button>
-      </div>
-
-      <div class="auth-switch" id="auth-switch-login">
-        Pas encore de compte ? <a onclick="app.showSignup()">Créer un accès</a>
-      </div>
-      <div class="auth-switch" id="auth-switch-signup" style="display:none">
-        Déjà un compte ? <a onclick="app.showLogin()">Se connecter</a>
-      </div>
+      <input type="email"    class="auth-input" id="auth-email"     placeholder="Adresse e-mail"            autocomplete="email"            onkeydown="if(event.key==='Enter')app.authSubmit()">
+      <input type="password" class="auth-input" id="auth-password"  placeholder="Mot de passe"              autocomplete="current-password" onkeydown="if(event.key==='Enter')app.authSubmit()">
+      <input type="password" class="auth-input" id="auth-password2" placeholder="Confirmer le mot de passe" style="display:none"            autocomplete="new-password">
+      <button class="auth-btn" id="auth-submit" onclick="app.authSubmit()">Se connecter</button>
     </div>
 
+    <div class="auth-switch" id="auth-switch-login">
+      Pas encore de compte ? <a onclick="app.showSignup()">Créer un accès</a>
+    </div>
+    <div class="auth-switch" id="auth-switch-signup" style="display:none">
+      Déjà un compte ? <a onclick="app.showLogin()">Se connecter</a>
+    </div>
   </div>
+
+</div>
 </div>
 
 <!-- Bouton aide déplacé dans tab-customize-bar -->
