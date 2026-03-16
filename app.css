@@ -642,3 +642,57 @@ html{-webkit-text-size-adjust:100%}
 /* ── Espacement entre les cartes de chaque onglet ── */
 [data-card-id]{margin-bottom:1rem;}
 [data-card-id]:last-child{margin-bottom:0;}
+
+/* ── Pointage bancaire ─────────────────────────────── */
+.pointage-compte-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    margin-bottom: .75rem;
+}
+.pointage-compte-card:last-child { margin-bottom: 0; }
+
+.pointage-compte-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .85rem;
+}
+
+.pointage-soldes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: .75rem;
+}
+@media (max-width: 600px) {
+    .pointage-soldes-grid { grid-template-columns: 1fr; }
+}
+
+.pointage-solde-bloc {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: .6rem .85rem;
+}
+
+.pointage-ecart {
+    border-color: transparent;
+    background: var(--bg-tertiary, var(--bg-secondary));
+}
+
+.pointage-solde-label {
+    font-size: .62rem;
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-tertiary);
+    margin-bottom: .2rem;
+}
+
+.pointage-solde-val {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin-top: .15rem;
+}

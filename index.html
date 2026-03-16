@@ -616,6 +616,18 @@
   </div>
 </div></div>
 
+<!-- Pointage bancaire -->
+<div data-card-id="dep-pointage" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.75rem;flex-wrap:wrap;gap:.75rem">
+    <div>
+      <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Comptes bancaires</div>
+      <h2 class="card-title" style="margin:0;font-size:1.2rem">💳 Pointage</h2>
+    </div>
+    <button class="btn btn-primary btn-small" onclick="app.openAddComptePointage()" style="padding:.45rem 1rem;font-size:.72rem">+ Ajouter un compte</button>
+  </div>
+  <div id="pointage-container" style="padding:0 1.5rem 1.5rem"></div>
+</div></div>
+
 </div> <!-- fin tab-depenses -->
 
 <!-- PEA -->
@@ -1158,6 +1170,12 @@
           <label class="form-label">Note</label>
           <input type="text" class="form-input" id="rev-note" placeholder="Source, employeur...">
         </div>
+        <div class="form-group" id="rev-compte-group" style="display:none">
+          <label class="form-label">Compte bancaire</label>
+          <select class="form-select" id="rev-compte">
+            <option value="">— Aucun —</option>
+          </select>
+        </div>
       </div>
       <div id="revenus-history" style="margin-top:.5rem"></div>
     </div>
@@ -1402,6 +1420,50 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('SW non enregistré:', err));
   });
 }
+<!-- ── Bottom Sheet : Ajouter/éditer compte bancaire ──── -->
+<div id="bs-pointage-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeAddComptePointage()">
+  <div class="bs-sheet">
+    <div class="bs-handle"><div class="bs-handle-bar"></div></div>
+    <div class="bs-header">
+      <div>
+        <div class="bs-subtitle">Compte bancaire</div>
+        <div class="bs-title" id="bs-pointage-title">Ajouter un compte</div>
+      </div>
+      <button onclick="app.closeAddComptePointage()" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;color:var(--text-secondary);font-size:.8rem">✕</button>
+    </div>
+    <div class="bs-body">
+      <input type="hidden" id="bs-pointage-edit-id">
+      <div class="grid grid-2" style="gap:.75rem;margin-bottom:.75rem">
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Nom du compte</label>
+          <input type="text" class="form-input" id="bs-pointage-nom" placeholder="Ex: Compte Courant BNP…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="bs-pointage-type">
+            <option value="courant">💳 Courant</option>
+            <option value="épargne">🏦 Épargne</option>
+            <option value="autre">📁 Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Solde initial (€)</label>
+          <input type="number" class="form-input" id="bs-pointage-solde" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <label class="form-label">Date du solde initial</label>
+          <input type="date" class="form-input" id="bs-pointage-date">
+          <div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.35rem">Vault calcule le solde à partir de cette date en ajoutant revenus et en retranchant les dépenses liées à ce compte.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bs-footer">
+      <button class="bs-btn-cancel" onclick="app.closeAddComptePointage()">Annuler</button>
+      <button class="bs-btn-save" onclick="app.saveComptePointage()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 </script>
 </body>
 </html>

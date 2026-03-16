@@ -18,6 +18,7 @@ const app = {
         },
         comptes: ['Livret A', 'Livret Jeune', 'PEA', 'CTO'],
         comptesLiquides: ['Livret A', 'Livret Jeune'],
+        comptesPointage: [],
         modeles: [],
         scenarios: [],
         objectifs: [],
@@ -429,6 +430,7 @@ const app = {
             categoriesEpargne:  loaded.categoriesEpargne  || ['ÉPARGNE'],
             comptes:            loaded.comptes             || this.data.comptes,
             comptesLiquides:    loaded.comptesLiquides     || [],
+            comptesPointage:    loaded.comptesPointage     || [],
             modeles:            loaded.modeles             || [],
             scenarios:          loaded.scenarios           || [],
             objectifs:          loaded.objectifs           || [],
@@ -860,7 +862,7 @@ const app = {
         });
         this._currentTab = realName;
         if (realName === 'dashboard') { this.refreshDashboard(); this.refreshHeatmap(); }
-        if (realName === 'depenses') { this.analyseDepenses(); this.refreshRegle503020(); this.refreshComparaison(); this.refreshRevenus(); this.refreshHistoriqueRevenus(); }
+        if (realName === 'depenses') { this.analyseDepenses(); this.refreshRegle503020(); this.refreshComparaison(); this.refreshRevenus(); this.refreshHistoriqueRevenus(); this.refreshPointage(); }
         if (realName === 'bilan') { this.refreshObjectifs(); this.refreshNotes(); this.refreshBilanAnnuel(); this.initRapportSelect(); this.initBilanSelect(); }
         if (realName === 'patrimoine') { this.afficherPatrimoine(); this.refreshStatsPatrimoine(); }
         if (realName === 'pea') { this.refreshLignesPEA(); }
@@ -2073,6 +2075,8 @@ const app = {
         const row = document.createElement('div');
         row.className = 'bs-dep-row';
         row.id = 'bs-dep-row-' + id;
+        const hasComptes = (this.data.comptesPointage || []).length > 0;
+        const comptesOpts = (this.data.comptesPointage || []).map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
         row.innerHTML = `
             <div class="bs-dep-row-label"># ${id}</div>
             ${id > 1 ? `<button class="bs-remove-btn" onclick="app._bsRemoveDepRow(${id})">✕</button>` : ''}
@@ -2086,6 +2090,7 @@ const app = {
                 <input type="text" class="bs-input" id="bs-dep-note-${id}" placeholder="Note…">
                 <input type="date" class="bs-input" id="bs-dep-date-${id}" value="${today}" style="width:140px">
             </div>
+            ${hasComptes ? `<div style="margin-top:.35rem"><select class="bs-input" id="bs-dep-compte-${id}" style="width:100%;font-size:.75rem"><option value="">💳 Compte — (optionnel)</option>${comptesOpts}</select></div>` : ''}
         `;
         const body = document.getElementById('bs-dep-rows');
 
@@ -2126,8 +2131,9 @@ const app = {
             const montant = parseFloat(document.getElementById('bs-dep-montant-' + id)?.value);
             const date = document.getElementById('bs-dep-date-' + id)?.value;
             const note = document.getElementById('bs-dep-note-' + id)?.value || '';
+            const compteId = document.getElementById('bs-dep-compte-' + id)?.value || null;
             if (!montant || montant <= 0) return;
-            this.data.depenses.push({ id: Date.now() + added, categorie: cat, montant, date, note });
+            this.data.depenses.push({ id: Date.now() + added, categorie: cat, montant, date, note, compteId });
             added++;
         });
         if (added === 0) { this.notify('Aucun montant saisi', 'error'); return; }
@@ -2136,6 +2142,7 @@ const app = {
         this.refreshStatsDepenses();
         this.analyseDepenses();
         this.refreshCharts();
+        this.refreshPointage();
         this.closeBsDepenses();
         this.notify(`${added} dépense${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''}`, 'success');
     },
@@ -2680,6 +2687,169 @@ const app = {
         );
     },
 
+    // ─── POINTAGE BANCAIRE ──────────────────────────────────────────────────
+
+    openAddComptePointage(id) {
+        const overlay = document.getElementById('bs-pointage-overlay');
+        const title   = document.getElementById('bs-pointage-title');
+        const editId  = document.getElementById('bs-pointage-edit-id');
+        const nom     = document.getElementById('bs-pointage-nom');
+        const type    = document.getElementById('bs-pointage-type');
+        const solde   = document.getElementById('bs-pointage-solde');
+        const date    = document.getElementById('bs-pointage-date');
+        if (id) {
+            const c = (this.data.comptesPointage || []).find(c => c.id === id);
+            if (!c) return;
+            title.textContent = 'Modifier le compte';
+            editId.value  = c.id;
+            nom.value     = c.nom;
+            type.value    = c.type || 'courant';
+            solde.value   = c.soldeInitial;
+            date.value    = c.dateSoldeInitial;
+        } else {
+            title.textContent = 'Ajouter un compte';
+            editId.value  = '';
+            nom.value     = '';
+            type.value    = 'courant';
+            solde.value   = '';
+            date.value    = new Date().toISOString().slice(0, 10);
+        }
+        overlay.classList.add('open');
+    },
+
+    closeAddComptePointage() {
+        document.getElementById('bs-pointage-overlay').classList.remove('open');
+    },
+
+    saveComptePointage() {
+        const nom   = document.getElementById('bs-pointage-nom').value.trim();
+        const type  = document.getElementById('bs-pointage-type').value;
+        const solde = parseFloat(document.getElementById('bs-pointage-solde').value);
+        const date  = document.getElementById('bs-pointage-date').value;
+        const editId = document.getElementById('bs-pointage-edit-id').value;
+        if (!nom)           { this.notify('Nom requis', 'error'); return; }
+        if (isNaN(solde))   { this.notify('Solde initial requis', 'error'); return; }
+        if (!date)          { this.notify('Date requise', 'error'); return; }
+        if (!this.data.comptesPointage) this.data.comptesPointage = [];
+        if (editId) {
+            const c = this.data.comptesPointage.find(c => c.id === editId);
+            if (c) { c.nom = nom; c.type = type; c.soldeInitial = solde; c.dateSoldeInitial = date; }
+        } else {
+            this.data.comptesPointage.push({
+                id: 'cp_' + Date.now(),
+                nom, type,
+                soldeInitial: solde,
+                dateSoldeInitial: date
+            });
+        }
+        this.save();
+        this.refreshPointage();
+        this.closeAddComptePointage();
+        this.notify(editId ? 'Compte modifié' : 'Compte ajouté', 'success');
+    },
+
+    supprimerComptePointage(id) {
+        this.showModal('Supprimer ce compte', 'Toutes les liaisons de transactions seront perdues.', () => {
+            this.data.comptesPointage = (this.data.comptesPointage || []).filter(c => c.id !== id);
+            this.data.depenses.forEach(d => { if (d.compteId === id) d.compteId = null; });
+            this.data.revenus.forEach(r => { if (r.compteId === id) r.compteId = null; });
+            this.save();
+            this.refreshPointage();
+            this.notify('Compte supprimé', 'success');
+        });
+    },
+
+    _calcSoldeCompte(compte) {
+        const ref = new Date(compte.dateSoldeInitial + 'T00:00:00');
+        const deps = (this.data.depenses || [])
+            .filter(d => d.compteId === compte.id && new Date(d.date + 'T00:00:00') > ref)
+            .reduce((s, d) => s + d.montant, 0);
+        const revs = (this.data.revenus || [])
+            .filter(r => r.compteId === compte.id && new Date(r.date + 'T00:00:00') > ref)
+            .reduce((s, r) => s + r.montant, 0);
+        return compte.soldeInitial + revs - deps;
+    },
+
+    saisirSoldeReel(id) {
+        const c = (this.data.comptesPointage || []).find(c => c.id === id);
+        if (!c) return;
+        const input = document.getElementById('pointage-solde-reel-' + id);
+        const val = parseFloat(input?.value);
+        if (isNaN(val)) { this.notify('Montant invalide', 'error'); return; }
+        c.soldeReel = val;
+        c.dateSoldeReel = new Date().toISOString().slice(0, 10);
+        this.save();
+        this.refreshPointage();
+        this.notify('Solde réel mis à jour', 'success');
+    },
+
+    refreshPointage() {
+        const container = document.getElementById('pointage-container');
+        if (!container) return;
+        const comptes = this.data.comptesPointage || [];
+        if (comptes.length === 0) {
+            container.innerHTML = `<div style="text-align:center;padding:2rem 1rem;color:var(--text-tertiary)">
+                <div style="font-size:2rem;margin-bottom:.5rem">🏦</div>
+                <div style="font-size:.85rem">Aucun compte bancaire. Ajoutez-en un pour commencer le pointage.</div>
+            </div>`;
+            return;
+        }
+        const typeIcon = { courant: '💳', épargne: '🏦', autre: '📁' };
+        container.innerHTML = comptes.map(c => {
+            const soldeVault = this._calcSoldeCompte(c);
+            const hasReel    = typeof c.soldeReel === 'number';
+            const ecart      = hasReel ? (c.soldeReel - soldeVault) : null;
+            const ecartAbs   = ecart !== null ? Math.abs(ecart) : null;
+            const ecartColor = ecart === null ? 'var(--text-tertiary)'
+                             : ecartAbs < 0.01 ? 'var(--success)'
+                             : ecartAbs < 20   ? 'var(--warning, #f59e0b)'
+                             : 'var(--danger)';
+            const ecartIcon  = ecart === null ? '' : ecartAbs < 0.01 ? '✅' : ecartAbs < 20 ? '⚠️' : '🔴';
+            const ecartLabel = ecart === null ? '—'
+                             : ecartAbs < 0.01 ? 'Parfait !'
+                             : (ecart >= 0 ? '+' : '') + this.formatCurrency(ecart);
+            const nbDep = (this.data.depenses || []).filter(d => d.compteId === c.id).length;
+            const nbRev = (this.data.revenus  || []).filter(r => r.compteId === c.id).length;
+            return `<div class="pointage-compte-card">
+                <div class="pointage-compte-header">
+                    <div style="display:flex;align-items:center;gap:.6rem">
+                        <span style="font-size:1.3rem">${typeIcon[c.type] || '💳'}</span>
+                        <div>
+                            <div style="font-weight:600;color:var(--text-primary);font-size:.95rem">${c.nom}</div>
+                            <div style="font-size:.68rem;color:var(--text-tertiary);text-transform:capitalize">${c.type} · ${nbDep} dépense${nbDep>1?'s':''} · ${nbRev} revenu${nbRev>1?'s':''} liés</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:.4rem">
+                        <button class="btn btn-small btn-secondary" onclick="app.openAddComptePointage('${c.id}')" style="font-size:.65rem;padding:.3rem .6rem">✏️</button>
+                        <button class="btn btn-small btn-secondary" onclick="app.supprimerComptePointage('${c.id}')" style="font-size:.65rem;padding:.3rem .6rem">✕</button>
+                    </div>
+                </div>
+                <div class="pointage-soldes-grid">
+                    <div class="pointage-solde-bloc">
+                        <div class="pointage-solde-label">Solde Vault</div>
+                        <div class="pointage-solde-val" style="color:var(--accent-primary)">${this.formatCurrency(soldeVault)}</div>
+                        <div style="font-size:.65rem;color:var(--text-tertiary)">depuis le ${new Date(c.dateSoldeInitial+'T00:00:00').toLocaleDateString('fr-FR')}</div>
+                    </div>
+                    <div class="pointage-solde-bloc">
+                        <div class="pointage-solde-label">Solde réel</div>
+                        <div style="display:flex;gap:.4rem;align-items:center;margin-top:.25rem">
+                            <input type="number" id="pointage-solde-reel-${c.id}" class="form-input" step="0.01"
+                                value="${hasReel ? c.soldeReel : ''}" placeholder="Saisir…"
+                                style="width:110px;padding:.3rem .5rem;font-size:.82rem;text-align:right">
+                            <button class="btn btn-primary btn-small" onclick="app.saisirSoldeReel('${c.id}')" style="font-size:.7rem;padding:.3rem .7rem;white-space:nowrap">OK</button>
+                        </div>
+                        ${hasReel ? `<div style="font-size:.65rem;color:var(--text-tertiary)">saisi le ${new Date(c.dateSoldeReel+'T00:00:00').toLocaleDateString('fr-FR')}</div>` : ''}
+                    </div>
+                    <div class="pointage-solde-bloc pointage-ecart">
+                        <div class="pointage-solde-label">Écart</div>
+                        <div class="pointage-solde-val" style="color:${ecartColor}">${ecartIcon} ${ecartLabel}</div>
+                        ${ecart !== null && ecartAbs >= 0.01 ? `<div style="font-size:.65rem;color:var(--text-tertiary)">${ecart > 0 ? 'Dépenses manquantes ?' : 'Revenus manquants ?'}</div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    },
+
     updatePatInputs() {
         const container = document.getElementById('pat-inputs');
         container.innerHTML = this.data.comptes.map(compte => `
@@ -2944,6 +3114,19 @@ const app = {
             const now = new Date();
             date.value = now.toISOString().split('T')[0];
         }
+        // Peupler le select compte
+        const compteGroup = document.getElementById('rev-compte-group');
+        const compteSelect = document.getElementById('rev-compte');
+        const comptes = this.data.comptesPointage || [];
+        if (compteGroup && compteSelect) {
+            if (comptes.length > 0) {
+                compteSelect.innerHTML = '<option value="">— Aucun —</option>' +
+                    comptes.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+                compteGroup.style.display = '';
+            } else {
+                compteGroup.style.display = 'none';
+            }
+        }
         // Afficher l'historique récent
         this.refreshHistoriqueRevenus();
         // Ouvrir le bottom sheet
@@ -2961,13 +3144,15 @@ const app = {
         const type    = document.getElementById('rev-type').value;
         const date    = document.getElementById('rev-date').value;
         const note    = document.getElementById('rev-note').value;
+        const compteId = document.getElementById('rev-compte')?.value || null;
         if (!montant || montant <= 0) { this.notify('Montant invalide', 'error'); return; }
         if (!date) { this.notify('Date requise', 'error'); return; }
         const mois = date.substring(0, 7);
-        this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note });
+        this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note, compteId });
         this.save();
         this.refreshRevenus();
         this.refreshDashboard();
+        this.refreshPointage();
         document.getElementById('rev-montant').value = '';
         document.getElementById('rev-note').value = '';
         this.notify('Revenu enregistré', 'success');
@@ -3922,6 +4107,7 @@ const app = {
             { id: 'dep-analyse',     label: '🔍 Analyse des dépenses',    sub: 'Graphique par période' },
             { id: 'dep-historique',  label: '📋 Historique',              sub: 'Toutes les transactions' },
             { id: 'dep-hist-revenus',label: '📊 Historique Revenus',      sub: 'Cashflow mensuel' },
+            { id: 'dep-pointage',    label: '💳 Pointage bancaire',       sub: 'Soldes & vérification' },
         ],
         'pea': [
             { id: 'pea-stats',      label: 'Stats PEA',                    sub: 'Valeur, investi, gain' },
@@ -4782,6 +4968,7 @@ const app = {
         this.refreshBilanAnnuel();
         this.refreshHeatmap();
         this.checkResumeHebdo();
+        this.refreshPointage();
     },
 
     saveSettings() {
