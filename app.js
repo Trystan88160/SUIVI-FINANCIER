@@ -3265,6 +3265,7 @@ const app = {
         this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note, compteId: compteId || null });
         this.save();
         this.refreshRevenus();
+        this.refreshHistoriqueRevenus();
         this.refreshDashboard();
         this.refreshPointage();
         document.getElementById('rev-montant').value = '';
@@ -3278,6 +3279,7 @@ const app = {
             this.data.revenus = this.data.revenus.filter(r => r.id !== id);
             this.save();
             this.refreshRevenus();
+            this.refreshHistoriqueRevenus();
             this.refreshDashboard();
             this.refreshPointage();
             this.notify('Revenu supprimé', 'success');
