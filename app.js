@@ -2676,9 +2676,12 @@ const app = {
             return;
         }
 
-        const valeur = this.data.budgets[ancien];
-        delete this.data.budgets[ancien];
-        this.data.budgets[nouveau] = valeur;
+        // Reconstruire l'objet en remplaçant la clé à sa position d'origine
+        const nouvelObjet = {};
+        Object.keys(this.data.budgets).forEach(k => {
+            nouvelObjet[k === ancien ? nouveau : k] = this.data.budgets[k];
+        });
+        this.data.budgets = nouvelObjet;
 
         this.data.depenses.forEach(d => {
             if (d.categorie === ancien) d.categorie = nouveau;
