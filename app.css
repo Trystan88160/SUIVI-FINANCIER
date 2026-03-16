@@ -658,3 +658,92 @@ html{-webkit-text-size-adjust:100%}
     border-radius: 14px;
     padding: .75rem 1rem;
 }
+
+/* ── Historique Revenus — switcher & modèles ──────── */
+.hist-rev-switcher {
+    display: flex;
+    gap: .3rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: .2rem;
+}
+.hist-rev-mode-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: .3rem .6rem;
+    border-radius: 7px;
+    font-size: 1rem;
+    color: var(--text-tertiary);
+    line-height: 1;
+}
+.hist-rev-mode-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+/* Tableau — row hover */
+.hist-rev-row { cursor: pointer; }
+.hist-rev-row:hover { background: var(--bg-secondary) !important; }
+
+/* Timeline */
+.hist-rev-timeline {
+    position: relative;
+    padding-left: 1.5rem;
+}
+.hist-rev-timeline::before {
+    content: '';
+    position: absolute;
+    left: .45rem;
+    top: .5rem;
+    bottom: .5rem;
+    width: 2px;
+    background: var(--border-color);
+    border-radius: 1px;
+}
+.hist-rev-tl-item {
+    position: relative;
+    display: flex;
+    gap: .85rem;
+    margin-bottom: 1.25rem;
+}
+.hist-rev-tl-item:last-child { margin-bottom: 0; }
+.hist-rev-tl-dot {
+    position: absolute;
+    left: -1.25rem;
+    top: .35rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 2px solid var(--bg-primary);
+    box-shadow: 0 0 0 2px var(--border-color);
+}
+.hist-rev-tl-content {
+    flex: 1;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: .75rem 1rem;
+}
+
+/* Cards grid */
+.hist-rev-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: .75rem;
+}
+.hist-rev-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: .85rem 1rem;
+}
+.hist-rev-card-current {
+    border-color: var(--accent-primary);
+    background: rgba(63,81,181,.04);
+}
+
+/* Details summary shared */
+.hist-rev-details summary::-webkit-details-marker { display: none; }

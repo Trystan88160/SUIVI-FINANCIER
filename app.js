@@ -1857,23 +1857,36 @@ const app = {
         if (arrow) arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
     },
 
+    setHistRevMode(mode) {
+        this.data.parametres = this.data.parametres || {};
+        this.data.parametres.histRevMode = mode;
+        this.save();
+        ['tableau','timeline','cards'].forEach(m => {
+            const btn = document.getElementById('hist-rev-btn-' + m);
+            if (btn) btn.classList.toggle('active', m === mode);
+        });
+        this.refreshHistoriqueRevenus();
+    },
+
     refreshHistoriqueRevenus() {
         const container = document.getElementById('historique-revenus-container');
         if (!container) return;
-        const exclus = this.data.categoriesEpargne || ['ÉPARGNE'];
+        const mode = (this.data.parametres && this.data.parametres.histRevMode) || 'tableau';
+        // sync buttons
+        ['tableau','timeline','cards'].forEach(m => {
+            const btn = document.getElementById('hist-rev-btn-' + m);
+            if (btn) btn.classList.toggle('active', m === mode);
+        });
         const now = new Date();
-
         const moisSet = new Set([
             ...this.data.depenses.map(d => d.date.slice(0,7)),
-            ...this.data.revenus.map(r => r.mois)
+            ...this.data.revenus.map(r => r.mois || r.date.slice(0,7))
         ]);
         const moisList = [...moisSet].sort().reverse().slice(0, 24);
-
         if (moisList.length === 0) {
             container.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-state-icon">📊</div><div>Aucune donnée disponible</div></div>';
             return;
         }
-
         const rows = moisList.map(mois => {
             const [y, m] = mois.split('-').map(Number);
             const year = y, month = m - 1;
@@ -1881,49 +1894,154 @@ const app = {
             const depEffectives = this.getDepEffectives(year, month);
             const cashflow = revenus > 0 ? revenus - depEffectives : null;
             const tauxEp = revenus > 0 ? ((revenus - depEffectives) / revenus * 100) : null;
-            const label = new Date(year, month, 1).toLocaleDateString('fr-FR', { month:'short', year:'numeric' });
+            const label = new Date(year, month, 1).toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+            const labelShort = new Date(year, month, 1).toLocaleDateString('fr-FR', { month:'short', year:'numeric' });
             const isCurrentMonth = year === now.getFullYear() && month === now.getMonth();
-            const flagColor = tauxEp === null ? 'var(--text-tertiary)' : tauxEp >= 20 ? 'var(--success)' : tauxEp >= 10 ? 'var(--warning)' : 'var(--danger)';
-            return { mois, label, revenus, depEffectives, cashflow, tauxEp, source, isCurrentMonth, flagColor };
+            const flagColor = tauxEp === null ? 'var(--text-tertiary)' : tauxEp >= 20 ? 'var(--success)' : tauxEp >= 10 ? 'var(--warning,#f59e0b)' : 'var(--danger)';
+            const detailRevenus = this.data.revenus.filter(r => (r.mois || r.date.slice(0,7)) === mois).sort((a,b) => b.date.localeCompare(a.date));
+            return { mois, label, labelShort, revenus, depEffectives, cashflow, tauxEp, source, isCurrentMonth, flagColor, detailRevenus };
         });
+        if (mode === 'tableau')  container.innerHTML = this._histRevTableau(rows);
+        if (mode === 'timeline') container.innerHTML = this._histRevTimeline(rows);
+        if (mode === 'cards')    container.innerHTML = this._histRevCards(rows);
+    },
 
-        container.innerHTML = `
-        <div class="table-container">
+    _histRevDetailList(revs) {
+        if (!revs || revs.length === 0) return '<div style="color:var(--text-tertiary);font-size:.72rem;padding:.4rem 0 .2rem">Aucun revenu saisi ce mois</div>';
+        return revs.map(r => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid var(--border-color)">
+                <div>
+                    <span style="font-size:.72rem;font-weight:600;color:var(--text-primary)">${r.type || '—'}</span>
+                    ${r.note ? `<span style="font-size:.67rem;color:var(--text-tertiary);margin-left:.4rem">${r.note}</span>` : ''}
+                    <div style="font-size:.63rem;color:var(--text-tertiary);font-family:'DM Mono',monospace">${r.date}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:.5rem">
+                    <span style="font-size:.82rem;font-weight:700;color:var(--success)">+${this.formatCurrency(r.montant)}</span>
+                    <button onclick="app.supprimerRevenu(${r.id})" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:.65rem;padding:.1rem .25rem;opacity:.6" title="Supprimer">✕</button>
+                </div>
+            </div>`).join('');
+    },
+
+    _histRevTableau(rows) {
+        return `<div class="table-container">
             <table class="table" style="font-size:.8rem">
-                <thead>
-                    <tr>
-                        <th>Mois</th>
-                        <th style="text-align:right">Revenus</th>
-                        <th style="text-align:right">Dépenses eff.</th>
-                        <th style="text-align:right">Cashflow</th>
-                        <th style="text-align:right">Taux épargne</th>
-                    </tr>
-                </thead>
+                <thead><tr>
+                    <th>Mois</th>
+                    <th style="text-align:right">Revenus</th>
+                    <th style="text-align:right">Dépenses</th>
+                    <th style="text-align:right">Cashflow</th>
+                    <th style="text-align:right">Taux épargne</th>
+                    <th style="width:32px"></th>
+                </tr></thead>
                 <tbody>
-                    ${rows.map(r => `
-                    <tr style="${r.isCurrentMonth ? 'background:rgba(var(--heatmap-rgb),.05);font-style:italic' : ''}">
-                        <td style="font-family:DM Mono,monospace;font-size:.72rem">
-                            ${r.label}${r.isCurrentMonth ? ' <span style="font-size:.6rem;color:var(--warning)">en cours</span>' : ''}
+                ${rows.map(r => `
+                    <tr class="hist-rev-row" style="${r.isCurrentMonth ? 'background:rgba(var(--heatmap-rgb),.05);' : ''}" onclick="app._toggleHistRevDetail('${r.mois}')">
+                        <td style="font-family:'DM Mono',monospace;font-size:.72rem;font-weight:${r.isCurrentMonth?'700':'400'}">
+                            ${r.labelShort}${r.isCurrentMonth ? ' <span style="font-size:.58rem;color:var(--warning)">●</span>' : ''}
                         </td>
                         <td style="text-align:right;color:var(--success);font-weight:600">
                             ${r.revenus > 0 ? this.formatCurrency(r.revenus) : '<span style="color:var(--text-tertiary)">—</span>'}
-                            ${r.source === 'salaire' ? '<span style="font-size:.58rem;color:var(--text-tertiary)"> param.</span>' : ''}
+                            ${r.source === 'salaire' ? '<span style="font-size:.55rem;color:var(--text-tertiary)"> param.</span>' : ''}
+                            ${r.detailRevenus.length > 0 ? `<span style="font-size:.6rem;color:var(--accent-primary);margin-left:.3rem">${r.detailRevenus.length}</span>` : ''}
                         </td>
                         <td style="text-align:right">${this.formatCurrency(r.depEffectives)}</td>
-                        <td style="text-align:right;font-weight:700;color:${r.cashflow === null ? 'var(--text-tertiary)' : r.cashflow >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                        <td style="text-align:right;font-weight:700;color:${r.cashflow===null?'var(--text-tertiary)':r.cashflow>=0?'var(--success)':'var(--danger)'}">
                             ${r.cashflow !== null ? (r.cashflow >= 0 ? '+' : '') + this.formatCurrency(r.cashflow) : '—'}
                         </td>
                         <td style="text-align:right;font-weight:700;color:${r.flagColor}">
                             ${r.tauxEp !== null ? r.tauxEp.toFixed(0) + ' %' : '—'}
                         </td>
+                        <td style="text-align:center;color:var(--text-tertiary);font-size:.7rem" id="hist-rev-arrow-${r.mois}">›</td>
+                    </tr>
+                    <tr id="hist-rev-detail-${r.mois}" style="display:none">
+                        <td colspan="6" style="padding:.5rem 1rem .75rem 2rem;background:var(--bg-secondary)">
+                            <div style="font-size:.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.35rem">Revenus saisis</div>
+                            ${this._histRevDetailList(r.detailRevenus)}
+                        </td>
                     </tr>`).join('')}
                 </tbody>
             </table>
         </div>
-        <div style="margin-top:.75rem;font-size:.68rem;color:var(--text-tertiary);font-family:DM Mono,monospace">
-            * Revenus = données saisies ou salaire paramétré (param.) · Dépenses effectives = hors catégories épargne
+        <div style="margin-top:.6rem;font-size:.65rem;color:var(--text-tertiary);font-family:'DM Mono',monospace">Cliquez sur un mois pour voir le détail des revenus</div>`;
+    },
+
+    _toggleHistRevDetail(mois) {
+        const row = document.getElementById('hist-rev-detail-' + mois);
+        const arrow = document.getElementById('hist-rev-arrow-' + mois);
+        if (!row) return;
+        const open = row.style.display === 'none' || row.style.display === '';
+        row.style.display = open ? 'table-row' : 'none';
+        if (arrow) arrow.textContent = open ? '↓' : '›';
+    },
+
+    _histRevTimeline(rows) {
+        return `<div class="hist-rev-timeline">
+        ${rows.map((r, i) => {
+            const barW = r.revenus > 0 ? Math.min(100, (r.depEffectives / r.revenus) * 100) : 0;
+            const barColor = r.cashflow === null ? 'var(--text-tertiary)' : r.cashflow >= 0 ? 'var(--success)' : 'var(--danger)';
+            return `<div class="hist-rev-tl-item">
+                <div class="hist-rev-tl-dot" style="background:${r.isCurrentMonth ? 'var(--accent-primary)' : 'var(--border-color)'}"></div>
+                <div class="hist-rev-tl-content">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.35rem;flex-wrap:wrap;gap:.3rem">
+                        <div style="font-size:.8rem;font-weight:700;color:var(--text-primary);text-transform:capitalize">
+                            ${r.label}${r.isCurrentMonth ? ' <span style="font-size:.6rem;color:var(--accent-primary);font-weight:400">en cours</span>' : ''}
+                        </div>
+                        <div style="display:flex;gap:1rem;align-items:baseline">
+                            <span style="font-size:.72rem;color:var(--success);font-weight:600">${r.revenus > 0 ? '+' + this.formatCurrency(r.revenus) : '—'}</span>
+                            <span style="font-size:.72rem;color:var(--danger)">-${this.formatCurrency(r.depEffectives)}</span>
+                            <span style="font-size:.85rem;font-weight:800;color:${barColor}">${r.cashflow !== null ? (r.cashflow >= 0 ? '+' : '') + this.formatCurrency(r.cashflow) : '—'}</span>
+                        </div>
+                    </div>
+                    ${r.revenus > 0 ? `<div style="height:4px;background:var(--bg-secondary);border-radius:2px;overflow:hidden;margin-bottom:.5rem">
+                        <div style="height:100%;width:${barW}%;background:${barColor};border-radius:2px"></div>
+                    </div>` : ''}
+                    ${r.detailRevenus.length > 0 ? `
+                    <details class="hist-rev-details">
+                        <summary style="font-size:.68rem;color:var(--accent-primary);cursor:pointer;font-family:'DM Mono',monospace;list-style:none;padding:.2rem 0">
+                            ▸ ${r.detailRevenus.length} revenu${r.detailRevenus.length > 1 ? 's' : ''} saisi${r.detailRevenus.length > 1 ? 's' : ''}
+                        </summary>
+                        <div style="margin-top:.35rem;padding-left:.5rem;border-left:2px solid var(--accent-primary)">
+                            ${this._histRevDetailList(r.detailRevenus)}
+                        </div>
+                    </details>` : `<div style="font-size:.67rem;color:var(--text-tertiary);font-family:'DM Mono',monospace">Aucun revenu saisi${r.source === 'salaire' ? ' — salaire paramétré utilisé' : ''}</div>`}
+                </div>
+            </div>`;
+        }).join('')}
         </div>`;
     },
+
+    _histRevCards(rows) {
+        return `<div class="hist-rev-cards-grid">
+        ${rows.map(r => {
+            const cashColor = r.cashflow === null ? 'var(--text-tertiary)' : r.cashflow >= 0 ? 'var(--success)' : 'var(--danger)';
+            const cashSign  = r.cashflow !== null && r.cashflow >= 0 ? '+' : '';
+            return `<div class="hist-rev-card${r.isCurrentMonth ? ' hist-rev-card-current' : ''}">
+                <div style="font-size:.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.07em;color:var(--text-tertiary);margin-bottom:.3rem">${r.labelShort}</div>
+                <div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:${cashColor};line-height:1.1;margin-bottom:.4rem">
+                    ${r.cashflow !== null ? cashSign + this.formatCurrency(r.cashflow) : '—'}
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem .75rem;font-size:.68rem;margin-bottom:.5rem">
+                    <div style="color:var(--text-tertiary)">Revenus</div>
+                    <div style="text-align:right;color:var(--success);font-weight:600">${r.revenus > 0 ? this.formatCurrency(r.revenus) : '—'}</div>
+                    <div style="color:var(--text-tertiary)">Dépenses</div>
+                    <div style="text-align:right">${this.formatCurrency(r.depEffectives)}</div>
+                    <div style="color:var(--text-tertiary)">Taux ép.</div>
+                    <div style="text-align:right;font-weight:700;color:${r.flagColor}">${r.tauxEp !== null ? r.tauxEp.toFixed(0) + ' %' : '—'}</div>
+                </div>
+                ${r.detailRevenus.length > 0 ? `
+                <details class="hist-rev-details">
+                    <summary style="font-size:.65rem;color:var(--accent-primary);cursor:pointer;font-family:'DM Mono',monospace;list-style:none">
+                        ▸ ${r.detailRevenus.length} revenu${r.detailRevenus.length > 1 ? 's' : ''}
+                    </summary>
+                    <div style="margin-top:.35rem">
+                        ${this._histRevDetailList(r.detailRevenus)}
+                    </div>
+                </details>` : `<div style="font-size:.63rem;color:var(--text-tertiary);font-family:'DM Mono',monospace">${r.source === 'salaire' ? 'Salaire paramétré' : 'Aucun revenu saisi'}</div>`}
+            </div>`;
+        }).join('')}
+        </div>`;
+    },
+
 
     getTauxEpargne12Mois() {
         const now = new Date();
