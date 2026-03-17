@@ -1,5 +1,4 @@
 /* ── Service Worker — Vault ── */
-/* ── Test push via Desktop Commander MCP ── */
 const CACHE_NAME = 'vault-v7';
 
 /* Fichiers à mettre en cache dès l'installation */

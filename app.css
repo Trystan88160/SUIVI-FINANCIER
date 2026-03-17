@@ -1043,10 +1043,14 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
     transform:none!important;width:100%!important;max-width:100%!important;
     border-radius:28px 28px 0 0!important;max-height:92vh!important;
   }
-  .modal.active { animation:vpModalInMobile .36s cubic-bezier(.34,1.4,.64,1) both!important; }
-  @keyframes vpModalInMobile { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
-  .modal.closing { animation:vpModalOutMobile .22s cubic-bezier(.4,0,1,1) both!important; pointer-events:none!important; }
-  @keyframes vpModalOutMobile { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(30px)} }
+  /* Barre dégradée arrondie côté haut uniquement sur mobile */
+  .modal::before { border-radius: 28px 28px 0 0; }
+  /* Entrée : glisse depuis le bas avec spring */
+  .modal.active { animation:vpModalInMobile .38s cubic-bezier(.34,1.4,.64,1) both!important; }
+  @keyframes vpModalInMobile { from{opacity:0;transform:translateY(48px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+  /* Sortie : descend rapidement */
+  .modal.closing { animation:vpModalOutMobile .2s cubic-bezier(.4,0,1,1) both!important; pointer-events:none!important; }
+  @keyframes vpModalOutMobile { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(32px)} }
 }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
