@@ -1997,8 +1997,8 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">💎 Patrimoine Net</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> total de tous tes comptes du dernier mois saisi, et le taux d'épargne moyen sur 12 mois.<br>
-    <strong>Taux d'épargne · 12 mois :</strong> moyenne de (Revenus − Dépenses effectives) / Revenus sur les 12 derniers mois complets. Vert ≥ 20%, orange ≥ 10%, rouge &lt; 10%.<br>
-    <strong>À analyser :</strong> si le taux baisse mois après mois, tu dépenses plus que tu ne gagnes sur la durée.</p>
+    <strong>Taux d'épargne · 12 mois :</strong> moyenne de (Revenus − Dépenses) / Revenus sur les 12 derniers mois. Vert ≥ 20%, orange ≥ 10%, rouge &lt; 10%.<br>
+    <strong>À surveiller :</strong> si le taux baisse mois après mois, tu dépenses plus que tu ne gagnes.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
@@ -2008,17 +2008,22 @@ const app = {
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📆 Récap de la semaine</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> résumé automatique des dépenses des 7 derniers jours — total, catégories touchées et comparaison avec la semaine précédente.<br>
+    <strong>Score :</strong> emoji récapitulatif selon l'intensité de dépenses. Utile pour surveiller les petites dépenses du quotidien.</p>
+  </div>
+
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">⚡ Accès Rapide</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> 4 raccourcis vers les actions fréquentes.<br>
-    <strong>Saisir dépense :</strong> ouvre l'onglet Dépenses et positionne le curseur sur le champ montant directement.<br>
-    <strong>Actualiser PEA :</strong> va sur l'onglet PEA et lance la mise à jour des cours via Finnhub.</p>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> raccourcis vers les actions fréquentes (saisir une dépense, ajouter un revenu, mettre à jour le PEA, ajouter au patrimoine).<br>
+    <strong>Saisir dépense :</strong> bascule directement sur l'onglet Dépenses et ouvre la bottom sheet de saisie.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--warning)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--warning);font-weight:700;margin-bottom:.25rem">🔔 Alertes Intelligentes</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> alertes triées par priorité — rouge = urgent, orange = attention, vert = bonne nouvelle.<br>
-    <strong>Types d'alertes :</strong> fonds d'urgence insuffisant 🛡️, taux d'épargne faible 📉, dépassement de budget 💸, dépense inhabituelle 🔍.<br>
-    <strong>Astuce :</strong> la carte s'ouvre automatiquement s'il y a une alerte urgente. Clique dessus pour tout voir.</p>
+    <strong>Types :</strong> fonds d'urgence insuffisant 🛡️, taux d'épargne faible 📉, dépassement de budget 💸, dépense inhabituelle 🔍.<br>
+    <strong>Astuce :</strong> la carte s'ouvre automatiquement s'il y a une alerte urgente.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--success)">
@@ -2030,15 +2035,15 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">Répartition</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> graphe en anneau montrant la part de chaque compte dans ton patrimoine total (dernier mois saisi).<br>
-    <strong>Personnaliser :</strong> clique le bouton 🎨 Couleurs pour attribuer une couleur à chaque compte.<br>
-    <strong>À analyser :</strong> identifie rapidement où est concentré ton argent — trop sur un seul compte peut indiquer un déséquilibre entre liquidités et investissements.</p>
+    <strong>Personnaliser :</strong> clique 🎨 Couleurs pour attribuer une couleur à chaque compte.<br>
+    <strong>À analyser :</strong> trop concentré sur un seul compte peut indiquer un déséquilibre entre liquidités et investissements.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">Dépenses : Réel vs Budget</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> graphe à barres comparant ce que tu as dépensé vs le budget fixé pour chaque catégorie.<br>
-    <strong>Exclusions :</strong> les catégories sans budget (0€) et les catégories épargne n'apparaissent pas ici.<br>
-    <strong>À analyser :</strong> une barre "Dépensé" qui dépasse "Budget" signale un dépassement — vérifie si c'est ponctuel ou récurrent.</p>
+    <strong>Exclusions :</strong> catégories sans budget (0€) et catégories épargne n'apparaissent pas ici.<br>
+    <strong>À analyser :</strong> une barre "Dépensé" qui dépasse "Budget" signale un dépassement à surveiller.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
@@ -2056,29 +2061,35 @@ const app = {
 <p style="margin-bottom:.85rem;color:var(--text-secondary);font-size:.8rem">Onglet central de ta gestion quotidienne. Chaque carte dans l'ordre d'apparition.</p>
 <div style="display:flex;flex-direction:column;gap:.65rem">
 
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">💳 Soldes bancaires</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> le solde total de tous tes comptes bancaires en un coup d'œil.<br>
+    <strong>Voir le détail :</strong> clique sur la flèche ▾ à droite du montant pour afficher / masquer le détail compte par compte.<br>
+    <strong>Ajouter un compte :</strong> bouton "+ Compte" en haut à droite — saisis le nom, le type (Courant, Épargne…) et le solde initial à une date donnée. Vault recalcule ensuite le solde automatiquement en ajoutant tes revenus et en retranchant tes dépenses liées à ce compte.</p>
+  </div>
+
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--success)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--success);font-weight:700;margin-bottom:.25rem">💰 Revenus & Cashflow</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> Revenus du mois, Dépenses effectives, Cashflow net, Taux d'épargne.<br>
-    <strong>Comment saisir :</strong> clique <em>+ Saisir revenu</em>, entre le montant et le type (Salaire, Prime, Locatif…). Tu peux en ajouter plusieurs dans le même mois.<br>
-    <strong>Cashflow :</strong> Revenus − Dépenses effectives. Si positif → tu n'as pas tout dépensé, le surplus reste disponible pour l'épargne. ✅<br>
-    <strong>Important :</strong> si aucun revenu saisi ce mois, le salaire paramétré dans ⚙ est utilisé automatiquement.</p>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--success);font-weight:700;margin-bottom:.25rem">💰 Revenu</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> total des revenus saisis pour le mois, avec le détail des saisies (Salaire, Prime, Locatif…).<br>
+    <strong>Comment saisir :</strong> clique <em>＋ Ajouter</em>, entre le montant et le type. Tu peux en ajouter plusieurs dans le même mois.<br>
+    <strong>Important :</strong> si aucun revenu saisi ce mois, le salaire paramétré dans ⚙ est utilisé automatiquement comme valeur de référence.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">Ajouter une dépense</div>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">➕ Dépense</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> saisit une nouvelle dépense avec sa catégorie, son montant, sa date et une note optionnelle.<br>
-    <strong>✦ Gérer les catégories :</strong> crée ou supprime des catégories, fixe leur budget mensuel. Budget = 0 → catégorie "sans budget" (ex : Vacances), exclue du graphe Réel vs Budget.<br>
+    <strong>⚙ Catégories :</strong> crée ou supprime des catégories, fixe leur budget mensuel. Budget = 0 → catégorie "sans budget" (ex : Vacances), exclue du graphe Réel vs Budget.<br>
     <strong>🏦 Import relevé bancaire :</strong> glisse le CSV de ta banque (Boursorama, BNP, CA…). L'app détecte les montants et propose une catégorie automatique. Tu valides avant d'importer.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">État des catégories</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> progression de chaque catégorie par rapport à son budget mensuel — barre de progression + montant restant.<br>
-    <strong>À analyser :</strong> les catégories en rouge ont dépassé leur budget. Clique pour déplie la carte.</p>
+    <strong>À analyser :</strong> les catégories en rouge ont dépassé leur budget. Clique sur la carte pour la déplier.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem"> Comparaison mois à mois</div>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📊 Comparaison mois à mois</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> deux mois côte à côte pour comparer tes dépenses par catégorie.<br>
     <strong>Utilité :</strong> détecte les catégories qui dérivent dans le temps. Clique sur le titre pour déplier.</p>
   </div>
@@ -2086,18 +2097,14 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--warning)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--warning);font-weight:700;margin-bottom:.25rem">⚖️ Règle 50 / 30 / 20</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tes dépenses du mois ventilées en 3 compartiments : Besoins (≤50%), Envies (≤30%), Épargne (≥20%).<br>
-    <strong>Comment l'app classe tes catégories par défaut (mode Auto) :</strong><br>
-    → <strong>Besoins</strong> : nom contenant MANGER, CARBU, TRANSPORT, LOYER, SANTE, FACTURE, ABONNEMENT<br>
-    → <strong>Envies</strong> : nom contenant LOISIR, BAR, VETEMENT, SHOPPING, RESTAURANT, SORTIE<br>
-    → <strong>Non reconnu</strong> : la dépense est partagée 50/50 entre Besoins et Envies<br>
-    <strong>🏷 Bouton Classifier :</strong> clique pour voir comment chaque catégorie est classée et forcer manuellement sa classification en Besoin, Envie ou revenir en Auto. Un badge "forcé" s'affiche sur les catégories que tu as manuellement classifiées. La règle se recalcule instantanément.<br>
-    <strong>Astuce :</strong> si une catégorie mal classée en mode Auto, utilise le classificateur plutôt que de renommer la catégorie.</p>
+    <strong>Classification auto :</strong> Besoins = Loyer, Transport, Santé… Envies = Loisirs, Restaurant, Shopping…<br>
+    <strong>🏷 Bouton Classifier :</strong> force manuellement la classification d'une catégorie si l'auto ne convient pas. Un badge "forcé" s'affiche sur les catégories modifiées.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">🔄 Dépenses Récurrentes</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> dépenses qui reviennent chaque mois (abonnements, loyer, assurances…).<br>
-    <strong>Utilité :</strong> visualise tes charges fixes pour savoir ce qui est incompressible dans ton budget.</p>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tes charges fixes paramétrées (abonnements, loyer, assurances…) avec leur montant mensuel total.<br>
+    <strong>Ajouter :</strong> clique "＋ Récurrence" pour enregistrer une charge fixe — elle apparaît ici chaque mois sans avoir à la resaisir.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--success)">
@@ -2109,17 +2116,15 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">📋 Historique</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> liste de toutes tes dépenses, des plus récentes aux plus anciennes.<br>
-    <strong>Filtrer par mois :</strong> sélectionne un mois pour n'afficher que ses dépenses.<br>
-    <strong>Filtrer par catégorie :</strong> isole un poste précis pour l'auditer.<br>
-    <strong>Recherche par note :</strong> tape un mot-clé (ex : "Netflix", "Carrefour") pour retrouver une dépense via sa description.<br>
+    <strong>Filtres :</strong> par mois, par catégorie, ou par mot-clé dans la note (ex : "Netflix", "Carrefour").<br>
     <strong>🕐 Ordre :</strong> bascule entre "Récent → Ancien" (défaut) et "Ancien → Récent" d'un clic.<br>
-    <strong>Astuce :</strong> clique ✕ pour effacer tous les filtres et remettre l'ordre par défaut. Le compteur de résultats s'affiche quand des filtres sont actifs.</p>
+    <strong>Astuce :</strong> clique ✕ pour effacer tous les filtres d'un coup.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📊 Historique Revenus & Cashflow</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tableau des 24 derniers mois avec revenus, dépenses, cashflow et taux d'épargne.<br>
-    <strong>Utilité :</strong> justificatif pour une banque, suivi de l'évolution de ta santé financière dans le temps.<br>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📊 Historique Revenus</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tableau des 24 derniers mois avec revenus, dépenses, cashflow et taux d'épargne mois par mois.<br>
+    <strong>Utilité :</strong> suivi de l'évolution de ta santé financière dans le temps, utilisable comme justificatif.<br>
     <strong>Astuce :</strong> les mois avec "(param.)" indiquent que le salaire paramétré a été utilisé comme fallback.</p>
   </div>
 
@@ -2132,7 +2137,7 @@ const app = {
 <div style="display:flex;flex-direction:column;gap:.65rem">
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">Stat-cards (Valeur PEA · Total Investi · Gain/Perte)</div>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">Stat-cards (Valeur · Investi · Gain/Perte)</div>
     <p style="font-size:.79rem;margin:0"><strong>Valeur PEA :</strong> dernier solde total saisi.<br>
     <strong>Total Investi :</strong> cumul de tes versements.<br>
     <strong>Gain/Perte :</strong> Valeur − Investi. Positif = portefeuille dans le vert. La performance en % s'affiche juste en dessous.</p>
@@ -2141,12 +2146,12 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--success)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--success);font-weight:700;margin-bottom:.25rem">Mise à jour PEA</div>
     <p style="font-size:.79rem;margin:0"><strong>Manuel :</strong> saisis la valeur totale du PEA + montant investi cumulé pour une date donnée.<br>
-    <strong>Import CSV :</strong> importe un fichier CSV au format Date, Valeur, Investi pour alimenter l'historique en masse.</p>
+    <strong>Import CSV :</strong> importe un fichier au format Date, Valeur, Investi pour alimenter l'historique en masse.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">📋 Lignes du Portefeuille & Plus-values</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> ajoute chaque ligne de ton portefeuille (ETF, action) avec son ticker, nombre de parts, prix d'achat (PRU).<br>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> ajoute chaque ligne (ETF, action) avec son ticker, nombre de parts et prix d'achat (PRU).<br>
     <strong>Actualiser les cours :</strong> si tu as une clé API Finnhub dans ⚙, le bouton récupère les cours en temps réel et recalcule la plus-value latente.<br>
     <strong>Sans Finnhub :</strong> entre le prix actuel manuellement — la performance reste calculée.</p>
   </div>
@@ -2154,20 +2159,26 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--warning)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--warning);font-weight:700;margin-bottom:.25rem">Évolution PEA : Valeur vs Investi</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> deux courbes superposées — la valeur de marché et le total investi mois par mois.<br>
-    <strong>À analyser :</strong> l'écart entre les deux courbes = ta plus-value latente. Les creux sont normaux sur les marchés long terme.<br>
+    <strong>À analyser :</strong> l'écart entre les deux courbes = ta plus-value latente. Les creux sont normaux sur le long terme.<br>
     <strong>Boutons :</strong> 📊 Benchmark ajoute une courbe de référence (MSCI World). 🧮 Outils affiche des simulations.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">📊 Benchmark — Ton PEA vs Indices</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> comparaison de la performance de ton PEA face à un indice de référence.<br>
-    <strong>Utilité :</strong> sais-tu si tu fais mieux ou moins bien que le marché ?</p>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">👴 Projection Retraite</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> simule la valeur de ton PEA à l'âge de la retraite selon ton âge actuel, tes versements mensuels et un taux de rendement estimé.<br>
+    <strong>Utilité :</strong> visualise l'impact des intérêts composés sur le long terme et ajuste ta stratégie d'épargne en conséquence.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">🧮 Outils PEA</div>
-    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> simulations d'épargne programmée — projette la valeur finale de ton PEA selon un versement mensuel et un taux de rendement estimé.<br>
-    <strong>Note :</strong> la performance affichée est la plus-value brute cumulée, pas un rendement annualisé (TRI).</p>
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">🎲 Simulateur "Et si…"</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on fait :</strong> compare plusieurs scénarios d'épargne côte à côte — que se passe-t-il si tu verses 50€ de plus par mois, ou si le marché fait +5% au lieu de +7% ?<br>
+    <strong>Note :</strong> la performance affichée est la plus-value brute cumulée, pas un TRI annualisé.</p>
+  </div>
+
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">📋 Historique PEA</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> toutes tes saisies PEA classées par date (valeur + montant investi).<br>
+    <strong>Utilité :</strong> modifie ou supprime une entrée erronée directement depuis ce tableau.</p>
   </div>
 
 </div>`
@@ -2185,6 +2196,12 @@ const app = {
     <strong>Investissements :</strong> somme des comptes non cochés 🛡️ (PEA, CTO, immobilier…).</p>
   </div>
 
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">Répartition du patrimoine</div>
+    <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> barre de répartition visuelle entre liquidités (🛡️) et investissements, avec les montants de chaque côté.<br>
+    <strong>À analyser :</strong> assure-toi d'avoir un fonds d'urgence suffisant (3 à 6 mois de dépenses) en liquidités avant de sur-investir.</p>
+  </div>
+
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--success)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--success);font-weight:700;margin-bottom:.25rem">Mise à jour</div>
     <p style="font-size:.79rem;margin:0"><strong>Quand saisir :</strong> idéalement en fin de mois, après tous tes virements.<br>
@@ -2192,14 +2209,14 @@ const app = {
     <strong>✦ Gérer les comptes :</strong> ajoute ou supprime des comptes. Coche 🛡️ sur les comptes liquides (disponibles immédiatement) — utilisé pour le calcul du fonds d'urgence dans les Alertes.</p>
   </div>
 
-  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">Évolution du Patrimoine</div>
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--warning)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--warning);font-weight:700;margin-bottom:.25rem">Évolution du Patrimoine</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> courbe d'évolution du patrimoine total mois par mois.<br>
     <strong>À analyser :</strong> la pente doit être positive sur le long terme. Un mois négatif peut venir d'une dépense exceptionnelle ou d'une baisse des marchés (PEA).</p>
   </div>
 
-  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--warning)">
-    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--warning);font-weight:700;margin-bottom:.25rem">📋 Historique Patrimoine</div>
+  <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
+    <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--text-tertiary);font-weight:700;margin-bottom:.25rem">📋 Historique Patrimoine</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tableau de toutes tes saisies mensuelles, compte par compte, avec le total.<br>
     <strong>Astuce :</strong> coche 🛡️ uniquement sur les comptes <strong>immédiatement disponibles</strong> sans pénalité. Cible fonds d'urgence : 3 à 6 mois de dépenses.</p>
   </div>
@@ -2215,7 +2232,7 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">🏅 Bilan annuel</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> Revenus totaux, Dépenses effectives, Épargne nette, Taux d'épargne, tableau mois par mois et top catégories.<br>
-    <strong>Comment c'est calculé :</strong> revenus = données saisies dans Dépenses (ou salaire en fallback). Dépenses effectives = hors catégories épargne.<br>
+    <strong>Calcul :</strong> revenus = données saisies dans Dépenses (ou salaire en fallback). Dépenses effectives = hors catégories épargne.<br>
     <strong>Export PDF :</strong> bouton "🖨 Exporter PDF" → page imprimable utilisable comme justificatif bancaire.</p>
   </div>
 
@@ -2228,8 +2245,7 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-secondary);font-weight:700;margin-bottom:.25rem">🎯 Objectifs</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce qu'on voit :</strong> tes objectifs d'épargne avec progression, montant cible, échéance et effort mensuel requis.<br>
-    <strong>Comment ça marche :</strong> clique "+ Nouvel objectif", entre le nom, montant cible, montant actuel et date cible. L'app calcule combien mettre de côté par mois pour y arriver.<br>
-    <strong>Analyse :</strong> le total "À épargner / mois" te dit si tes objectifs sont réalistes par rapport à ton cashflow habituel.</p>
+    <strong>Comment ça marche :</strong> clique "+ Nouvel objectif", entre le nom, montant cible, montant actuel et date cible. L'app calcule combien mettre de côté par mois pour y arriver.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--text-tertiary)">
@@ -2255,10 +2271,7 @@ const app = {
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-primary)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--accent-primary);font-weight:700;margin-bottom:.25rem">🎨 Préférences</div>
-    <p style="font-size:.79rem;margin:0"><strong>Thème :</strong> 30 thèmes disponibles, organisés en 2 groupes :<br>
-    <strong>☀️ Clairs (4) :</strong> Aurora · 🌫️ Brume · 🌅 Horizon · 🌊 Aqua<br>
-    <strong>🌑 Sombres (4) :</strong> Aurora · Abyss · Obsidian · Arctic<br>
-    + ⚙️ Auto (suit le système OS).<br>
+    <p style="font-size:.79rem;margin:0"><strong>Thème :</strong> plusieurs thèmes disponibles — clairs (Aurora, Brume, Horizon, Aqua) et sombres (Aurora, Abyss, Obsidian, Arctic) + Auto (suit le système OS).<br>
     <strong>Salaire net mensuel :</strong> valeur de référence utilisée comme <em>fallback</em> si aucun revenu n'est saisi pour un mois donné. Utilisé dans le bilan annuel, les alertes et la règle 50/30/20.<br>
     <strong>Important :</strong> si tu saisis tes revenus réels dans l'onglet Dépenses, ce salaire est ignoré pour ce mois-là.</p>
   </div>
@@ -2268,7 +2281,7 @@ const app = {
     <p style="font-size:.79rem;margin:0"><strong>Clé API Finnhub :</strong> récupère les cours boursiers en temps réel pour actualiser la valeur de tes positions PEA.<br>
     <strong>Comment obtenir :</strong> va sur <em>finnhub.io</em>, crée un compte gratuit, copie ta clé API.<br>
     <strong>Sans clé :</strong> tu peux utiliser le PEA normalement — entre juste les prix manuellement.<br>
-    <strong>Limite :</strong> clé gratuite = 60 requêtes/min. Suffisant pour un portefeuille standard.</p>
+    <strong>Limite :</strong> clé gratuite = 60 requêtes/min, suffisant pour un portefeuille standard.</p>
   </div>
 
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--accent-secondary)">
@@ -2281,14 +2294,14 @@ const app = {
   <div style="background:var(--bg-card);border-radius:12px;padding:.85rem 1rem;border-left:3px solid var(--danger)">
     <div style="font-family:DM Mono,monospace;font-size:.65rem;text-transform:uppercase;color:var(--danger);font-weight:700;margin-bottom:.25rem">⚠️ Zone de danger</div>
     <p style="font-size:.79rem;margin:0"><strong>Ce que ça fait :</strong> supprime <strong>toutes tes données</strong> (dépenses, revenus, PEA, patrimoine, objectifs, notes) de façon <strong>irréversible</strong>.<br>
-    <strong>Avant de cliquer :</strong> fais impérativement un export Excel via le bouton dans Sauvegarde & Export.</p>
+    <strong>Avant de cliquer :</strong> fais impérativement un export Excel via le bouton Sauvegarde & Export.</p>
   </div>
 
 </div>`
         }
     },
 
-    openHelp(tabName) {
+        openHelp(tabName) {
         const tab = tabName === 'current' ? (this._currentTab || 'dashboard') : tabName;
         const content = this._helpContent[tab] || this._helpContent['dashboard'];
         const panel = document.getElementById('help-panel');
@@ -4719,7 +4732,7 @@ const app = {
         ],
         'depenses': [
             { id: 'dep-pointage',    label: '💳 Soldes bancaires',        sub: 'Pointage de vos comptes' },
-            { id: 'dep-revenus',     label: '💰 Revenus & Cashflow',      sub: 'Saisie & stats du mois' },
+            { id: 'dep-revenus',     label: '💰 Revenu',                   sub: 'Saisie & stats du mois' },
             { id: 'dep-saisie',      label: '➕ Ajouter une dépense',     sub: 'Formulaire de saisie' },
             { id: 'dep-etat-cat',    label: 'État des catégories',        sub: 'Budget par catégorie' },
             { id: 'dep-comparaison', label: '📊 Comparaison mois à mois', sub: 'Comparaison entre deux mois' },
