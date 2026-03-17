@@ -759,25 +759,30 @@ html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
    Classes ajoutées par JS : .vp-overlay .vp-box .vp-close
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Overlay unifié — remplace #overlay, .bs-overlay ET .vp-overlay-bg ── */
+/* ── Overlay unifié ── */
 
-/* Override du legacy #overlay — même style que bs-overlay */
-.overlay {
-  background: rgba(10, 20, 60, .52) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  transition: opacity .25s !important;
-  opacity: 0 !important;
-}
+/* #overlay neutralisé — vp-global-overlay gère tout pour les .modal */
+.overlay,
 .overlay.active {
-  opacity: 1 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
-/* Override #confirm-overlay aussi */
+/* #confirm-overlay : animation via keyframe pour éviter le flash */
 #confirm-overlay {
   background: rgba(10, 20, 60, .55) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
+  opacity: 0;
+}
+#confirm-overlay.active {
+  animation: vpOverlayIn .25s ease forwards !important;
+}
+@keyframes vpOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .vp-overlay-bg {
@@ -804,10 +809,13 @@ html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
   box-shadow: 0 24px 64px rgba(30, 50, 150, .22), 0 1px 0 rgba(255,255,255,.9) inset !important;
 }
 
-/* Modal centré — Glass : pas de barre dégradée, coins très arrondis */
+/* Modal centré — Glass : taille adaptive selon contenu */
 .modal {
   border-radius: 26px !important;
   overflow: hidden !important;
+  width: fit-content !important;
+  min-width: min(360px, 92vw) !important;
+  max-width: min(580px, 92vw) !important;
 }
 /* Supprime la barre dégradée du style précédent */
 .modal::before {

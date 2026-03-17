@@ -545,9 +545,10 @@ const app = {
                 if (!el.classList.contains('modal')) continue;
                 if (el.classList.contains('active')) {
                     this._vpShowOverlay();
+                    // Supprimer vpDone pour re-patcher si le innerHTML a changé
+                    delete el.dataset.vpDone;
                     this._vpPatchModal(el);
                 } else {
-                    // Vérifier s'il reste un autre modal ouvert
                     if (!document.querySelector('.modal.active')) this._vpHideOverlay();
                 }
             }
