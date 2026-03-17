@@ -1055,3 +1055,66 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ════════════════════════════════════════════════════════════
+   VAULT UNIFIED BUTTON SYSTEM
+   .btn-vault-primary  → Gradient pill  (actions importantes)
+   .btn-vault-secondary → Neumorphisme  (actions secondaires)
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Gradient Pill — actions principales ───────────────── */
+.btn-vault-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .52rem 1.15rem;
+  background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: .78rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: .01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(124,77,255,.28);
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, opacity .15s;
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-vault-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(124,77,255,.38);
+  opacity: .93;
+}
+.btn-vault-primary:active { transform: scale(.97); }
+
+/* ── Neumorphisme léger — actions secondaires ───────────── */
+.btn-vault-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 1.1rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  font-size: .76rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  box-shadow: 4px 4px 10px var(--shadow-light), -4px -4px 10px var(--shadow-dark);
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, color .15s;
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.btn-vault-secondary:hover {
+  transform: translateY(-2px);
+  color: var(--accent-primary);
+  box-shadow: 6px 6px 14px rgba(124,77,255,.15), -4px -4px 10px var(--shadow-dark);
+}
+.btn-vault-secondary:active { transform: scale(.97); box-shadow: 2px 2px 6px var(--shadow-light), -2px -2px 6px var(--shadow-dark); }
