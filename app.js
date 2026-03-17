@@ -1528,7 +1528,7 @@ const app = {
                 <div id="sim-conseil" style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;padding:0.75rem;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border-color)"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('simulateurModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Fermer</button>
+                <button class="vp-btn-cancel" onclick="document.getElementById('simulateurModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Fermer</button>
             </div>
         `;
         modal.classList.add('active');
@@ -4735,9 +4735,9 @@ const app = {
                 </div>
             </div>
             <div class="modal-footer" style="display:flex;gap:.65rem;flex-wrap:wrap">
-                <button class="btn btn-secondary" onclick="app.resetTabCustomizer('${tabId}')" style="margin-right:auto">🔄 Tout afficher</button>
-                <button class="btn btn-secondary" onclick="app.closeTabCustomizer()">Annuler</button>
-                <button class="btn btn-primary" onclick="app.saveTabCustomizer('${tabId}')">✅ Appliquer</button>
+                <button class="vp-btn-cancel" onclick="app.resetTabCustomizer('${tabId}')" style="margin-right:auto">🔄 Tout afficher</button>
+                <button class="vp-btn-cancel" onclick="app.closeTabCustomizer()">Annuler</button>
+                <button class="vp-btn-save" onclick="app.saveTabCustomizer('${tabId}')">✅ Appliquer</button>
             </div>
         `;
         modal.classList.add('active');
@@ -4957,8 +4957,8 @@ const app = {
                 }).join('')}
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="app.closeChartColorPicker()">Annuler</button>
-                <button class="btn btn-primary" onclick="app.saveChartColorPicker()">✅ Appliquer</button>
+                <button class="vp-btn-cancel" onclick="app.closeChartColorPicker()">Annuler</button>
+                <button class="vp-btn-save" onclick="app.saveChartColorPicker()">✅ Appliquer</button>
             </div>
         `;
 
@@ -5255,7 +5255,7 @@ const app = {
                     document.getElementById('colorModal').classList.remove('active');
                     document.getElementById('overlay').classList.remove('active');
                 ">Annuler</button>
-                <button class="btn btn-primary" onclick="app.sauvegarderCouleursCategoriesDonut()">✅ Appliquer</button>
+                <button class="vp-btn-save" onclick="app.sauvegarderCouleursCategoriesDonut()">✅ Appliquer</button>
             </div>
         `;
 
@@ -6357,7 +6357,7 @@ const app = {
                 </button>` : ''}
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="app._closeClassif503020Modal()">Fermer</button>
+                <button class="vp-btn-cancel" onclick="app._closeClassif503020Modal()">Fermer</button>
             </div>`;
         };
 
@@ -6554,8 +6554,8 @@ const app = {
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('recurrenceModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
-                <button class="btn" onclick="app.ajouterRecurrence()">+ Ajouter</button>
+                <button class="vp-btn-cancel" onclick="document.getElementById('recurrenceModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
+                <button class="vp-btn-save" onclick="app.ajouterRecurrence()">+ Ajouter</button>
             </div>
         `;
         modal.classList.add('active');
@@ -6651,8 +6651,8 @@ const app = {
                 <div class="form-group"><label class="form-label">Date cible</label><input type="month" class="form-input" id="obj-date"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('objectifModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
-                <button class="btn" onclick="app.ajouterObjectif()">+ Ajouter</button>
+                <button class="vp-btn-cancel" onclick="document.getElementById('objectifModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
+                <button class="vp-btn-save" onclick="app.ajouterObjectif()">+ Ajouter</button>
             </div>
         `;
         modal.classList.add('active');
@@ -6903,8 +6903,8 @@ const app = {
                 <p style="font-size:0.72rem;color:var(--text-tertiary);font-family:DM Mono,monospace;margin-top:0.5rem">💡 Saisis l'ISIN (ex: <strong>IE00B4L5Y983</strong>) ou directement le ticker Yahoo Finance (ex: <strong>MWRD.PA</strong>). Le cours sera récupéré automatiquement via 🔄 Actualiser.</p>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('lignePEAModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
-                <button class="btn" onclick="app.ajouterLignePEA()">+ Ajouter</button>
+                <button class="vp-btn-cancel" onclick="document.getElementById('lignePEAModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>
+                <button class="vp-btn-save" onclick="app.ajouterLignePEA()">+ Ajouter</button>
             </div>
         `;
         modal.classList.add('active');
@@ -7312,7 +7312,7 @@ const app = {
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="document.getElementById('retraiteModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Fermer</button>
+                <button class="vp-btn-cancel" onclick="document.getElementById('retraiteModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Fermer</button>
             </div>
         `;
         modal.classList.add('active');

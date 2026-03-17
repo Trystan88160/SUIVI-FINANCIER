@@ -104,8 +104,8 @@
         Êtes-vous sûr de vouloir continuer ?
     </div>
     <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="app.closeModal()">Annuler</button>
-        <button class="btn" id="confirmBtn" onclick="app.confirmAction()">Confirmer</button>
+        <button class="vp-btn-cancel" onclick="app.closeModal()">Annuler</button>
+        <button class="vp-btn-save" id="confirmBtn" onclick="app.confirmAction()">Confirmer</button>
     </div>
 </div>
 
@@ -125,8 +125,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="app.closeInputModal()">Annuler</button>
-        <button class="btn" onclick="app.submitInput()">Valider</button>
+        <button class="vp-btn-cancel" onclick="app.closeInputModal()">Annuler</button>
+        <button class="vp-btn-save" onclick="app.submitInput()">Valider</button>
     </div>
 </div>
 <div id="confirm-overlay"></div>
@@ -146,7 +146,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="app.closeBudgetsModal()">Fermer</button>
+        <button class="vp-btn-cancel" onclick="app.closeBudgetsModal()">Fermer</button>
     </div>
 </div>
 
@@ -163,7 +163,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="app.closeComptesModal()">Fermer</button>
+        <button class="vp-btn-cancel" onclick="app.closeComptesModal()">Fermer</button>
     </div>
 </div>
 
@@ -219,7 +219,7 @@
 
 <!-- Dashboard -->
 <div id="tab-dashboard" class="tab-content active">
-<div class="tab-customize-bar"><button class="tab-customize-btn btn-vault-primary" onclick="app.openTabCustomizer('dashboard')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('dashboard')" title="Aide">❓ Aide</button></div>
+<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('dashboard')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('dashboard')" title="Aide">❓ Aide</button></div>
 
 <!-- Hero patrimoine -->
 <div data-card-id="dash-hero" data-tab="dashboard"><div class="card" style="background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));border:none;padding:2rem 2.5rem;margin-bottom:1.5rem">
@@ -359,7 +359,7 @@
 
 <!-- Dépenses -->
 <div id="tab-depenses" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn btn-vault-primary" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
+<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
 
 <!-- Card Revenus + Cashflow -->
 
@@ -408,8 +408,8 @@
     <div class="card-title" style="margin:0">Ajouter une dépense</div>
   </div>
   <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn-vault-primary" onclick="app.toggleBudgetsPanel()">⚙ Catégories</button>
-    <button class="btn-vault-primary" onclick="app.toggleImportBancaire()">🏦 Import relevé</button>
+    <button class="btn-vault-secondary" onclick="app.toggleBudgetsPanel()">⚙ Catégories</button>
+    <button class="btn-vault-secondary" onclick="app.toggleImportBancaire()">🏦 Import relevé</button>
     <button class="btn-vault-primary" onclick="app.openBsDepenses()">＋ Ajouter des dépenses</button>
   </div>
 </div>
@@ -636,7 +636,7 @@
 
 <!-- PEA -->
 <div id="tab-pea" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn btn-vault-primary" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓ Aide</button></div>
+<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓ Aide</button></div>
 
 <div data-card-id="pea-stats" data-tab="pea" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
 <div class="stat-card stat-card-main">
@@ -811,10 +811,10 @@
 <!-- Outils PEA (modales) — indépendants -->
 <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem">
   <div data-card-id="pea-retraite" data-tab="pea">
-    <button class="btn-vault-primary" onclick="app.ouvrirModalRetraite()">👴 Projection retraite</button>
+    <button class="btn-vault-secondary" onclick="app.ouvrirModalRetraite()">👴 Projection retraite</button>
   </div>
   <div data-card-id="pea-simulateur" data-tab="pea">
-    <button class="btn-vault-primary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur «&nbsp;Et si…&nbsp;»</button>
+    <button class="btn-vault-secondary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur «&nbsp;Et si…&nbsp;»</button>
   </div>
 </div>
 
@@ -839,7 +839,7 @@
 
 <!-- Patrimoine -->
 <div id="tab-patrimoine" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn btn-vault-primary" onclick="app.openTabCustomizer('patrimoine')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('patrimoine')" title="Aide">❓ Aide</button></div>
+<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('patrimoine')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('patrimoine')" title="Aide">❓ Aide</button></div>
 
 <div data-card-id="pat-stats" data-tab="patrimoine" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
 <div class="stat-card stat-card-main">
@@ -885,7 +885,7 @@
     <div class="card-title" style="margin:0">Mise à jour</div>
   </div>
   <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn-vault-primary" onclick="app.toggleComptesPanel()">⚙ Comptes</button>
+    <button class="btn-vault-secondary" onclick="app.toggleComptesPanel()">⚙ Comptes</button>
     <button class="btn-vault-primary" onclick="app.openBsPatrimoine()">＋ Mettre à jour Patrimoine</button>
   </div>
 </div>
@@ -932,7 +932,7 @@
 
 <!-- Bilan -->
 <div id="tab-bilan" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn btn-vault-primary" onclick="app.openTabCustomizer('bilan')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('bilan')" title="Aide">❓ Aide</button></div>
+<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('bilan')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('bilan')" title="Aide">❓ Aide</button></div>
 
 <!-- Bilan annuel (dépliant) -->
 <div data-card-id="bilan-annuel" data-tab="bilan"><div class="card" style="padding:0;overflow:hidden">
