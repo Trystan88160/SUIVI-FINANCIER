@@ -447,8 +447,7 @@ const app = {
     _obPause(currentStep, steps) {
         const o = this._obOverlay;
         if (!o) return;
-        o.style.opacity = '0';
-        o.style.pointerEvents = 'none';
+        o.style.display = 'none';
 
         // Supprimer un éventuel pill existant
         document.getElementById('_ob_resume_pill')?.remove();
@@ -462,8 +461,7 @@ const app = {
             if (o) {
                 // Avancer d'une étape si ce n'est pas la dernière
                 const nextStep = Math.min(currentStep + 1, steps.length - 1);
-                o.style.opacity = '';
-                o.style.pointerEvents = '';
+                o.style.display = '';
                 // Re-render à l'étape suivante
                 const body = o.querySelector('#_ob_body');
                 if (body) {
