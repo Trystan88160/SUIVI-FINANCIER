@@ -397,9 +397,6 @@ const app = {
           </div>`;
         document.body.appendChild(overlay);
         this._obOverlay = overlay;
-        this._obCurrentStep = 0;
-        this._obSteps = STEPS;
-        this._obRender = render;
 
         const render = (idx, dir = 1) => {
             this._obCurrentStep = idx;
@@ -443,6 +440,9 @@ const app = {
         overlay.querySelector('.v-ob-skip').onclick = () => this._closeOnboarding();
         overlay.addEventListener('click', e => { if (e.target === overlay) this._closeOnboarding(); });
 
+        this._obCurrentStep = 0;
+        this._obSteps = STEPS;
+        this._obRender = render;
         render(0);
     },
 
