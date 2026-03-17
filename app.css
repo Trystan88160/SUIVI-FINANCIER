@@ -759,11 +759,31 @@ html{-webkit-text-size-adjust:100%}
    Classes ajoutées par JS : .vp-overlay .vp-box .vp-close
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Overlay unifié ─────────────────────────────────────── */
+/* ── Overlay unifié — remplace #overlay, .bs-overlay ET .vp-overlay-bg ── */
+
+/* Override du legacy #overlay — même style que bs-overlay */
+.overlay {
+  background: rgba(10, 20, 60, .52) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  transition: opacity .25s !important;
+  opacity: 0 !important;
+}
+.overlay.active {
+  opacity: 1 !important;
+}
+
+/* Override #confirm-overlay aussi */
+#confirm-overlay {
+  background: rgba(10, 20, 60, .55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
 .vp-overlay-bg {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 60, .55);
+  background: rgba(10, 20, 60, .52);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 998;
@@ -824,15 +844,39 @@ html{-webkit-text-size-adjust:100%}
   transition: transform .18s cubic-bezier(.4,0,1,1), opacity .16s ease !important;
 }
 @media (min-width: 769px) {
+  /* Desktop : même animation spring que les modals */
+  .bs-sheet {
+    border-radius: 22px !important;
+    transform: scale(.93) translateY(16px) !important;
+    opacity: 0 !important;
+    transition: transform .36s cubic-bezier(.34,1.4,.64,1), opacity .22s ease !important;
+  }
+  .bs-overlay.open .bs-sheet {
+    transform: scale(1) translateY(0) !important;
+    opacity: 1 !important;
+  }
   .bs-overlay.vp-bs-closing .bs-sheet {
+    transform: scale(.94) translateY(12px) !important;
+    opacity: 0 !important;
     transition: transform .18s cubic-bezier(.4,0,1,1), opacity .16s ease !important;
   }
-  .bs-sheet { border-radius: 22px !important; }
 }
 .bs-overlay {
-  background: rgba(10, 20, 60, .55) !important;
+  background: rgba(10, 20, 60, .52) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
+}
+/* Mobile : slide naturel depuis le bas */
+@media (max-width: 768px) {
+  .bs-sheet {
+    transform: translateY(100%) !important;
+    opacity: 1 !important;
+    transition: transform .36s cubic-bezier(.34,1.4,.64,1) !important;
+  }
+  .bs-overlay.open .bs-sheet {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
 }
 
 /* ── Header — modal — Glass ─────────────────────────────── */
