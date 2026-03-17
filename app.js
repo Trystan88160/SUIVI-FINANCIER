@@ -3404,6 +3404,8 @@ const app = {
 
     refreshPointage() {
         const container = document.getElementById('pointage-container');
+        const emptyEl   = document.getElementById('pointage-empty');
+        const detail    = document.getElementById('vault-solde-detail');
         if (!container) return;
         const comptes = this.data.comptesPointage || [];
 
@@ -3412,10 +3414,13 @@ const app = {
         const totalEl   = document.getElementById('vault-solde-total');
 
         if (comptes.length === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:.65rem 0;color:var(--text-tertiary);font-size:.78rem;font-family:DM Mono,monospace">Aucun compte — cliquez sur "+ Compte"</div>';
+            container.innerHTML = '';
+            if (emptyEl) emptyEl.innerHTML = '<div style="text-align:center;padding:.65rem 0;color:var(--text-tertiary);font-size:.78rem;font-family:DM Mono,monospace">Aucun compte — cliquez sur "+ Compte"</div>';
             if (totalWrap) totalWrap.style.display = 'none';
+            if (detail) detail.style.display = 'none';
             return;
         }
+        if (emptyEl) emptyEl.innerHTML = '';
 
         // Calcul total
         const total = comptes.reduce((s, c) => s + this._calcSoldeCompte(c), 0);
@@ -3445,6 +3450,15 @@ const app = {
         container.innerHTML = '<div class="vault-accounts-row">' + chips + '</div>';
     },
 
+
+    toggleSoldeDetail() {
+        const detail = document.getElementById('vault-solde-detail');
+        const btn    = document.getElementById('vault-solde-toggle');
+        if (!detail) return;
+        const isOpen = detail.style.display !== 'none';
+        detail.style.display = isOpen ? 'none' : '';
+        if (btn) btn.classList.toggle('open', !isOpen);
+    },
 
     updatePatInputs() {
         const container = document.getElementById('pat-inputs');

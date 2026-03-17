@@ -1257,10 +1257,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   transform: translateY(-2px);
   box-shadow: var(--glass-shadow-hover, 0 14px 40px rgba(99,102,241,.26), inset 0 1px 0 rgba(255,255,255,.95));
 }
-.vault-solde-topbar {
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-gradient-start), var(--accent-gradient-end));
-}
+.vault-solde-topbar { display: none; }
 .vault-solde-inner {
   padding: 1.1rem 1.4rem 1.2rem;
 }
@@ -1309,6 +1306,27 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   letter-spacing: -.05em;
   font-family: 'Outfit', sans-serif;
   line-height: 1;
+}
+.vault-solde-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 .1rem;
+  margin-left: auto;
+  transition: transform .25s ease, color .15s;
+  display: flex;
+  align-items: center;
+}
+.vault-solde-toggle-btn.open {
+  transform: rotate(180deg);
+  color: var(--accent-primary);
+}
+#vault-solde-detail {
+  overflow: hidden;
+  transition: opacity .25s ease;
 }
 .vault-accounts-row {
   display: flex;
