@@ -1136,7 +1136,7 @@ const app = {
                     const ws = workbook.Sheets['Dépenses'];
                     const data = XLSX.utils.sheet_to_json(ws);
                     this.data.depenses = data.map(d => ({
-                        id: d.ID || Date.now() + Math.random(),
+                        id: d.ID || crypto.randomUUID(),
                         categorie: d.Catégorie,
                         montant: d.Montant,
                         date: d.Date,
@@ -1148,7 +1148,7 @@ const app = {
                     const ws = workbook.Sheets['PEA'];
                     const data = XLSX.utils.sheet_to_json(ws);
                     this.data.suiviPEA = data.map(p => ({
-                        id: p.ID || Date.now() + Math.random(),
+                        id: p.ID || crypto.randomUUID(),
                         date: p.Date,
                         valeur: p.Valeur,
                         investi: p.Investi,
@@ -1163,7 +1163,7 @@ const app = {
                     const data = XLSX.utils.sheet_to_json(ws);
                     this.data.patrimoine = data.map(p => {
                         const obj = {
-                            id: p.ID || Date.now() + Math.random(),
+                            id: p.ID || crypto.randomUUID(),
                             mois: p.Mois,
                             total: p.Total
                         };
@@ -2718,7 +2718,7 @@ const app = {
             const note = document.getElementById('bs-dep-note-' + id)?.value || '';
             const compteId = document.getElementById('bs-dep-compte-' + id)?.value || null;
             if (!montant || montant <= 0) return;
-            this.data.depenses.push({ id: Date.now() + added, categorie: cat, montant, date, note, compteId: compteId || null });
+            this.data.depenses.push({ id: crypto.randomUUID(), categorie: cat, montant, date, note, compteId: compteId || null });
             added++;
         });
         if (added === 0) { this.notify('Aucun montant saisi', 'error'); return; }
@@ -2803,7 +2803,7 @@ const app = {
             if (oldEl) oldEl.value = values[compte];
         });
         this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
-        this.data.patrimoine.push({ id: Date.now(), date: dateVal, mois, ...values, total });
+        this.data.patrimoine.push({ id: crypto.randomUUID(), date: dateVal, mois, ...values, total });
         this.save();
         this.afficherPatrimoine();
         this.refreshStatsPatrimoine();
@@ -2862,7 +2862,7 @@ const app = {
         if (!valeur || !investi) { this.notify('Remplir Valeur et Investi', 'error'); return; }
         const gain = valeur - investi;
         const perf = ((gain / investi) * 100).toFixed(2);
-        this.data.suiviPEA.push({ id: Date.now(), date, valeur, investi, gainPerte: gain, performance: perf, note });
+        this.data.suiviPEA.push({ id: crypto.randomUUID(), date, valeur, investi, gainPerte: gain, performance: perf, note });
 
         document.getElementById('pea-date').value = date;
         document.getElementById('pea-val').value  = valeur;
@@ -3324,7 +3324,7 @@ const app = {
             if (c) { c.nom = nom; c.type = type; c.soldeInitial = solde; c.dateSoldeInitial = date; }
         } else {
             this.data.comptesPointage.push({
-                id: 'cp_' + Date.now(),
+                id: 'cp_' + crypto.randomUUID(),
                 nom, type,
                 soldeInitial: solde,
                 dateSoldeInitial: date
@@ -3454,7 +3454,7 @@ const app = {
         }
 
         this.data.depenses.push({
-            id: Date.now(),
+            id: crypto.randomUUID(),
             categorie: cat,
             montant: montant,
             date: date,
@@ -3719,7 +3719,7 @@ const app = {
         if (!montant || montant <= 0) { this.notify('Montant invalide', 'error'); return; }
         if (!date) { this.notify('Date requise', 'error'); return; }
         const mois = date.substring(0, 7);
-        this.data.revenus.push({ id: Date.now(), date, mois, type, montant, note, compteId: compteId || null });
+        this.data.revenus.push({ id: crypto.randomUUID(), date, mois, type, montant, note, compteId: compteId || null });
         this.save();
         this.refreshRevenus();
         this.refreshHistoriqueRevenus();
@@ -4102,7 +4102,7 @@ const app = {
         const perf = ((gain / investi) * 100).toFixed(2);
 
         this.data.suiviPEA.push({
-            id: Date.now(),
+            id: crypto.randomUUID(),
             date: date,
             valeur: valeur,
             investi: investi,
@@ -4251,7 +4251,7 @@ const app = {
                         const gain = val - inv;
 
                         this.data.suiviPEA.push({
-                            id: Date.now() + i,
+                            id: crypto.randomUUID(),
                             date: date.trim(),
                             valeur: val,
                             investi: inv,
@@ -4290,7 +4290,7 @@ const app = {
 
         this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
         this.data.patrimoine.push({
-            id: Date.now(),
+            id: crypto.randomUUID(),
             date: dateVal,
             mois: mois,
             ...values,
@@ -5654,7 +5654,7 @@ const app = {
         }
 
         const scenario = {
-            id: Date.now(),
+            id: crypto.randomUUID(),
             nom: nom,
             actuel: parseFloat(document.getElementById('prev-pea-actuel').value) || 0,
             mensuel: parseFloat(document.getElementById('prev-pea-mensuel').value) || 0,
@@ -5976,7 +5976,7 @@ const app = {
         }
 
         const modele = {
-            id: Date.now(),
+            id: crypto.randomUUID(),
             nom: nom,
             lignes: lignes
         };
@@ -6583,7 +6583,7 @@ const app = {
         const jour = parseInt(document.getElementById('rec-jour').value) || 1;
         const freq = document.getElementById('rec-freq').value;
         if (!nom || !montant) { this.notify('Remplir nom et montant', 'error'); return; }
-        this.data.recurrences.push({ id: Date.now(), nom, emoji, montant, jour, freq, actif: true });
+        this.data.recurrences.push({ id: crypto.randomUUID(), nom, emoji, montant, jour, freq, actif: true });
         this.save();
         this.refreshRecurrences();
         document.getElementById('recurrenceModal').classList.remove('active');
@@ -6684,7 +6684,7 @@ const app = {
         const actuel = parseFloat(document.getElementById('obj-actuel').value) || 0;
         const dateTarget = document.getElementById('obj-date').value;
         if (!nom || !cible) { this.notify('Remplir nom et cible', 'error'); return; }
-        this.data.objectifs.push({ id: Date.now(), nom, emoji, cible, actuel, dateTarget });
+        this.data.objectifs.push({ id: crypto.randomUUID(), nom, emoji, cible, actuel, dateTarget });
         this.save();
         this.refreshObjectifs();
         document.getElementById('objectifModal').classList.remove('active');
@@ -6824,7 +6824,7 @@ const app = {
         const texte = document.getElementById('note-texte').value.trim();
         const tag = document.getElementById('note-tag').value;
         if (!mois || !texte) { this.notify('Remplir mois et note', 'error'); return; }
-        this.data.notes.push({ id: Date.now(), mois, texte, tag });
+        this.data.notes.push({ id: crypto.randomUUID(), mois, texte, tag });
         this.save();
         this.refreshNotes();
         document.getElementById('note-texte').value = '';
@@ -6853,7 +6853,7 @@ const app = {
         const texte = document.getElementById('bs-note-texte').value.trim();
         const tag   = document.getElementById('bs-note-tag').value;
         if (!mois || !texte) { this.notify('Remplir le mois et la note', 'error'); return; }
-        this.data.notes.push({ id: Date.now(), mois, texte, tag });
+        this.data.notes.push({ id: crypto.randomUUID(), mois, texte, tag });
         this.save();
         this.refreshNotes();
         this.closeBsNote();
@@ -6933,7 +6933,7 @@ const app = {
         const parts = parseFloat(document.getElementById('lpea-parts').value) || 0;
         const pru = parseFloat(document.getElementById('lpea-pru').value) || 0;
         if (!nom || !parts) { this.notify('Remplir nom et parts', 'error'); return; }
-        this.data.lignesPEA.push({ id: Date.now(), nom, isin, ticker: '', parts, pru, valeurActuelle: pru });
+        this.data.lignesPEA.push({ id: crypto.randomUUID(), nom, isin, ticker: '', parts, pru, valeurActuelle: pru });
         this.save();
         this.refreshLignesPEA();
         this.chartPEA();
@@ -7036,7 +7036,7 @@ const app = {
             const gain = totalValeur - totalInvesti;
             const perf = totalInvesti > 0 ? ((gain / totalInvesti) * 100).toFixed(2) : '0';
             const today = new Date().toISOString().split('T')[0];
-            const entry = { id: Date.now(), date: today, valeur: totalValeur, investi: totalInvesti,
+            const entry = { id: crypto.randomUUID(), date: today, valeur: totalValeur, investi: totalInvesti,
                             gainPerte: gain, performance: perf, note: '📡 Finnhub' };
             const idx = this.data.suiviPEA.findIndex(p => p.date === today);
             if (idx >= 0) this.data.suiviPEA[idx] = entry; else this.data.suiviPEA.push(entry);
@@ -7931,7 +7931,7 @@ const app = {
         let added = 0;
         selected.forEach(row => {
             this.data.depenses.push({
-                id: Date.now() + Math.random(),
+                id: crypto.randomUUID(),
                 categorie: row.categorie,
                 montant: row.montant,
                 date: row.date,
