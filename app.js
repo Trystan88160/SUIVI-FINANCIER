@@ -3652,8 +3652,8 @@ const app = {
                             </div>
                             <div class="hist-card-amount">${this.formatCurrency(d.montant)}</div>
                             <div class="hist-card-actions">
-                                <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', ${d.id})" title="Modifier">✏️</button>
-                                <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense(${d.id})" title="Supprimer">✕</button>
+                                <button class="btn btn-small btn-secondary" onclick="app.ouvrirEditDepense('${d.id}')" title="Modifier">✏️</button>
+                                <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${d.id}')" title="Supprimer">✕</button>
                             </div>
                         </div>`;
                     }).join('')}
@@ -3691,12 +3691,91 @@ const app = {
         this.afficherDepenses();
     },
 
+    ouvrirEditDepense(id) {
+        const dep = this.data.depenses.find(d => d.id === id);
+        if (!dep) return;
+
+        const cats = Object.keys(this.data.budgets).sort();
+        const catsOpts = cats.map(c => `<option value="${c}" ${c === dep.categorie ? 'selected' : ''}>${c}</option>`).join('');
+        const hasComptes = (this.data.comptesPointage || []).length > 0;
+        const comptesOpts = (this.data.comptesPointage || []).map(c =>
+            `<option value="${c.id}" ${String(c.id) === String(dep.compteId) ? 'selected' : ''}>${c.nom}</option>`
+        ).join('');
+        const compteHtml = hasComptes
+            ? `<div class="form-group">
+                <label class="form-label">Compte</label>
+                <select class="form-select" id="edit-dep-compte">
+                  <option value="">— Aucun —</option>${comptesOpts}
+                </select>
+               </div>`
+            : '';
+
+        const modal = document.createElement('div');
+        modal.id = 'edit-dep-modal-wrap';
+        modal.style.cssText = 'position:fixed;inset:0;z-index:1900;display:flex;align-items:center;justify-content:center';
+        modal.innerHTML = `
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)" onclick="document.getElementById('edit-dep-modal-wrap').remove()"></div>
+          <div class="modal" style="display:flex;position:relative;z-index:1901;max-width:420px;width:92%">
+            <div class="modal-header">
+              <h2 class="modal-title">✏️ Modifier la dépense</h2>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="form-label">Catégorie</label>
+                <select class="form-select" id="edit-dep-cat">${catsOpts}</select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Montant (€)</label>
+                <input type="number" class="form-input" id="edit-dep-montant" value="${dep.montant}" step="0.01" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="edit-dep-date" value="${dep.date}">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Note</label>
+                <input type="text" class="form-input" id="edit-dep-note" value="${this._esc(dep.note || '')}">
+              </div>
+              ${compteHtml}
+            </div>
+            <div class="modal-footer">
+              <button class="vp-btn-cancel" onclick="document.getElementById('edit-dep-modal-wrap').remove()">Annuler</button>
+              <button class="vp-btn-save" onclick="app._sauvegarderEditDepense('${id}')">Enregistrer</button>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+    },
+
+    _sauvegarderEditDepense(id) {
+        const dep = this.data.depenses.find(d => d.id === id);
+        if (!dep) return;
+        const cat     = document.getElementById('edit-dep-cat')?.value;
+        const montant = parseFloat(document.getElementById('edit-dep-montant')?.value);
+        const date    = document.getElementById('edit-dep-date')?.value;
+        const note    = document.getElementById('edit-dep-note')?.value || '';
+        const compteEl = document.getElementById('edit-dep-compte');
+        if (!cat || isNaN(montant) || !date) { this.notify('Champs invalides', 'error'); return; }
+        dep.categorie = cat;
+        dep.montant   = montant;
+        dep.date      = date;
+        dep.note      = note;
+        if (compteEl) dep.compteId = compteEl.value || null;
+        document.getElementById('edit-dep-modal-wrap')?.remove();
+        this.save();
+        this.afficherDepenses();
+        this.refreshStatsDepenses();
+        this.analyseDepenses();
+        this.refreshCharts();
+        this.refreshPointage();
+        this.notify('Dépense modifiée', 'success');
+    },
+
     supprimerDepense(id) {
         this.showModal(
             'Supprimer la dépense',
             'Voulez-vous vraiment supprimer cette dépense ?',
             () => {
-                this.data.depenses = this.data.depenses.filter(d => d.id !== id);
+                this.data.depenses = this.data.depenses.filter(d => String(d.id) !== String(id));
                 this.save();
                 this.afficherDepenses();
                 this.refreshStatsDepenses();
@@ -4068,7 +4147,7 @@ const app = {
                                         ${this.formatCurrency(d.montant)}
                                     </td>
                                     <td style="color:var(--text-secondary)">${d.note || '—'}</td>
-                                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerDepense(${d.id})">✕</button></td>
+                                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${d.id}')">✕</button></td>
                                 </tr>`).join('')}
                             </tbody>
                         </table>
@@ -4093,7 +4172,7 @@ const app = {
                             <span style="font-family:DM Mono,monospace;font-size:0.7rem;color:var(--text-tertiary);min-width:80px">${new Date(d.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span>
                             <span style="font-size:0.82rem;flex:1;color:var(--text-secondary)">${d.note || '—'}</span>
                             <span style="font-family:DM Mono,monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary)">${this.formatCurrency(d.montant)}</span>
-                            <button onclick="app.supprimerDepense(${d.id})" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.75rem;padding:0 0.25rem" title="Supprimer">✕</button>
+                            <button onclick="app.supprimerDepense('${d.id}')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.75rem;padding:0 0.25rem" title="Supprimer">✕</button>
                         </div>`).join('');
                     html += `
                     <div class="cat-row" style="border-radius:14px;background:var(--bg-card);border:1px solid var(--border-color);overflow:hidden;box-shadow:4px 4px 8px var(--shadow-light),-4px -4px 8px var(--shadow-dark)">
@@ -4221,7 +4300,7 @@ const app = {
                     <div class="mdc-bottom">
                         <span class="mdc-date">${new Date(s.date).toLocaleDateString('fr-FR')}</span>
                         <div class="mdc-actions">
-                            <button class="mdc-btn mdc-btn-edit" onclick="app.modifierNote('pea', ${s.id})">✏️ Note</button>
+                            <button class="mdc-btn mdc-btn-edit" onclick="app.modifierNote('pea', '${s.id}')">✏️ Note</button>
                             <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPEA(${s.id})">🗑 Suppr.</button>
                         </div>
                     </div>
@@ -4238,7 +4317,7 @@ const app = {
                     </td>
                     <td>
                         ${s.note || '—'}
-                        <button class="btn btn-small btn-secondary" onclick="app.modifierNote('pea', ${s.id})" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
+                        <button class="btn btn-small btn-secondary" onclick="app.modifierNote('pea', '${s.id}')" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
                     </td>
                     <td><button class="btn btn-small btn-secondary" onclick="app.supprimerPEA(${s.id})">✕</button></td>
                 </tr>
@@ -5860,9 +5939,9 @@ const app = {
     modifierNote(type, id) {
         let item;
         if (type === 'depense') {
-            item = this.data.depenses.find(d => d.id === id);
+            item = this.data.depenses.find(d => String(d.id) === String(id));
         } else if (type === 'pea') {
-            item = this.data.suiviPEA.find(p => p.id === id);
+            item = this.data.suiviPEA.find(p => String(p.id) === String(id));
         }
 
         if (!item) return;
