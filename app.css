@@ -1214,3 +1214,19 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   color: var(--accent-primary);
   border-color: var(--accent-primary);
 }
+
+/* ── Hauteur égale dans une vault-layout-row ───────────────────────────────
+   Le wrapper [data-card-id] devient flex-colonne pour que la .card
+   à l'intérieur puisse s'étirer à toute la hauteur de la ligne.        */
+.vault-layout-row > [data-card-id] {
+  display: flex;
+  flex-direction: column;
+}
+.vault-layout-row > [data-card-id] > .card {
+  flex: 1;
+  height: 100%;
+}
+/* Les chart-container dans une row s'adaptent aussi */
+.vault-layout-row > [data-card-id] .chart-container {
+  flex: 1;
+}
