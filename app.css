@@ -1384,6 +1384,8 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   box-shadow: var(--glass-shadow, 0 8px 28px rgba(99,102,241,.18), inset 0 1px 0 rgba(255,255,255,.9));
   transition: transform .3s, box-shadow .3s;
   margin-bottom: 2rem;
+  min-height: 175px;
+  justify-content: center;
 }
 .vault-action-tile:hover {
   transform: translateY(-2px);
