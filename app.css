@@ -1109,17 +1109,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 /* ══════════════════════════════════════════════════════════
    VAULT LAYOUT SYSTEM — lignes dynamiques
    ══════════════════════════════════════════════════════════ */
-.vault-layout-row {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: stretch;
-  margin-bottom: 2rem;
-}
-.vault-layout-row > [data-card-id] {
-  flex: 1;
-  min-width: 260px;
-}
+/* vault-layout-row — consolidé plus bas, ne pas dupliquer */
 
 /* ══════════════════════════════════════════════════════════
    VAULT LAYOUT EDITOR (VLE) — modal éditeur visuel
@@ -1215,18 +1205,32 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   border-color: var(--accent-primary);
 }
 
-/* ── Hauteur égale dans une vault-layout-row ───────────────────────────────
-   Chaîne flex complète : row → wrapper → card                            */
+/* ── vault-layout-row — bloc unique consolidé ─────────────────────────────
+   Gère l'espacement, la hauteur égale et la suppression des marges
+   parasites à l'intérieur d'une ligne de cartes côte à côte.           */
+.vault-layout-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin-bottom: 2rem;
+}
+/* Wrapper de chaque carte — flex colonne pour que .card s'étire en hauteur */
 .vault-layout-row > [data-card-id] {
+  flex: 1;
+  min-width: 260px;
   display: flex;
   flex-direction: column;
+  /* Annuler tout margin-bottom sur le wrapper lui-même */
+  margin-bottom: 0 !important;
 }
-/* La .card directe s'étire — on annule son margin-bottom dans ce contexte */
-.vault-layout-row > [data-card-id] > .card {
+/* .card à l'intérieur — s'étire, supprime son margin-bottom */
+/* Pas de > pour couvrir les wrappers intermédiaires éventuels */
+.vault-layout-row > [data-card-id] .card {
   flex: 1;
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
-/* Les chart-container s'adaptent à l'espace disponible */
+/* chart-container s'adapte à l'espace dispo */
 .vault-layout-row > [data-card-id] .chart-container {
   flex: 1;
   min-height: 200px;
