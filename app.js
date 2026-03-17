@@ -6638,18 +6638,22 @@ const app = {
         modal.innerHTML = `
             <div class="modal-header"><h2 class="modal-title">🎯 Nouvel objectif</h2></div>
             <div class="modal-body">
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem">
-                    <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="obj-nom" placeholder="Voyage Japon..."></div>
-                    <div class="form-group"><label class="form-label">Emoji</label>
-                        <div class="emoji-picker-wrap">
-                            <button type="button" class="emoji-preview-btn" onclick="app.openEmojiPicker('obj-emoji', this)">🎯</button>
-                            <input type="text" class="form-input" id="obj-emoji" placeholder="🎯" style="display:none">
+                <div style="display:flex;flex-direction:column;gap:.65rem">
+                    <div style="display:grid;grid-template-columns:1fr auto;gap:.65rem;align-items:end">
+                        <div class="form-group" style="margin:0"><label class="form-label">Nom</label><input type="text" class="form-input" id="obj-nom" placeholder="Voyage Japon..."></div>
+                        <div class="form-group" style="margin:0"><label class="form-label">Emoji</label>
+                            <div class="emoji-picker-wrap">
+                                <button type="button" class="emoji-preview-btn" onclick="app.openEmojiPicker('obj-emoji', this)">🎯</button>
+                                <input type="text" class="form-input" id="obj-emoji" placeholder="🎯" style="display:none">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group"><label class="form-label">Montant cible (€)</label><input type="number" class="form-input" id="obj-cible" placeholder="3500" step="100"></div>
-                    <div class="form-group"><label class="form-label">Déjà épargné (€)</label><input type="number" class="form-input" id="obj-actuel" placeholder="0" step="100"></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem">
+                        <div class="form-group" style="margin:0"><label class="form-label">Montant cible (€)</label><input type="number" class="form-input" id="obj-cible" placeholder="3500" step="100"></div>
+                        <div class="form-group" style="margin:0"><label class="form-label">Déjà épargné (€)</label><input type="number" class="form-input" id="obj-actuel" placeholder="0" step="100"></div>
+                    </div>
+                    <div class="form-group" style="margin:0"><label class="form-label">Date cible</label><input type="month" class="form-input" id="obj-date"></div>
                 </div>
-                <div class="form-group"><label class="form-label">Date cible</label><input type="month" class="form-input" id="obj-date"></div>
             </div>
             <div class="modal-footer">
                 <button class="vp-btn-cancel" onclick="document.getElementById('objectifModal').classList.remove('active');document.getElementById('overlay').classList.remove('active')">Annuler</button>

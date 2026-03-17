@@ -817,6 +817,16 @@ html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
   max-width: 600px !important;
   min-width: 0 !important;
 }
+/* Grilles dans les modals — empêche le débordement horizontal */
+.modal .form-group,
+.modal input,
+.modal select,
+.modal textarea {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 /* Modals avec grille 2 colonnes → plus larges */
 #objectifModal, #lignePEAModal, #retraiteModal, #simulateurModal {
   max-width: 640px !important;
@@ -907,7 +917,7 @@ html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
   color: var(--text-primary) !important;
   line-height: 1.25 !important;
 }
-.modal-body  { padding: .75rem 1.5rem 1rem !important; }
+.modal-body  { padding: .75rem 1.5rem 1rem !important; overflow-x: hidden !important; overflow-y: auto !important; }
 .modal-footer {
   padding: .85rem 1.5rem 1.4rem !important;
   border-top: 1px solid rgba(63, 81, 181, .1) !important;
