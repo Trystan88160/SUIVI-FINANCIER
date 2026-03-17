@@ -1230,6 +1230,11 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   flex: 1;
   margin-bottom: 0 !important;
 }
+/* vault-action-tile s'étire pour égaliser la hauteur des cartes côte à côte */
+.vault-layout-row > [data-card-id] .vault-action-tile {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
 /* chart-container s'adapte à l'espace dispo */
 .vault-layout-row > [data-card-id] .chart-container {
   flex: 1;
@@ -1384,7 +1389,6 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   box-shadow: var(--glass-shadow, 0 8px 28px rgba(99,102,241,.18), inset 0 1px 0 rgba(255,255,255,.9));
   transition: transform .3s, box-shadow .3s;
   margin-bottom: 2rem;
-  min-height: 175px;
   justify-content: center;
 }
 .vault-action-tile:hover {
