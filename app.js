@@ -397,9 +397,12 @@ const app = {
           </div>`;
         document.body.appendChild(overlay);
         this._obOverlay = overlay;
-        this._obStep = () => step; // expose pour reprise
+        this._obCurrentStep = 0;
+        this._obSteps = STEPS;
+        this._obRender = render;
 
         const render = (idx, dir = 1) => {
+            this._obCurrentStep = idx;
             const body = document.getElementById('_ob_body');
             body.classList.add('exit');
             setTimeout(() => {
@@ -418,7 +421,7 @@ const app = {
                     aw.innerHTML = `<button class="v-ob-btn-action" id="_ob_action">${s.actionLabel}</button>`;
                     document.getElementById('_ob_action').onclick = () => {
                         // Masquer l'overlay sans marquer comme terminé
-                        this._obPause(step, STEPS);
+                        this._obPause();
                         setTimeout(() => { try { s.actionFn(); } catch(e){} }, 150);
                     };
                 } else {
@@ -443,66 +446,32 @@ const app = {
         render(0);
     },
 
-    // Pause : masque l'overlay, affiche le pill "reprendre", ne marque PAS comme terminé
-    _obPause(currentStep, steps) {
+    // Pause : masque l'overlay, affiche le pill "reprendre"
+    _obPause() {
         const o = this._obOverlay;
         if (!o) return;
         o.style.display = 'none';
-
-        // Supprimer un éventuel pill existant
         document.getElementById('_ob_resume_pill')?.remove();
-
         const pill = document.createElement('button');
         pill.id = '_ob_resume_pill';
         pill.className = 'v-ob-resume-pill';
-        pill.innerHTML = `<span class="v-ob-pill-dot"></span> Reprendre le guide`;
-        pill.onclick = () => {
-            pill.remove();
-            if (o) {
-                // Avancer d'une étape si ce n'est pas la dernière
-                const nextStep = Math.min(currentStep + 1, steps.length - 1);
-                o.style.display = '';
-                // Re-render à l'étape suivante
-                const body = o.querySelector('#_ob_body');
-                if (body) {
-                    const s = steps[nextStep];
-                    body.classList.add('exit');
-                    setTimeout(() => {
-                        o.querySelector('#_ob_illu').innerHTML = this._obIllu?.[s.key] || '';
-                        o.querySelector('#_ob_label').textContent = s.label;
-                        o.querySelector('#_ob_title').textContent = s.title;
-                        o.querySelector('#_ob_desc').textContent = s.desc;
-                        o.querySelector('#_ob_next').textContent = s.cta;
-                        o.querySelector('#_ob_back').style.display = nextStep > 0 && nextStep < steps.length - 1 ? '' : 'none';
-                        o.querySelector('#_ob_dots').innerHTML = steps.map((_,i) =>
-                            `<span class="v-ob-dot${i===nextStep?' active':''}"></span>`).join('');
-                        const aw = o.querySelector('#_ob_action_wrap');
-                        if (s.actionLabel && s.actionFn && aw) {
-                            aw.innerHTML = `<button class="v-ob-btn-action">${s.actionLabel}</button>`;
-                            aw.querySelector('button').onclick = () => {
-                                this._obPause(nextStep, steps);
-                                setTimeout(() => { try { s.actionFn(); } catch(e){} }, 150);
-                            };
-                        } else if (aw) { aw.innerHTML = ''; }
-                        // Update next button handler for new step
-                        const nextBtn = o.querySelector('#_ob_next');
-                        nextBtn.onclick = () => {
-                            if (nextStep < steps.length - 1) {
-                                // Simple increment — on reuse pill mechanism
-                                this._obPause(nextStep, steps);
-                                setTimeout(() => {
-                                    document.getElementById('_ob_resume_pill')?.click();
-                                }, 10);
-                            } else { this._closeOnboarding(); }
-                        };
-                        body.classList.remove('exit');
-                        body.classList.add('enter');
-                        requestAnimationFrame(() => body.classList.remove('enter'));
-                    }, 180);
-                }
-            }
-        };
+        pill.innerHTML = '<span class="v-ob-pill-dot"></span> Reprendre le guide';
+        pill.onclick = () => this._obAutoResume(false);
         document.body.appendChild(pill);
+    },
+
+    // Reprise auto (après save) ou manuelle (pill)
+    // advance=true → passe à l'étape suivante ; false → reste sur l'étape courante
+    _obAutoResume(advance = true) {
+        document.getElementById('_ob_resume_pill')?.remove();
+        const o = this._obOverlay;
+        if (!o || !this._obRender || !this._obSteps) return;
+        const steps = this._obSteps;
+        const nextStep = advance
+            ? Math.min(this._obCurrentStep + 1, steps.length - 1)
+            : this._obCurrentStep;
+        o.style.display = '';
+        this._obRender(nextStep);
     },
 
     _closeOnboarding() {
@@ -2759,6 +2728,7 @@ const app = {
         this.refreshPointage();
         this.closeBsDepenses();
         this.notify(`${added} dépense${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''}`, 'success');
+        if (this._obOverlay && this._obOverlay.style.display === 'none') setTimeout(() => this._obAutoResume(true), 300);
     },
 
     openBsPatrimoine() {
@@ -3363,6 +3333,7 @@ const app = {
         this.refreshPointage();
         this.closeAddComptePointage();
         this.notify(editId ? 'Compte modifié' : 'Compte ajouté', 'success');
+        if (this._obOverlay && this._obOverlay.style.display === 'none') setTimeout(() => this._obAutoResume(true), 300);
     },
 
     supprimerComptePointage(id) {
@@ -3863,6 +3834,7 @@ const app = {
         document.getElementById('rev-note').value = '';
         this.notify('Revenu enregistré', 'success');
         this.closeBsRevenus();
+        if (this._obOverlay && this._obOverlay.style.display === 'none') setTimeout(() => this._obAutoResume(true), 300);
     },
 
     supprimerRevenu(id) {
