@@ -297,6 +297,8 @@ const app = {
 
         // Système popup unifié
         this._initVaultPopups();
+        // Appliquer l'ordre des cartes sauvegardé
+        this.applyAllCardOrder();
     },
 
     /* ── Onboarding ─────────────────────────────────────── */
@@ -899,6 +901,7 @@ const app = {
             classif503020:      loaded.classif503020       || {},
             chartColors:        loaded.chartColors          || {},
             hiddenCards:        loaded.hiddenCards          || {},
+            cardOrder:          loaded.cardOrder            || {},
             categorieColors:    loaded.categorieColors      || {},
             parametres:         loaded.parametres          || this.data.parametres
         };
@@ -4713,7 +4716,14 @@ const app = {
     openTabCustomizer(tabId) {
         const config = this._tabCardsConfig[tabId];
         if (!config) return;
-        const hidden = this.data.hiddenCards?.[tabId] || {};
+        const hidden   = this.data.hiddenCards?.[tabId] || {};
+        const order    = this.data.cardOrder?.[tabId] || config.map(c => c.id);
+        // Trier la config selon l'ordre sauvegardé
+        const orderedConfig = [...config].sort((a, b) => {
+            const ia = order.indexOf(a.id);
+            const ib = order.indexOf(b.id);
+            return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+        });
         const tabNames = { dashboard:'Dashboard', depenses:'Budget', pea:'PEA', patrimoine:'Patrimoine', bilan:'Bilan' };
         let modal = document.getElementById('tabCustomizerModal');
         if (!modal) {
@@ -4728,13 +4738,16 @@ const app = {
                 <h2 class="modal-title" style="font-family:'Outfit',sans-serif">⚙️ Personnaliser — ${tabNames[tabId] || tabId}</h2>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom:1.25rem;color:var(--text-secondary);font-size:.88rem;line-height:1.6">
-                    Active ou désactive les sections de cet onglet. Les données sont toujours conservées.
+                <p style="margin-bottom:.5rem;color:var(--text-secondary);font-size:.88rem;line-height:1.6">
+                    Active / désactive les sections et <strong>glisse ⠿ pour réordonner</strong>.
                 </p>
-                <div style="display:flex;flex-direction:column;gap:.5rem">
-                ${config.map(card => `
-                    <div class="tc-toggle-row">
-                        <div>
+                <div id="tc-drag-list" style="display:flex;flex-direction:column;gap:.4rem">
+                ${orderedConfig.map(card => `
+                    <div class="tc-toggle-row" draggable="true" data-card-id="${card.id}"
+                         style="cursor:default;user-select:none;transition:opacity .15s,transform .15s">
+                        <span class="tc-drag-handle" title="Glisser pour réordonner"
+                              style="cursor:grab;font-size:1rem;color:var(--text-tertiary);padding:0 .5rem 0 0;flex-shrink:0;line-height:1">⠿</span>
+                        <div style="flex:1;min-width:0">
                             <div class="tc-toggle-label">${card.label}</div>
                             <div class="tc-toggle-sub">${card.sub}</div>
                         </div>
@@ -4747,7 +4760,7 @@ const app = {
                 </div>
             </div>
             <div class="modal-footer" style="display:flex;gap:.65rem;flex-wrap:wrap">
-                <button class="vp-btn-cancel" onclick="app.resetTabCustomizer('${tabId}')" style="margin-right:auto">🔄 Tout afficher</button>
+                <button class="vp-btn-cancel" onclick="app.resetTabCustomizer('${tabId}')" style="margin-right:auto">🔄 Réinitialiser</button>
                 <button class="vp-btn-cancel" onclick="app.closeTabCustomizer()">Annuler</button>
                 <button class="vp-btn-save" onclick="app.saveTabCustomizer('${tabId}')">✅ Appliquer</button>
             </div>
@@ -4755,6 +4768,61 @@ const app = {
         modal.classList.add('active');
         document.getElementById('overlay').classList.add('active');
         document.getElementById('overlay').onclick = () => app.closeTabCustomizer();
+
+        // ── Drag & Drop sur la liste ──────────────────────────────────────────
+        this._initDragList(document.getElementById('tc-drag-list'));
+    },
+
+    _initDragList(list) {
+        if (!list) return;
+        let dragSrc = null;
+
+        list.querySelectorAll('[draggable]').forEach(row => {
+            row.addEventListener('dragstart', e => {
+                dragSrc = row;
+                row.style.opacity = '.4';
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            row.addEventListener('dragend', () => {
+                row.style.opacity = '';
+                list.querySelectorAll('[draggable]').forEach(r => r.classList.remove('tc-drag-over'));
+            });
+            row.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (row === dragSrc) return;
+                list.querySelectorAll('[draggable]').forEach(r => r.classList.remove('tc-drag-over'));
+                row.classList.add('tc-drag-over');
+            });
+            row.addEventListener('dragleave', () => row.classList.remove('tc-drag-over'));
+            row.addEventListener('drop', e => {
+                e.preventDefault();
+                if (!dragSrc || dragSrc === row) return;
+                row.classList.remove('tc-drag-over');
+                // Réordonner dans le DOM
+                const rows = [...list.querySelectorAll('[draggable]')];
+                const srcIdx = rows.indexOf(dragSrc);
+                const dstIdx = rows.indexOf(row);
+                if (srcIdx < dstIdx) list.insertBefore(dragSrc, row.nextSibling);
+                else                  list.insertBefore(dragSrc, row);
+            });
+        });
+    },
+
+    applyCardOrder(tabId) {
+        const order = this.data.cardOrder?.[tabId];
+        if (!order || order.length === 0) return;
+        // Trouver le conteneur parent des cartes de cet onglet
+        const tab = document.getElementById('tab-' + tabId);
+        if (!tab) return;
+        order.forEach(cardId => {
+            const el = tab.querySelector(`[data-card-id="${cardId}"]`);
+            if (el) tab.appendChild(el);
+        });
+    },
+
+    applyAllCardOrder() {
+        Object.keys(this._tabCardsConfig).forEach(tabId => this.applyCardOrder(tabId));
     },
 
     closeTabCustomizer() {
@@ -4766,17 +4834,30 @@ const app = {
 
     resetTabCustomizer(tabId) {
         if (!this.data.hiddenCards) this.data.hiddenCards = {};
+        if (!this.data.cardOrder)   this.data.cardOrder   = {};
         this.data.hiddenCards[tabId] = {};
+        this.data.cardOrder[tabId]   = this._tabCardsConfig[tabId]?.map(c => c.id) || [];
         this.save();
+        this.applyCardOrder(tabId);
         this.applyTabCards(tabId);
         this.closeTabCustomizer();
-        this.notify(`Onglet réinitialisé — toutes les sections affichées`, 'success');
+        this.notify('Onglet réinitialisé — ordre et sections par défaut', 'success');
     },
 
     saveTabCustomizer(tabId) {
         const config = this._tabCardsConfig[tabId];
         if (!config) return;
         if (!this.data.hiddenCards) this.data.hiddenCards = {};
+        if (!this.data.cardOrder)   this.data.cardOrder   = {};
+
+        // Lire l'ordre actuel dans le DOM de la liste drag
+        const list = document.getElementById('tc-drag-list');
+        if (list) {
+            this.data.cardOrder[tabId] = [...list.querySelectorAll('[data-card-id]')]
+                .map(el => el.dataset.cardId);
+        }
+
+        // Lire les toggles visibilité
         const newHidden = {};
         config.forEach(card => {
             const chk = document.getElementById('tc-chk-' + card.id);
@@ -4789,9 +4870,10 @@ const app = {
         }
         this.data.hiddenCards[tabId] = newHidden;
         this.save();
+        this.applyCardOrder(tabId);
         this.applyTabCards(tabId);
         this.closeTabCustomizer();
-        this.notify(`Onglet personnalisé — ${visibleCount}/${config.length} sections affichées`, 'success');
+        this.notify(`✅ Onglet personnalisé — ${visibleCount}/${config.length} sections affichées`, 'success');
     },
 
     applyTabCards(tabId) {
