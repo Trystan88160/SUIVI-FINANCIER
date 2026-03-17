@@ -2544,39 +2544,53 @@ const app = {
     },
 
     toggleTriPanel(panel) {
-        const panels = ['comp', 'regle', 'recurrences'];
-        const bodyIds = { comp: 'comparaison-body', regle: 'regle-body', recurrences: 'recurrences-body' };
-        const arrowIds = { comp: 'comp-arrow', regle: 'regle-arrow', recurrences: 'recurrences-arrow' };
+        const panels    = ['comp', 'regle', 'recurrences'];
+        const bodyIds   = { comp: 'comparaison-body', regle: 'regle-body', recurrences: 'recurrences-body' };
+        const arrowIds  = { comp: 'comp-arrow', regle: 'regle-arrow', recurrences: 'recurrences-arrow' };
         const triggerIds = { comp: 'comp-trigger', regle: 'regle-trigger', recurrences: 'recurrences-trigger' };
-        const tripanel = document.getElementById('tripanel-content');
+        const tripanel  = document.getElementById('tripanel-content');
 
         const currentlyOpen = panels.find(p => document.getElementById(bodyIds[p])?.style.display !== 'none');
-        const clickingSame = currentlyOpen === panel;
+        const clickingSame  = currentlyOpen === panel;
 
         panels.forEach(p => {
-            const body = document.getElementById(bodyIds[p]);
-            const arrow = document.getElementById(arrowIds[p]);
+            const body    = document.getElementById(bodyIds[p]);
+            const arrow   = document.getElementById(arrowIds[p]);
             const trigger = document.getElementById(triggerIds[p]);
-            if (body) body.style.display = 'none';
-            if (arrow) arrow.style.transform = '';
+            if (body)    body.style.display    = 'none';
+            if (arrow)   arrow.style.transform = '';
             if (trigger) trigger.style.boxShadow = '';
         });
 
         if (clickingSame) {
-
             tripanel.style.display = 'none';
             return;
         }
 
-        const body = document.getElementById(bodyIds[panel]);
-        const arrow = document.getElementById(arrowIds[panel]);
+        // ── Repositionner tripanel juste après la ligne/carte du bouton cliqué ──
         const trigger = document.getElementById(triggerIds[panel]);
-        if (body) body.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(90deg)';
-        if (trigger) trigger.style.boxShadow = '8px 8px 16px var(--shadow-light), -8px -8px 16px var(--shadow-dark), inset 0 -3px 0 var(--accent-primary)';
+        if (trigger) {
+            // Remonter au [data-card-id], puis vérifier si son parent est une vault-layout-row
+            const cardWrapper = trigger.closest('[data-card-id]');
+            const anchor = cardWrapper
+                ? (cardWrapper.parentElement.classList.contains('vault-layout-row')
+                    ? cardWrapper.parentElement   // insérer après la row entière
+                    : cardWrapper)                // insérer après le wrapper seul
+                : null;
+            if (anchor && anchor.parentElement) {
+                anchor.after(tripanel);
+            }
+        }
+
+        const body    = document.getElementById(bodyIds[panel]);
+        const arrow   = document.getElementById(arrowIds[panel]);
+        const trigger2 = document.getElementById(triggerIds[panel]);
+        if (body)     body.style.display     = 'block';
+        if (arrow)    arrow.style.transform  = 'rotate(90deg)';
+        if (trigger2) trigger2.style.boxShadow = '8px 8px 16px var(--shadow-light), -8px -8px 16px var(--shadow-dark), inset 0 -3px 0 var(--accent-primary)';
         tripanel.style.display = 'block';
 
-        if (panel === 'comp') this.refreshComparaison();
+        if (panel === 'comp')  this.refreshComparaison();
         if (panel === 'regle') this.refreshRegle503020();
     },
 
