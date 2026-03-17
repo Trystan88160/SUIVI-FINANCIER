@@ -1235,3 +1235,225 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   flex: 1;
   min-height: 200px;
 }
+
+/* ══════════════════════════════════════════════════════════
+   VAULT SOLDE CARD — Crystal × Vault
+   ══════════════════════════════════════════════════════════ */
+.vault-solde-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: var(--glass-shadow, 0 8px 28px rgba(99,102,241,.18), inset 0 1px 0 rgba(255,255,255,.9));
+  transition: transform .3s, box-shadow .3s;
+  margin-bottom: 2rem;
+}
+.vault-solde-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-hover, 0 14px 40px rgba(99,102,241,.26), inset 0 1px 0 rgba(255,255,255,.95));
+}
+.vault-solde-topbar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-gradient-start), var(--accent-gradient-end));
+}
+.vault-solde-inner {
+  padding: 1.1rem 1.4rem 1.2rem;
+}
+.vault-solde-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .8rem;
+}
+.vault-solde-label {
+  font-size: .62rem;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-tertiary);
+}
+.vault-solde-add-btn {
+  font-size: .72rem;
+  background: rgba(63,81,181,.08);
+  border: 0.5px solid rgba(63,81,181,.3);
+  border-radius: 20px;
+  padding: .2rem .75rem;
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-weight: 600;
+  transition: background .15s;
+}
+.vault-solde-add-btn:hover { background: rgba(63,81,181,.15); }
+.vault-solde-total-row {
+  display: flex;
+  align-items: baseline;
+  gap: .35rem;
+  margin-bottom: .85rem;
+}
+.vault-solde-currency {
+  font-size: .95rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+}
+.vault-solde-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -.05em;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1;
+}
+.vault-accounts-row {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+.vault-account-chip {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(63,81,181,.06);
+  border: 0.5px solid rgba(63,81,181,.2);
+  border-radius: 12px;
+  padding: .65rem .8rem;
+  transition: background .15s;
+}
+.vault-account-chip:hover { background: rgba(63,81,181,.1); }
+.vault-account-chip--neg {
+  background: rgba(244,67,54,.05);
+  border-color: rgba(244,67,54,.2);
+}
+.vault-account-chip-name {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: .72rem;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent-primary);
+  margin-bottom: .3rem;
+  justify-content: space-between;
+}
+.vault-account-chip-actions {
+  display: flex;
+  gap: .1rem;
+}
+.vault-account-chip-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: .65rem;
+  padding: .1rem .2rem;
+  line-height: 1;
+  opacity: .6;
+  transition: opacity .15s;
+}
+.vault-account-chip-btn:hover { opacity: 1; }
+.vault-account-chip-amount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+.vault-account-chip--neg .vault-account-chip-amount { color: var(--danger); }
+.vault-account-chip-tx {
+  font-size: .6rem;
+  color: var(--text-tertiary);
+  font-family: 'DM Mono', monospace;
+  margin-top: .2rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   VAULT ACTION TILE — Revenu / Dépense
+   ══════════════════════════════════════════════════════════ */
+.vault-action-tile {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  padding: 1.4rem 1.25rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .6rem;
+  text-align: center;
+  box-shadow: var(--glass-shadow, 0 8px 28px rgba(99,102,241,.18), inset 0 1px 0 rgba(255,255,255,.9));
+  transition: transform .3s, box-shadow .3s;
+  margin-bottom: 2rem;
+}
+.vault-action-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-hover, 0 14px 40px rgba(99,102,241,.26), inset 0 1px 0 rgba(255,255,255,.95));
+}
+.vault-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+.vault-action-rev .vault-action-icon {
+  background: linear-gradient(135deg, var(--accent-gradient-start), #5c6bc0);
+}
+.vault-action-exp .vault-action-icon {
+  background: linear-gradient(135deg, var(--accent-gradient-end), #b259ff);
+}
+.vault-action-label {
+  font-size: .65rem;
+  font-family: 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text-tertiary);
+}
+.vault-action-cta {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: .65rem 0;
+  font-size: .8rem;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: filter .15s, transform .12s;
+}
+.vault-action-cta:hover { filter: brightness(1.08); transform: scale(1.02); }
+.vault-action-cta:active { transform: scale(.98); }
+.vault-action-rev .vault-action-cta {
+  background: linear-gradient(135deg, var(--accent-gradient-start), #5c6bc0);
+  color: #fff;
+}
+.vault-action-exp .vault-action-cta {
+  background: linear-gradient(135deg, var(--accent-gradient-end), #b259ff);
+  color: #fff;
+}
+.vault-action-links {
+  display: flex;
+  gap: .45rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.vault-action-links span {
+  font-size: .68rem;
+  color: var(--text-tertiary);
+  font-family: 'DM Mono', monospace;
+  border: 0.5px solid var(--border-color);
+  border-radius: 6px;
+  padding: .2rem .6rem;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  background: var(--bg-secondary);
+}
+.vault-action-links span:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}

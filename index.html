@@ -380,49 +380,56 @@
 </div>
 
 <!-- Pointage bancaire -->
-<div data-card-id="dep-pointage" data-tab="depenses"><div class="card" style="padding:1rem 1.5rem">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary)">💳 Soldes bancaires</div>
-    <button class="btn-vault-primary" onclick="app.openAddComptePointage()">＋ Compte</button>
-  </div>
-  <div id="pointage-container"></div>
-</div></div>
-
-<div data-card-id="dep-revenus" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
-  <div>
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Revenus</div>
-    <div class="card-title" style="margin:0">Ajouter un revenu</div>
-  </div>
-  <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn-vault-primary" onclick="app.openBsRevenus()">＋ Ajouter un revenu</button>
-  </div>
-</div></div>
-
-
-<!-- 1. Ajouter une dépense -->
-<div data-card-id="dep-saisie" data-tab="depenses"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
-  <div>
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Dépenses</div>
-    <div class="card-title" style="margin:0">Ajouter une dépense</div>
-  </div>
-  <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn-vault-secondary" onclick="app.toggleBudgetsPanel()">⚙ Catégories</button>
-    <button class="btn-vault-secondary" onclick="app.toggleImportBancaire()">🏦 Import relevé</button>
-    <button class="btn-vault-primary" onclick="app.openBsDepenses()">＋ Ajouter des dépenses</button>
+<div data-card-id="dep-pointage" data-tab="depenses">
+  <div class="vault-solde-card">
+    <div class="vault-solde-topbar"></div>
+    <div class="vault-solde-inner">
+      <div class="vault-solde-header">
+        <span class="vault-solde-label">💳 Soldes bancaires</span>
+        <button class="vault-solde-add-btn" onclick="app.openAddComptePointage()">＋ Compte</button>
+      </div>
+      <div id="vault-solde-total-wrap" style="display:none">
+        <div class="vault-solde-total-row">
+          <span class="vault-solde-currency">€</span>
+          <span class="vault-solde-amount" id="vault-solde-total">0,00</span>
+        </div>
+      </div>
+      <div id="pointage-container"></div>
+    </div>
   </div>
 </div>
-<!-- Inputs cachés pour compatibilité JS -->
-<div style="display:none">
-  <select id="dep-cat"></select>
-  <div id="dep-pills"></div>
-  <input type="number" id="dep-montant">
-  <div id="dep-amount-underline"></div>
-  <input type="date" id="dep-date">
-  <input type="text" id="dep-note">
-  <button id="btn-toggle-import" onclick="app.toggleImportBancaire()"></button>
+
+<div data-card-id="dep-revenus" data-tab="depenses">
+  <div class="vault-action-tile vault-action-rev">
+    <div class="vault-action-icon">↑</div>
+    <div class="vault-action-label">Revenu</div>
+    <button class="vault-action-cta" onclick="app.openBsRevenus()">＋ Ajouter</button>
+  </div>
 </div>
-<!-- panel remplacé par bottom sheet #bs-import-overlay -->
-<div id="import-bancaire-panel" style="display:none"></div></div>
+
+
+<div data-card-id="dep-saisie" data-tab="depenses">
+  <div class="vault-action-tile vault-action-exp">
+    <div class="vault-action-icon">↓</div>
+    <div class="vault-action-label">Dépense</div>
+    <button class="vault-action-cta" onclick="app.openBsDepenses()">− Ajouter</button>
+    <div class="vault-action-links">
+      <span onclick="app.toggleBudgetsPanel()">⚙ Catégories</span>
+      <span onclick="app.toggleImportBancaire()">🏦 Import</span>
+    </div>
+  </div>
+  <!-- Inputs cachés pour compatibilité JS -->
+  <div style="display:none">
+    <select id="dep-cat"></select>
+    <div id="dep-pills"></div>
+    <input type="number" id="dep-montant">
+    <div id="dep-amount-underline"></div>
+    <input type="date" id="dep-date">
+    <input type="text" id="dep-note">
+    <button id="btn-toggle-import" onclick="app.toggleImportBancaire()"></button>
+  </div>
+  <div id="import-bancaire-panel" style="display:none"></div>
+</div>
 
 <!-- 2. État des catégories (dépliant) -->
 <div data-card-id="dep-etat-cat" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">

@@ -3406,33 +3406,45 @@ const app = {
         const container = document.getElementById('pointage-container');
         if (!container) return;
         const comptes = this.data.comptesPointage || [];
+
+        // Afficher/masquer le total
+        const totalWrap = document.getElementById('vault-solde-total-wrap');
+        const totalEl   = document.getElementById('vault-solde-total');
+
         if (comptes.length === 0) {
-            container.innerHTML = '<div style="text-align:center;padding:.5rem 0;color:var(--text-tertiary);font-size:.8rem">Aucun compte — cliquez sur &quot;+ Compte&quot; pour commencer.</div>';
+            container.innerHTML = '<div style="text-align:center;padding:.65rem 0;color:var(--text-tertiary);font-size:.78rem;font-family:DM Mono,monospace">Aucun compte — cliquez sur "+ Compte"</div>';
+            if (totalWrap) totalWrap.style.display = 'none';
             return;
         }
+
+        // Calcul total
+        const total = comptes.reduce((s, c) => s + this._calcSoldeCompte(c), 0);
+        if (totalWrap) totalWrap.style.display = '';
+        if (totalEl)   totalEl.textContent = total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
         const typeIcon = { courant: '💳', épargne: '🏦', autre: '📁' };
         const chips = comptes.map(c => {
             const solde = this._calcSoldeCompte(c);
             const cid   = String(c.id);
             const nbTx  = (this.data.depenses || []).filter(d => d.compteId && String(d.compteId) === cid).length
                         + (this.data.revenus  || []).filter(r => r.compteId && String(r.compteId) === cid).length;
-            return '<div class="pointage-solde-chip">'
-                 +   '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem">'
-                 +     '<div>'
-                 +       '<span style="font-size:.9rem;margin-right:.3rem">' + (typeIcon[c.type] || '💳') + '</span>'
-                 +       '<span style="font-size:.78rem;font-weight:600;color:var(--text-primary)">' + c.nom + '</span>'
-                 +     '</div>'
-                 +     '<div style="display:flex;gap:.2rem">'
-                 +       '<button onclick="app.openAddComptePointage(\'' + c.id + '\')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:.65rem;padding:.1rem .25rem" title="Modifier">✏️</button>'
-                 +       '<button onclick="app.supprimerComptePointage(\'' + c.id + '\')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:.65rem;padding:.1rem .25rem" title="Supprimer">✕</button>'
-                 +     '</div>'
+            const isNeg = solde < 0;
+            return '<div class="vault-account-chip' + (isNeg ? ' vault-account-chip--neg' : '') + '">'
+                 +   '<div class="vault-account-chip-name">'
+                 +     '<span style="font-size:.85rem">' + (typeIcon[c.type] || '💳') + '</span>'
+                 +     '<span>' + this._esc(c.nom) + '</span>'
                  +   '</div>'
-                 +   '<div style="font-size:1.45rem;font-weight:800;letter-spacing:-.04em;color:var(--accent-primary);line-height:1.1">' + this.formatCurrency(solde) + '</div>'
-                 +   '<div style="font-size:.63rem;color:var(--text-tertiary);margin-top:.25rem">' + nbTx + ' transaction' + (nbTx > 1 ? 's' : '') + ' liée' + (nbTx > 1 ? 's' : '') + '</div>'
+                 +   '<div class="vault-account-chip-actions">'
+                 +     '<button onclick="app.openAddComptePointage(\'' + c.id + '\')" class="vault-account-chip-btn" title="Modifier">✏️</button>'
+                 +     '<button onclick="app.supprimerComptePointage(\'' + c.id + '\')" class="vault-account-chip-btn" title="Supprimer">✕</button>'
+                 +   '</div>'
+                 +   '<div class="vault-account-chip-amount">' + this.formatCurrency(solde) + '</div>'
+                 +   '<div class="vault-account-chip-tx">' + nbTx + ' transaction' + (nbTx > 1 ? 's' : '') + '</div>'
                  + '</div>';
         }).join('');
-        container.innerHTML = '<div class="pointage-comptes-row">' + chips + '</div>';
+        container.innerHTML = '<div class="vault-accounts-row">' + chips + '</div>';
     },
+
 
     updatePatInputs() {
         const container = document.getElementById('pat-inputs');
@@ -4731,7 +4743,7 @@ const app = {
     /* ── Layout par défaut (référence pour reset) ───────────────────────── */
     _defaultLayout: {
         'dashboard':  [['dash-hero'],['dash-widget'],['dash-recap-semaine'],['dash-acces'],['dash-alertes'],['dash-evol','dash-repart'],['dash-dep-budget'],['dash-heatmap']],
-        'depenses':   [['dep-pointage'],['dep-revenus'],['dep-saisie'],['dep-etat-cat'],['dep-comparaison','dep-regle5030','dep-recurrentes'],['dep-analyse'],['dep-historique'],['dep-hist-revenus']],
+        'depenses':   [['dep-pointage'],['dep-revenus','dep-saisie'],['dep-etat-cat'],['dep-comparaison','dep-regle5030','dep-recurrentes'],['dep-analyse'],['dep-historique'],['dep-hist-revenus']],
         'pea':        [['pea-stats'],['pea-saisie'],['pea-lignes'],['pea-graphique'],['pea-retraite','pea-simulateur'],['pea-historique']],
         'patrimoine': [['pat-stats'],['pat-barre'],['pat-saisie'],['pat-evol'],['pat-historique']],
         'bilan':      [['bilan-annuel'],['bilan-rapport'],['bilan-objectifs'],['bilan-notes'],['bilan-hist-notes']],
