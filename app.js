@@ -786,6 +786,17 @@ const app = {
         this.refreshLignesPEA();
     },
 
+    // Échappe tous les caractères HTML dangereux — à utiliser sur toute
+    // donnée externe (libellés bancaires, notes, catégories) avant injection dans innerHTML
+    _esc(str) {
+        return String(str ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
     formatCurrency(amount) {
         return amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
     },
@@ -7878,9 +7889,9 @@ const app = {
             const badge = row.type === 'debit'
                 ? '<span style="background:rgba(244,67,54,.1);color:var(--danger);border-radius:6px;padding:.15rem .4rem;font-size:.62rem;font-family:DM Mono,monospace;font-weight:600">DÉBIT</span>'
                 : '<span style="background:rgba(0,200,83,.1);color:var(--success);border-radius:6px;padding:.15rem .4rem;font-size:.62rem;font-family:DM Mono,monospace;font-weight:600">CRÉDIT</span>';
-            const rawEsc   = row.libelle.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-            const noteEsc  = row.note.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-            const netEsc   = row.libelleNettoye.replace(/</g,'&lt;');
+            const rawEsc   = this._esc(row.libelle);
+            const noteEsc  = this._esc(row.note);
+            const netEsc   = this._esc(row.libelleNettoye);
             const catOpts  = cats.map(c => '<option value="'+c+'" '+(c===row.categorie?'selected':'')+'>'+c+'</option>').join('');
             return '<tr style="'+(row.type==='credit'?'opacity:.6':'')+'">'+
                 '<td><input type="checkbox" '+(row.selected?'checked':'')+' onchange="app._importRows['+i+'].selected=this.checked;app._updateImportCount()" style="accent-color:var(--accent-primary)"></td>'+
