@@ -813,9 +813,13 @@ html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
 .modal {
   border-radius: 26px !important;
   overflow: hidden !important;
-  width: fit-content !important;
-  min-width: min(360px, 92vw) !important;
-  max-width: min(580px, 92vw) !important;
+  width: 92vw !important;
+  max-width: 600px !important;
+  min-width: 0 !important;
+}
+/* Modals avec grille 2 colonnes → plus larges */
+#objectifModal, #lignePEAModal, #retraiteModal, #simulateurModal {
+  max-width: 640px !important;
 }
 /* Supprime la barre dégradée du style précédent */
 .modal::before {
@@ -1108,6 +1112,24 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .v-empty-title{font-size:1rem;font-weight:600;font-family:'Outfit',sans-serif;color:var(--text-primary);margin:0 0 .35rem}
 .v-empty-desc{font-size:.82rem;color:var(--text-tertiary);max-width:240px;line-height:1.6;margin:0 0 1.1rem}
 
+
+/* ── Grid adaptatif dans les popups ─────────────────────── */
+.modal .grid-2,
+.bs-sheet .grid-2 {
+  grid-template-columns: 1fr 1fr !important;
+}
+.modal .grid-3,
+.bs-sheet .grid-3 {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+@media (max-width: 480px) {
+  .modal .grid-2,
+  .bs-sheet .grid-2,
+  .modal .grid-3,
+  .bs-sheet .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width:600px) {
   .modal {

@@ -6638,7 +6638,7 @@ const app = {
         modal.innerHTML = `
             <div class="modal-header"><h2 class="modal-title">🎯 Nouvel objectif</h2></div>
             <div class="modal-body">
-                <div class="grid grid-2">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem">
                     <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" id="obj-nom" placeholder="Voyage Japon..."></div>
                     <div class="form-group"><label class="form-label">Emoji</label>
                         <div class="emoji-picker-wrap">
