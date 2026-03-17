@@ -1114,7 +1114,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   gap: 1rem;
   flex-wrap: wrap;
   align-items: stretch;
-  margin-bottom: 0;
+  margin-bottom: 2rem;
 }
 .vault-layout-row > [data-card-id] {
   flex: 1;
