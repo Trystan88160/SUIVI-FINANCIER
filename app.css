@@ -546,7 +546,7 @@ body
   #bs-import-overlay .bs-sheet { max-width: 780px; }
 }
 
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scrollbar-gutter:stable}
 
 .bs-sheet{will-change:transform}
 .toast{will-change:transform,opacity}
