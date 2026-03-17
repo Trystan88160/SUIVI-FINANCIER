@@ -315,19 +315,17 @@
   </div>
 </div></div>
 
-<!-- 3. Évolution patrimoine + Répartition (cartes indépendantes) -->
-<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
-<div data-card-id="dash-evol" data-tab="dashboard" style="flex:1;min-width:280px">
+<!-- 3. Évolution patrimoine + Répartition -->
+<div data-card-id="dash-evol" data-tab="dashboard">
 <div class="card">
 <div class="card-header"><h2 class="card-title">Évolution Patrimoine</h2></div>
 <div class="chart-container"><canvas id="chart-patrimoine"></canvas><button class="chart-color-btn" id="ccbtn-chart-patrimoine" onclick="app.openChartColorPicker('chart-patrimoine')" title="Personnaliser les couleurs">🎨</button></div>
 </div>
 </div>
-<div data-card-id="dash-repart" data-tab="dashboard" style="flex:1;min-width:280px">
+<div data-card-id="dash-repart" data-tab="dashboard">
 <div class="card">
 <div class="card-header"><h2 class="card-title">Répartition</h2></div>
 <div class="chart-container"><canvas id="chart-repartition"></canvas><button class="chart-color-btn has-custom" id="ccbtn-chart-repartition" onclick="app.ouvrirCouleursCategoriesDonut()" title="Personnaliser les couleurs">🎨</button></div>
-</div>
 </div>
 </div>
 
@@ -437,34 +435,27 @@
 </div>
 </div></div>
 
-<!-- Grille 3 boutons indépendants + contenu pleine largeur en dessous -->
-<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
-
-  <!-- Bouton Comparaison -->
-  <div data-card-id="dep-comparaison" data-tab="depenses" style="flex:1;min-width:180px">
+<!-- Grille 3 boutons indépendants -->
+  <div data-card-id="dep-comparaison" data-tab="depenses">
     <div class="card" onclick="app.toggleTriPanel('comp')" id="comp-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
       <h2 class="card-title" style="margin:0;font-size:.95rem">📊 Comparaison mois à mois</h2>
       <span id="comp-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
     </div>
   </div>
 
-  <!-- Bouton Règle 50/30/20 -->
-  <div data-card-id="dep-regle5030" data-tab="depenses" style="flex:1;min-width:180px">
+  <div data-card-id="dep-regle5030" data-tab="depenses">
     <div class="card" onclick="app.toggleTriPanel('regle')" id="regle-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
       <h2 class="card-title" style="margin:0;font-size:.95rem">⚖️ Règle 50 / 30 / 20</h2>
       <span id="regle-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
     </div>
   </div>
 
-  <!-- Bouton Récurrentes -->
-  <div data-card-id="dep-recurrentes" data-tab="depenses" style="flex:1;min-width:180px">
+  <div data-card-id="dep-recurrentes" data-tab="depenses">
     <div class="card" onclick="app.toggleTriPanel('recurrences')" id="recurrences-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
       <h2 class="card-title" style="margin:0;font-size:.95rem">🔄 Dépenses Récurrentes</h2>
       <span id="recurrences-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
     </div>
   </div>
-
-</div>
 
   <!-- Contenu pleine largeur -->
   <div id="tripanel-content" style="display:none;margin-top:1rem;margin-bottom:1rem">
@@ -808,14 +799,12 @@
 </div>
 </div>
 
-<!-- Outils PEA (modales) — indépendants -->
-<div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem">
-  <div data-card-id="pea-retraite" data-tab="pea">
-    <button class="btn-vault-secondary" onclick="app.ouvrirModalRetraite()">👴 Projection retraite</button>
-  </div>
-  <div data-card-id="pea-simulateur" data-tab="pea">
-    <button class="btn-vault-secondary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur «&nbsp;Et si…&nbsp;»</button>
-  </div>
+<!-- Outils PEA -->
+<div data-card-id="pea-retraite" data-tab="pea">
+  <button class="btn-vault-secondary" onclick="app.ouvrirModalRetraite()">👴 Projection retraite</button>
+</div>
+<div data-card-id="pea-simulateur" data-tab="pea">
+  <button class="btn-vault-secondary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur «&nbsp;Et si…&nbsp;»</button>
 </div>
 
 <!-- 5. Historique PEA -->

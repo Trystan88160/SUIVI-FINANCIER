@@ -4713,193 +4713,296 @@ const app = {
         ],
     },
 
+    /* ── Layout par défaut (référence pour reset) ───────────────────────── */
+    _defaultLayout: {
+        'dashboard':  [['dash-hero'],['dash-widget'],['dash-recap-semaine'],['dash-acces'],['dash-alertes'],['dash-evol','dash-repart'],['dash-dep-budget'],['dash-heatmap']],
+        'depenses':   [['dep-pointage'],['dep-revenus'],['dep-saisie'],['dep-etat-cat'],['dep-comparaison','dep-regle5030','dep-recurrentes'],['dep-analyse'],['dep-historique'],['dep-hist-revenus']],
+        'pea':        [['pea-stats'],['pea-saisie'],['pea-lignes'],['pea-graphique'],['pea-retraite','pea-simulateur'],['pea-historique']],
+        'patrimoine': [['pat-stats'],['pat-barre'],['pat-saisie'],['pat-evol'],['pat-historique']],
+        'bilan':      [['bilan-annuel'],['bilan-rapport'],['bilan-objectifs'],['bilan-notes'],['bilan-hist-notes']],
+    },
+
+    /* ══════════════════════════════════════════════════════════════════════
+       VAULT LAYOUT EDITOR — éditeur de mise en page visuel
+       Remplace l'ancien système toggle + ordre linéaire
+       ══════════════════════════════════════════════════════════════════════ */
+
     openTabCustomizer(tabId) {
-        const config = this._tabCardsConfig[tabId];
+        const config  = this._tabCardsConfig[tabId];
         if (!config) return;
-        const hidden   = this.data.hiddenCards?.[tabId] || {};
-        const order    = this.data.cardOrder?.[tabId] || config.map(c => c.id);
-        // Trier la config selon l'ordre sauvegardé
-        const orderedConfig = [...config].sort((a, b) => {
-            const ia = order.indexOf(a.id);
-            const ib = order.indexOf(b.id);
-            return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
-        });
-        const tabNames = { dashboard:'Dashboard', depenses:'Budget', pea:'PEA', patrimoine:'Patrimoine', bilan:'Bilan' };
-        let modal = document.getElementById('tabCustomizerModal');
+        const cardMap = {};
+        config.forEach(c => cardMap[c.id] = c);
+
+        const currentLayout = JSON.parse(JSON.stringify(
+            this.data.cardLayout?.[tabId] || this._defaultLayout[tabId] || config.map(c => [c.id])
+        ));
+        const hiddenSet = new Set(Object.keys(this.data.hiddenCards?.[tabId] || {}));
+        const tabNames  = { dashboard:'Dashboard', depenses:'Budget', pea:'PEA', patrimoine:'Patrimoine', bilan:'Bilan' };
+
+        let modal = document.getElementById('vleModal');
         if (!modal) {
             modal = document.createElement('div');
-            modal.id = 'tabCustomizerModal';
+            modal.id = 'vleModal';
             modal.className = 'modal';
-            modal.style.cssText = 'z-index:2000;border-radius:20px;max-width:480px;';
+            modal.style.cssText = 'z-index:2000;max-width:580px;width:95%;max-height:92vh;';
             document.body.appendChild(modal);
         }
+
+        const rowsHTML = currentLayout.map(row => {
+            const chips = row.filter(id => !hiddenSet.has(id) && cardMap[id]).map(id =>
+                `<div class="vle-chip" draggable="true" data-card-id="${id}">
+                    <span class="vle-handle">⠿</span>
+                    <span class="vle-chip-label">${cardMap[id].label}</span>
+                    <span class="vle-chip-rm">✕</span>
+                </div>`
+            ).join('');
+            return chips
+                ? `<div class="vle-row">${chips}</div>`
+                : `<div class="vle-row vle-row-empty"><span class="vle-empty-hint">Glisse une carte ici</span></div>`;
+        }).join('');
+
+        const poolHTML = [...hiddenSet].filter(id => cardMap[id]).map(id =>
+            `<div class="vle-pool-chip" data-card-id="${id}">${cardMap[id].label}</div>`
+        ).join('');
+
         modal.innerHTML = `
-            <div class="modal-header">
-                <h2 class="modal-title" style="font-family:'Outfit',sans-serif">⚙️ Personnaliser — ${tabNames[tabId] || tabId}</h2>
+          <div class="modal-header" style="padding:1.5rem 1.75rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+            <div>
+              <div style="font-size:.58rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.3rem">Mise en page · ${tabNames[tabId]||tabId}</div>
+              <h2 class="modal-title" style="font-size:1rem;font-family:'Outfit',sans-serif;font-weight:700">Éditeur de disposition</h2>
             </div>
-            <div class="modal-body">
-                <p style="margin-bottom:.5rem;color:var(--text-secondary);font-size:.88rem;line-height:1.6">
-                    Active / désactive les sections et <strong>glisse ⠿ pour réordonner</strong>.
-                </p>
-                <div id="tc-drag-list" style="display:flex;flex-direction:column;gap:.4rem">
-                ${orderedConfig.map(card => `
-                    <div class="tc-toggle-row" draggable="true" data-card-id="${card.id}"
-                         style="cursor:default;user-select:none;transition:opacity .15s,transform .15s">
-                        <span class="tc-drag-handle" title="Glisser pour réordonner"
-                              style="cursor:grab;font-size:1rem;color:var(--text-tertiary);padding:0 .5rem 0 0;flex-shrink:0;line-height:1">⠿</span>
-                        <div style="flex:1;min-width:0">
-                            <div class="tc-toggle-label">${card.label}</div>
-                            <div class="tc-toggle-sub">${card.sub}</div>
-                        </div>
-                        <label class="toggle" style="flex-shrink:0;margin-left:1rem">
-                            <input type="checkbox" id="tc-chk-${card.id}" ${!hidden[card.id] ? 'checked' : ''}>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                `).join('')}
-                </div>
+            <div style="font-size:.72rem;color:var(--text-secondary);line-height:1.55;text-align:right;max-width:210px">
+              <strong>⠿</strong> glisser · même ligne = côté à côté · <strong>✕</strong> masquer
             </div>
-            <div class="modal-footer" style="display:flex;gap:.65rem;flex-wrap:wrap">
-                <button class="vp-btn-cancel" onclick="app.resetTabCustomizer('${tabId}')" style="margin-right:auto">🔄 Réinitialiser</button>
-                <button class="vp-btn-cancel" onclick="app.closeTabCustomizer()">Annuler</button>
-                <button class="vp-btn-save" onclick="app.saveTabCustomizer('${tabId}')">✅ Appliquer</button>
+          </div>
+          <div class="modal-body" style="padding:.75rem 1.25rem 1rem;overflow-y:auto">
+            <div id="vle-canvas" style="display:flex;flex-direction:column;gap:.4rem">
+              ${rowsHTML}
+              <div class="vle-new-row-zone" id="vle-new-row-zone">＋ Nouvelle ligne — dépose ici</div>
             </div>
-        `;
+            <div id="vle-pool-wrap" style="${hiddenSet.size > 0 ? '' : 'display:none'}">
+              <div style="font-size:.58rem;font-family:DM Mono,monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.12em;margin:.85rem 0 .5rem">Masquées — clique pour remettre</div>
+              <div id="vle-pool" style="display:flex;flex-wrap:wrap;gap:.4rem">${poolHTML}</div>
+            </div>
+          </div>
+          <div class="modal-footer" style="padding:.85rem 1.25rem 1.25rem;display:flex;gap:.6rem;align-items:center">
+            <button class="vp-btn-cancel" onclick="app._vleReset('${tabId}')" style="margin-right:auto;font-size:.72rem">🔄 Réinitialiser</button>
+            <button class="vp-btn-cancel" onclick="app._vleClose()">Annuler</button>
+            <button class="vp-btn-save"   onclick="app._vleSave('${tabId}')">✅ Appliquer</button>
+          </div>`;
+
         modal.classList.add('active');
         document.getElementById('overlay').classList.add('active');
-        document.getElementById('overlay').onclick = () => app.closeTabCustomizer();
-
-        // ── Drag & Drop sur la liste ──────────────────────────────────────────
-        this._initDragList(document.getElementById('tc-drag-list'));
+        document.getElementById('overlay').onclick = () => app._vleClose();
+        this._vleInitDnd(modal, cardMap);
     },
 
-    _initDragList(list) {
-        if (!list) return;
-        let dragSrc = null;
+    /* ── Drag & Drop interne du layout editor ──────────────────────────── */
+    _vleInitDnd(modal, cardMap) {
+        let src = null;
+        const canvas = modal.querySelector('#vle-canvas');
 
-        list.querySelectorAll('[draggable]').forEach(row => {
-            row.addEventListener('dragstart', e => {
-                dragSrc = row;
-                row.style.opacity = '.4';
+        const attachChip = (chip) => {
+            chip.addEventListener('dragstart', e => {
+                src = chip; chip.classList.add('vle-dragging');
                 e.dataTransfer.effectAllowed = 'move';
             });
-            row.addEventListener('dragend', () => {
-                row.style.opacity = '';
-                list.querySelectorAll('[draggable]').forEach(r => r.classList.remove('tc-drag-over'));
+            chip.addEventListener('dragend', () => {
+                src = null; chip.classList.remove('vle-dragging');
+                canvas.querySelectorAll('.vle-drop-on').forEach(r => r.classList.remove('vle-drop-on'));
+                this._vleClean(canvas);
             });
+            chip.querySelector('.vle-chip-rm').addEventListener('click', () => {
+                const id    = chip.dataset.cardId;
+                const label = chip.querySelector('.vle-chip-label').textContent;
+                chip.remove();
+                this._vleClean(canvas);
+                this._vleToPool(modal, id, label, cardMap, canvas, attachChip, attachRow);
+            });
+        };
+
+        const attachRow = (row) => {
             row.addEventListener('dragover', e => {
+                if (!src) return;
                 e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                if (row === dragSrc) return;
-                list.querySelectorAll('[draggable]').forEach(r => r.classList.remove('tc-drag-over'));
-                row.classList.add('tc-drag-over');
+                canvas.querySelectorAll('.vle-drop-on').forEach(r => r.classList.remove('vle-drop-on'));
+                row.classList.add('vle-drop-on');
+                // Insertion positionnelle dans la ligne
+                const chips = [...row.querySelectorAll('.vle-chip')].filter(c => c !== src);
+                const after = chips.find(c => e.clientX < c.getBoundingClientRect().left + c.getBoundingClientRect().width / 2);
+                row.querySelector('.vle-empty-hint')?.remove();
+                row.classList.remove('vle-row-empty');
+                if (after) row.insertBefore(src, after);
+                else        row.appendChild(src);
             });
-            row.addEventListener('dragleave', () => row.classList.remove('tc-drag-over'));
-            row.addEventListener('drop', e => {
-                e.preventDefault();
-                if (!dragSrc || dragSrc === row) return;
-                row.classList.remove('tc-drag-over');
-                // Réordonner dans le DOM
-                const rows = [...list.querySelectorAll('[draggable]')];
-                const srcIdx = rows.indexOf(dragSrc);
-                const dstIdx = rows.indexOf(row);
-                if (srcIdx < dstIdx) list.insertBefore(dragSrc, row.nextSibling);
-                else                  list.insertBefore(dragSrc, row);
+            row.addEventListener('dragleave', e => {
+                if (!row.contains(e.relatedTarget)) row.classList.remove('vle-drop-on');
             });
+            row.addEventListener('drop', e => { e.preventDefault(); row.classList.remove('vle-drop-on'); });
+        };
+
+        // Zone "nouvelle ligne"
+        const newZone = modal.querySelector('#vle-new-row-zone');
+        newZone.addEventListener('dragover', e => { if (src) { e.preventDefault(); newZone.classList.add('vle-drop-on'); } });
+        newZone.addEventListener('dragleave', () => newZone.classList.remove('vle-drop-on'));
+        newZone.addEventListener('drop', e => {
+            e.preventDefault(); newZone.classList.remove('vle-drop-on');
+            if (!src) return;
+            const row = document.createElement('div'); row.className = 'vle-row';
+            row.appendChild(src); canvas.insertBefore(row, newZone); attachRow(row);
+            this._vleClean(canvas);
+        });
+
+        canvas.querySelectorAll('.vle-row').forEach(attachRow);
+        canvas.querySelectorAll('.vle-chip').forEach(attachChip);
+        modal._attachChip = attachChip; modal._attachRow = attachRow;
+
+        // Pool — clique pour remettre
+        modal.querySelectorAll('.vle-pool-chip').forEach(pc => this._vlePoolClick(pc, modal, cardMap, canvas, attachChip, attachRow));
+    },
+
+    _vleToPool(modal, id, label, cardMap, canvas, attachChip, attachRow) {
+        const wrap = modal.querySelector('#vle-pool-wrap');
+        const pool = modal.querySelector('#vle-pool');
+        if (wrap) wrap.style.display = '';
+        const pc = document.createElement('div');
+        pc.className = 'vle-pool-chip'; pc.dataset.cardId = id; pc.textContent = label;
+        this._vlePoolClick(pc, modal, cardMap, canvas, attachChip, attachRow);
+        if (pool) pool.appendChild(pc);
+    },
+
+    _vlePoolClick(pc, modal, cardMap, canvas, attachChip, attachRow) {
+        pc.addEventListener('click', () => {
+            const id    = pc.dataset.cardId;
+            const label = cardMap[id]?.label || id;
+            const chip  = document.createElement('div');
+            chip.className = 'vle-chip'; chip.draggable = true; chip.dataset.cardId = id;
+            chip.innerHTML = `<span class="vle-handle">⠿</span><span class="vle-chip-label">${label}</span><span class="vle-chip-rm">✕</span>`;
+            const row = document.createElement('div'); row.className = 'vle-row';
+            row.appendChild(chip);
+            const zone = canvas.querySelector('#vle-new-row-zone');
+            canvas.insertBefore(row, zone);
+            attachRow(row); attachChip(chip);
+            pc.remove();
+            const pool = modal.querySelector('#vle-pool');
+            if (pool && !pool.children.length) { const w = modal.querySelector('#vle-pool-wrap'); if (w) w.style.display = 'none'; }
         });
     },
 
-    applyCardOrder(tabId) {
-        const order = this.data.cardOrder?.[tabId];
-        if (!order || order.length === 0) return;
-        // Trouver le conteneur parent des cartes de cet onglet
-        const tab = document.getElementById('tab-' + tabId);
-        if (!tab) return;
-        order.forEach(cardId => {
-            const el = tab.querySelector(`[data-card-id="${cardId}"]`);
-            if (el) tab.appendChild(el);
+    _vleClean(canvas) {
+        canvas.querySelectorAll('.vle-row').forEach(row => {
+            if (!row.querySelector('.vle-chip')) {
+                row.classList.add('vle-row-empty');
+                if (!row.querySelector('.vle-empty-hint')) {
+                    row.innerHTML = '<span class="vle-empty-hint">Ligne vide — sera supprimée</span>';
+                }
+            } else {
+                row.classList.remove('vle-row-empty');
+            }
         });
     },
 
-    applyAllCardOrder() {
-        Object.keys(this._tabCardsConfig).forEach(tabId => this.applyCardOrder(tabId));
-    },
-
-    closeTabCustomizer() {
-        const modal = document.getElementById('tabCustomizerModal');
-        if (modal) modal.classList.remove('active');
+    _vleClose() {
+        const m = document.getElementById('vleModal');
+        if (m) m.classList.remove('active');
         document.getElementById('overlay').classList.remove('active');
         document.getElementById('overlay').onclick = null;
     },
 
-    resetTabCustomizer(tabId) {
-        if (!this.data.hiddenCards) this.data.hiddenCards = {};
-        if (!this.data.cardOrder)   this.data.cardOrder   = {};
-        this.data.hiddenCards[tabId] = {};
-        this.data.cardOrder[tabId]   = this._tabCardsConfig[tabId]?.map(c => c.id) || [];
-        this.save();
-        this.applyCardOrder(tabId);
-        this.applyTabCards(tabId);
-        this.closeTabCustomizer();
-        this.notify('Onglet réinitialisé — ordre et sections par défaut', 'success');
-    },
-
-    saveTabCustomizer(tabId) {
-        const config = this._tabCardsConfig[tabId];
-        if (!config) return;
-        if (!this.data.hiddenCards) this.data.hiddenCards = {};
-        if (!this.data.cardOrder)   this.data.cardOrder   = {};
-
-        // Lire l'ordre actuel dans le DOM de la liste drag
-        const list = document.getElementById('tc-drag-list');
-        if (list) {
-            this.data.cardOrder[tabId] = [...list.querySelectorAll('[data-card-id]')]
-                .map(el => el.dataset.cardId);
-        }
-
-        // Lire les toggles visibilité
-        const newHidden = {};
-        config.forEach(card => {
-            const chk = document.getElementById('tc-chk-' + card.id);
-            if (chk && !chk.checked) newHidden[card.id] = true;
+    _vleSave(tabId) {
+        const canvas = document.getElementById('vle-canvas');
+        if (!canvas) return;
+        const newLayout = [];
+        canvas.querySelectorAll('.vle-row').forEach(row => {
+            const ids = [...row.querySelectorAll('.vle-chip')].map(c => c.dataset.cardId);
+            if (ids.length) newLayout.push(ids);
         });
-        const visibleCount = config.length - Object.keys(newHidden).length;
-        if (visibleCount === 0) {
-            this.notify('⚠️ Au moins une section doit rester visible !', 'warning');
-            return;
-        }
+        if (!newLayout.length) { this.notify('⚠️ La mise en page ne peut pas être vide !', 'warning'); return; }
+        const newHidden = {};
+        const pool = document.getElementById('vle-pool');
+        pool?.querySelectorAll('.vle-pool-chip').forEach(c => { newHidden[c.dataset.cardId] = true; });
+        if (!this.data.cardLayout)  this.data.cardLayout  = {};
+        if (!this.data.hiddenCards) this.data.hiddenCards = {};
+        this.data.cardLayout[tabId]  = newLayout;
         this.data.hiddenCards[tabId] = newHidden;
         this.save();
-        this.applyCardOrder(tabId);
-        this.applyTabCards(tabId);
-        this.closeTabCustomizer();
-        this.notify(`✅ Onglet personnalisé — ${visibleCount}/${config.length} sections affichées`, 'success');
+        this.applyLayout(tabId);
+        this._vleClose();
+        const total = this._tabCardsConfig[tabId]?.length || 0;
+        this.notify(`✅ Mise en page appliquée — ${newLayout.length} ligne${newLayout.length > 1 ? 's' : ''}, ${total - Object.keys(newHidden).length}/${total} visibles`, 'success');
     },
 
-    applyTabCards(tabId) {
-        const config = this._tabCardsConfig[tabId];
-        if (!config) return;
+    _vleReset(tabId) {
+        if (!this.data.cardLayout)  this.data.cardLayout  = {};
+        if (!this.data.hiddenCards) this.data.hiddenCards = {};
+        this.data.cardLayout[tabId]  = JSON.parse(JSON.stringify(this._defaultLayout[tabId] || []));
+        this.data.hiddenCards[tabId] = {};
+        this.save();
+        this.applyLayout(tabId);
+        this._vleClose();
+        this.notify('Mise en page réinitialisée', 'success');
+    },
+
+    /* ── applyLayout — applique cardLayout au DOM ───────────────────────── */
+    applyLayout(tabId) {
+        const tab = document.getElementById('tab-' + tabId);
+        if (!tab) return;
+        const layout = this.data.cardLayout?.[tabId] || this._defaultLayout[tabId] || [];
         const hidden = this.data.hiddenCards?.[tabId] || {};
-        const allHidden = config.every(card => hidden[card.id]);
-        if (allHidden && config.length > 0) {
-            if (this.data.hiddenCards) this.data.hiddenCards[tabId] = {};
-            config.forEach(card => {
-                const el = document.querySelector(`[data-card-id="${card.id}"]`);
-                if (el) el.classList.remove('tab-card-hidden');
-            });
-            return;
-        }
+
+        // 1. Collecter toutes les cartes de cet onglet par id
+        const cardEls = {};
+        tab.querySelectorAll('[data-card-id]').forEach(el => {
+            if (el.dataset.tab === tabId || el.closest('#tab-' + tabId)) cardEls[el.dataset.cardId] = el;
+        });
+
+        // 2. Sortir les cartes de leurs vault-layout-row existants
+        tab.querySelectorAll('.vault-layout-row').forEach(row => {
+            [...row.children].forEach(child => { if (child.dataset?.cardId) tab.appendChild(child); });
+            row.remove();
+        });
+
+        // 3. Appliquer l'ordre + regroupement en lignes
+        layout.forEach(rowIds => {
+            const vis = rowIds.filter(id => !hidden[id] && cardEls[id]);
+            if (!vis.length) return;
+            if (vis.length === 1) {
+                cardEls[vis[0]].style.flex = '';
+                tab.appendChild(cardEls[vis[0]]);
+            } else {
+                const row = document.createElement('div');
+                row.className = 'vault-layout-row';
+                vis.forEach(id => { cardEls[id].style.flex = ''; row.appendChild(cardEls[id]); });
+                tab.appendChild(row);
+            }
+        });
+
+        // 4. Gérer les classes hidden/visible
+        const config = this._tabCardsConfig[tabId] || [];
         config.forEach(card => {
-            const el = document.querySelector(`[data-card-id="${card.id}"]`);
+            const el = cardEls[card.id];
             if (!el) return;
-            if (hidden[card.id]) { el.classList.add('tab-card-hidden'); }
-            else { el.classList.remove('tab-card-hidden'); }
+            if (hidden[card.id]) el.classList.add('tab-card-hidden');
+            else                  el.classList.remove('tab-card-hidden');
+        });
+
+        // 5. Masquer les vault-layout-row dont toutes les cartes sont cachées
+        tab.querySelectorAll('.vault-layout-row').forEach(row => {
+            const allHidden = [...row.querySelectorAll('[data-card-id]')].every(el => el.classList.contains('tab-card-hidden'));
+            row.style.display = allHidden ? 'none' : '';
         });
     },
 
-    applyAllTabCards() {
-        Object.keys(this._tabCardsConfig).forEach(tabId => this.applyTabCards(tabId));
+    applyAllLayouts() {
+        Object.keys(this._tabCardsConfig).forEach(tabId => this.applyLayout(tabId));
     },
+
+    /* ── Shims de compatibilité ─────────────────────────────────────────── */
+    applyTabCards(tabId)  { this.applyLayout(tabId); },
+    applyAllTabCards()    { this.applyAllLayouts(); },
+    applyCardOrder(tabId) { /* géré par applyLayout */ },
+    applyAllCardOrder()   { this.applyAllLayouts(); },
+    closeTabCustomizer()  { this._vleClose(); },
 
     _chartSeriesConfig: {
         'chart-patrimoine':    [{label:'Patrimoine'}],
