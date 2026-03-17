@@ -753,8 +753,9 @@ html{-webkit-text-size-adjust:100%}
 
 /* ═══════════════════════════════════════════════════════════
 
+
 /* ═══════════════════════════════════════════════════════════
-   VAULT UNIFIED POPUP SYSTEM v1
+   VAULT UNIFIED POPUP SYSTEM v2 — Style Glass
    Classes ajoutées par JS : .vp-overlay .vp-box .vp-close
    ═══════════════════════════════════════════════════════════ */
 
@@ -762,9 +763,9 @@ html{-webkit-text-size-adjust:100%}
 .vp-overlay-bg {
   position: fixed;
   inset: 0;
-  background: rgba(20, 30, 80, .52);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background: rgba(10, 20, 60, .55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 998;
   display: none;
   opacity: 0;
@@ -773,27 +774,24 @@ html{-webkit-text-size-adjust:100%}
 .vp-overlay-bg.vp-active { display: block; }
 .vp-overlay-bg.vp-visible { opacity: 1; }
 
-/* ── Boîte popup — .modal ET .bs-sheet ─────────────────── */
+/* ── Boîte popup — .modal ET .bs-sheet — Style Glass ────── */
 .modal,
 .bs-sheet {
-  background: var(--bg-card) !important;
-  border: none !important;
-  box-shadow: 0 28px 70px rgba(30,50,150,.22), 0 2px 0 rgba(255,255,255,.8) inset !important;
+  background: rgba(255, 255, 255, .94) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, .85) !important;
+  box-shadow: 0 24px 64px rgba(30, 50, 150, .22), 0 1px 0 rgba(255,255,255,.9) inset !important;
 }
 
-/* Modal centré */
+/* Modal centré — Glass : pas de barre dégradée, coins très arrondis */
 .modal {
-  border-radius: 28px !important;
+  border-radius: 26px !important;
   overflow: hidden !important;
 }
-/* Barre dégradée en haut — identique aux bs-sheet */
+/* Supprime la barre dégradée du style précédent */
 .modal::before {
-  content: '';
-  display: block;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-gradient-start), var(--accent-gradient-end), #38bdf8);
-  border-radius: 28px 28px 0 0;
-  flex-shrink: 0;
+  display: none !important;
 }
 .modal.active {
   display: flex !important;
@@ -813,11 +811,15 @@ html{-webkit-text-size-adjust:100%}
   to   { opacity:0; transform:translate(-50%,-49%) scale(.94); }
 }
 
-/* Bottom Sheet */
+/* Bottom Sheet — Glass */
 .bs-sheet {
   border-radius: 28px 28px 0 0 !important;
 }
-/* Exit animation rapide — classe ajoutée par JS avant de retirer .open */
+/* Supprime la barre dégradée du style précédent sur bs-sheet */
+.bs-sheet::before {
+  display: none !important;
+}
+/* Exit animation rapide */
 .bs-overlay.vp-bs-closing .bs-sheet {
   transition: transform .18s cubic-bezier(.4,0,1,1), opacity .16s ease !important;
 }
@@ -828,101 +830,118 @@ html{-webkit-text-size-adjust:100%}
   .bs-sheet { border-radius: 22px !important; }
 }
 .bs-overlay {
-  background: rgba(20, 30, 80, .52) !important;
-  backdrop-filter: blur(5px) !important;
-  -webkit-backdrop-filter: blur(5px) !important;
+  background: rgba(10, 20, 60, .55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 
-/* ── Header — modal ─────────────────────────────────────── */
+/* ── Header — modal — Glass ─────────────────────────────── */
 .modal-header {
-  padding: 1.5rem 1.75rem .9rem !important;
-  border-bottom: none !important;
+  padding: 1.4rem 1.5rem 1rem !important;
+  border-bottom: 1px solid rgba(63, 81, 181, .1) !important;
   display: flex !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   justify-content: space-between !important;
   gap: 1rem !important;
 }
 .modal-title {
   font-family: 'Outfit', sans-serif !important;
-  font-size: 1.2rem !important;
-  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
   color: var(--text-primary) !important;
   line-height: 1.25 !important;
 }
-.modal-body  { padding: .5rem 1.75rem 1rem !important; }
-.modal-footer { padding: .75rem 1.75rem 1.75rem !important; border-top: none !important; gap: 10px !important; justify-content: flex-end !important; display: flex !important; }
+.modal-body  { padding: .75rem 1.5rem 1rem !important; }
+.modal-footer {
+  padding: .85rem 1.5rem 1.4rem !important;
+  border-top: 1px solid rgba(63, 81, 181, .1) !important;
+  gap: .5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
 
-/* ── Header — bottom sheet ─────────────────────────────── */
+/* ── Header — bottom sheet — Glass ─────────────────────── */
 .bs-header {
-  padding: 1.25rem 1.5rem .85rem !important;
-  border-bottom: none !important;
+  padding: 1.2rem 1.5rem .9rem !important;
+  border-bottom: 1px solid rgba(63, 81, 181, .1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 .bs-subtitle {
-  font-size: .62rem !important;
+  font-size: .6rem !important;
   font-weight: 700 !important;
   letter-spacing: .1em !important;
   text-transform: uppercase !important;
   color: var(--accent-gradient-end) !important;
   font-family: 'DM Mono', monospace !important;
-  margin-bottom: .2rem !important;
+  margin-bottom: .15rem !important;
   display: block !important;
 }
 .bs-title {
   font-family: 'Outfit', sans-serif !important;
-  font-size: 1.15rem !important;
-  font-weight: 700 !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
   color: var(--text-primary) !important;
   line-height: 1.25 !important;
 }
-.bs-body  { padding: .75rem 1.5rem !important; border-top: 1px solid var(--border-color) !important; }
-.bs-footer { padding: 1rem 1.5rem 1.5rem !important; border-top: none !important; gap: 10px !important; }
+.bs-body  { padding: .75rem 1.5rem !important; border-top: none !important; }
+.bs-footer {
+  padding: .85rem 1.5rem 1.4rem !important;
+  border-top: 1px solid rgba(63, 81, 181, .1) !important;
+  gap: .5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
 
-/* ── Bouton ✕ — classe ajoutée par JS ──────────────────── */
+/* ── Bouton ✕ — Glass : carré arrondi ──────────────────── */
 .vp-close {
-  width: 32px !important; height: 32px !important;
-  min-width: 32px !important; flex-shrink: 0 !important;
-  border-radius: 50% !important;
-  background: var(--bg-primary) !important;
-  border: none !important; box-shadow: none !important;
+  width: 30px !important; height: 30px !important;
+  min-width: 30px !important; flex-shrink: 0 !important;
+  border-radius: 10px !important;
+  background: rgba(63, 81, 181, .08) !important;
+  border: 1px solid rgba(63, 81, 181, .15) !important;
+  box-shadow: none !important;
   cursor: pointer !important;
-  font-size: .8rem !important;
-  color: var(--text-tertiary) !important;
+  font-size: .78rem !important;
+  color: var(--text-secondary) !important;
   display: inline-flex !important;
   align-items: center !important; justify-content: center !important;
-  transition: background .15s, color .15s !important;
+  transition: background .15s, color .15s, border-color .15s !important;
   padding: 0 !important; margin: 0 !important;
-  /* Effacer tous les styles inline potentiels */
   line-height: 1 !important;
 }
 .vp-close:hover {
-  background: var(--bg-secondary) !important;
-  color: var(--accent-primary) !important;
+  background: rgba(63, 81, 181, .15) !important;
+  border-color: rgba(63, 81, 181, .3) !important;
+  color: var(--text-primary) !important;
   transform: none !important;
   box-shadow: none !important;
 }
 
-/* ── Inputs dans les popups ─────────────────────────────── */
+/* ── Inputs dans les popups — Glass : fond blanc ────────── */
 .modal input:not([type=checkbox]):not([type=radio]):not([type=hidden]),
 .modal select, .modal textarea,
 .bs-sheet input:not([type=checkbox]):not([type=radio]):not([type=hidden]),
 .bs-sheet select, .bs-sheet textarea {
   border-radius: 14px !important;
   border: 1.5px solid var(--border-color) !important;
-  background: var(--bg-secondary) !important;
+  background: #fff !important;
   transition: border-color .15s, box-shadow .15s !important;
 }
 .modal input:focus, .modal select:focus, .modal textarea:focus,
 .bs-sheet input:focus, .bs-sheet select:focus, .bs-sheet textarea:focus {
   border-color: var(--accent-gradient-end) !important;
-  background: var(--bg-card) !important;
+  background: #fff !important;
   box-shadow: 0 0 0 4px rgba(124,77,255,.1) !important;
   outline: none !important;
 }
 
-/* ── Boutons action — classe ajoutée par JS ─────────────── */
+/* ── Boutons action — Glass : save pleine largeur ───────── */
 .vp-btn-save, .vp-btn-cancel {
-  border-radius: 50px !important;
-  padding: .7rem 1.4rem !important;
+  width: 100% !important;
+  border-radius: 16px !important;
+  padding: .72rem 1.4rem !important;
   font-size: .875rem !important;
   font-weight: 700 !important;
   font-family: 'Inter', sans-serif !important;
@@ -939,16 +958,16 @@ html{-webkit-text-size-adjust:100%}
 }
 .vp-btn-save:hover {
   opacity: .92 !important;
-  transform: translateY(-2px) !important;
+  transform: translateY(-1px) !important;
   box-shadow: 0 10px 26px rgba(124,77,255,.38) !important;
 }
 .vp-btn-cancel {
-  background: var(--bg-secondary) !important;
+  background: rgba(63, 81, 181, .07) !important;
   color: var(--text-secondary) !important;
   box-shadow: none !important;
 }
 .vp-btn-cancel:hover {
-  background: var(--bg-primary) !important;
+  background: rgba(63, 81, 181, .13) !important;
   transform: translateY(-1px) !important;
   box-shadow: none !important;
 }
@@ -957,6 +976,7 @@ html{-webkit-text-size-adjust:100%}
   box-shadow: 0 6px 18px rgba(198,40,40,.28) !important;
 }
 .vp-btn-danger:hover { box-shadow: 0 10px 26px rgba(198,40,40,.38) !important; }
+
 
 /* ── Micro-animations globales ─────────────────────────── */
 .tab-content.active { animation: vpTabIn .28s cubic-bezier(.4,0,.2,1) both; }
@@ -1043,8 +1063,8 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
     transform:none!important;width:100%!important;max-width:100%!important;
     border-radius:28px 28px 0 0!important;max-height:92vh!important;
   }
-  /* Barre dégradée arrondie côté haut uniquement sur mobile */
-  .modal::before { border-radius: 28px 28px 0 0; }
+  /* Glass mobile : coins arrondis haut, fond glass */
+  .modal::before { display: none !important; }
   /* Entrée : glisse depuis le bas avec spring */
   .modal.active { animation:vpModalInMobile .38s cubic-bezier(.34,1.4,.64,1) both!important; }
   @keyframes vpModalInMobile { from{opacity:0;transform:translateY(48px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
