@@ -509,10 +509,12 @@ body
     border-radius: 22px;
     box-shadow: 0 32px 80px rgba(0,0,0,0.32), 0 0 0 1px rgba(99,102,241,0.1);
     transform: scale(0.94) translateY(12px);
-    transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .22s ease;
+    opacity: 0;
+    transition: transform .34s cubic-bezier(.34,1.4,.64,1), opacity .22s ease;
   }
   .bs-overlay.open .bs-sheet {
     transform: scale(1) translateY(0);
+    opacity: 1;
   }
   
   .bs-handle { display: none; }
@@ -783,20 +785,53 @@ html{-webkit-text-size-adjust:100%}
 .modal {
   border-radius: 28px !important;
   overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+/* Barre dégradée en haut — identique aux bs-sheet */
+.modal::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-gradient-start), var(--accent-gradient-end), #38bdf8);
+  border-radius: 28px 28px 0 0;
+  flex-shrink: 0;
 }
 .modal.active {
-  animation: vpModalIn .38s cubic-bezier(.34,1.4,.64,1) both !important;
+  animation: vpModalIn .36s cubic-bezier(.34,1.4,.64,1) both !important;
+}
+.modal.closing {
+  animation: vpModalOut .2s cubic-bezier(.4,0,1,1) both !important;
+  pointer-events: none !important;
 }
 @keyframes vpModalIn {
-  from { opacity:0; transform:translate(-50%,-47%) scale(.88); }
+  from { opacity:0; transform:translate(-50%,-47%) scale(.93); }
   to   { opacity:1; transform:translate(-50%,-50%) scale(1);  }
+}
+@keyframes vpModalOut {
+  from { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  to   { opacity:0; transform:translate(-50%,-49%) scale(.94); }
 }
 
 /* Bottom Sheet */
 .bs-sheet {
   border-radius: 28px 28px 0 0 !important;
 }
-.bs-overlay { background: transparent !important; backdrop-filter: none !important; }
+/* Exit animation rapide — classe ajoutée par JS avant de retirer .open */
+.bs-overlay.vp-bs-closing .bs-sheet {
+  transition: transform .18s cubic-bezier(.4,0,1,1), opacity .16s ease !important;
+}
+@media (min-width: 769px) {
+  .bs-overlay.vp-bs-closing .bs-sheet {
+    transition: transform .18s cubic-bezier(.4,0,1,1), opacity .16s ease !important;
+  }
+  .bs-sheet { border-radius: 22px !important; }
+}
+.bs-overlay {
+  background: rgba(20, 30, 80, .52) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
 
 /* ── Header — modal ─────────────────────────────────────── */
 .modal-header {
@@ -1010,6 +1045,8 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   }
   .modal.active { animation:vpModalInMobile .36s cubic-bezier(.34,1.4,.64,1) both!important; }
   @keyframes vpModalInMobile { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+  .modal.closing { animation:vpModalOutMobile .22s cubic-bezier(.4,0,1,1) both!important; pointer-events:none!important; }
+  @keyframes vpModalOutMobile { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(30px)} }
 }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}

@@ -528,9 +528,12 @@ const app = {
             const active = document.querySelector('.modal.active');
             if (active) {
                 const closeBtn = active.querySelector('[onclick*="close"], [onclick*="Close"], [onclick*="Modal"]');
-                if (closeBtn) closeBtn.click();
-                else active.classList.remove('active');
-                this._vpHideOverlay();
+                if (closeBtn) {
+                    this._vpCloseModal(active);
+                    setTimeout(() => closeBtn.click(), 200);
+                } else {
+                    this._vpCloseModal(active);
+                }
             }
         });
 
@@ -581,6 +584,32 @@ const app = {
         if (!o) return;
         o.classList.remove('vp-visible');
         setTimeout(() => o.classList.remove('vp-active'), 260);
+    },
+
+    // Ferme un bs-overlay avec animation de sortie propre
+    _vpBsClose(overlayOrId) {
+        const el = typeof overlayOrId === 'string'
+            ? document.getElementById(overlayOrId)
+            : overlayOrId;
+        if (!el) return;
+        el.classList.add('vp-bs-closing');
+        el.classList.remove('open');
+        setTimeout(() => el.classList.remove('vp-bs-closing'), 220);
+    },
+
+    _vpCloseModal(modal) {
+        if (!modal) return;
+        const isMobile = window.innerWidth <= 600;
+        if (!isMobile) {
+            modal.classList.add('closing');
+            setTimeout(() => modal.classList.remove('active', 'closing'), 210);
+        } else {
+            modal.classList.add('closing');
+            setTimeout(() => modal.classList.remove('active', 'closing'), 230);
+        }
+        setTimeout(() => {
+            if (!document.querySelector('.modal.active')) this._vpHideOverlay();
+        }, 50);
     },
 
     // Patch un .modal : retire styles inline, ajoute classes VP
@@ -703,6 +732,25 @@ const app = {
 
     _hideLoader() {
         document.getElementById('app-loader')?.remove();
+    },
+
+    /* ── Fermeture modale avec animation ── */
+    _closeModal(modalId, overlayId = 'overlay') {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.classList.add('closing');
+        modal.addEventListener('animationend', () => {
+            modal.classList.remove('closing');
+            const overlay = document.getElementById(overlayId);
+            if (overlay) overlay.classList.remove('active');
+        }, { once: true });
+        // Fallback si animationend ne se déclenche pas
+        setTimeout(() => {
+            modal.classList.remove('closing');
+            const overlay = document.getElementById(overlayId);
+            if (overlay) overlay.classList.remove('active');
+        }, 300);
     },
 
     chargerDonneesExemple() {
@@ -2539,7 +2587,7 @@ const app = {
     },
 
     closeBsImport() {
-        document.getElementById('bs-import-overlay').classList.remove('open');
+        this._vpBsClose('bs-import-overlay');
         document.body.style.overflow = '';
     },
 
@@ -2558,8 +2606,7 @@ const app = {
     },
 
     closeBudgetsModal() {
-        document.getElementById('budgetsModal').classList.remove('active');
-        document.getElementById('overlay').classList.remove('active');
+        this._closeModal('budgetsModal');
     },
 
     toggleComptesPanel() {
@@ -2585,7 +2632,7 @@ const app = {
     },
 
     closeBsDepenses() {
-        document.getElementById('bs-dep-overlay').classList.remove('open');
+        this._vpBsClose('bs-dep-overlay');
         document.body.style.overflow = '';
     },
 
@@ -2720,7 +2767,7 @@ const app = {
     },
 
     closeBsPatrimoine() {
-        document.getElementById('bs-pat-overlay').classList.remove('open');
+        this._vpBsClose('bs-pat-overlay');
         document.body.style.overflow = '';
     },
 
@@ -2771,7 +2818,7 @@ const app = {
     },
 
     closeBsPEA() {
-        document.getElementById('bs-pea-overlay').classList.remove('open');
+        this._vpBsClose('bs-pea-overlay');
         document.body.style.overflow = '';
     },
 
@@ -3247,7 +3294,7 @@ const app = {
     },
 
     closeAddComptePointage() {
-        document.getElementById('bs-pointage-overlay').classList.remove('open');
+        this._vpBsClose('bs-pointage-overlay');
     },
 
     saveComptePointage() {
@@ -3648,8 +3695,7 @@ const app = {
     },
 
     closeBsRevenus() {
-        const overlay = document.getElementById('bs-rev-overlay');
-        if (overlay) overlay.classList.remove('open');
+        this._vpBsClose('bs-rev-overlay');
     },
 
     ajouterRevenu() {
@@ -6782,7 +6828,7 @@ const app = {
     },
 
     closeBsNote() {
-        document.getElementById('bs-note-overlay').classList.remove('open');
+        this._vpBsClose('bs-note-overlay');
         document.body.style.overflow = '';
     },
 
