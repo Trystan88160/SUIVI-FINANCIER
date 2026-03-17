@@ -1216,17 +1216,18 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 }
 
 /* ── Hauteur égale dans une vault-layout-row ───────────────────────────────
-   Le wrapper [data-card-id] devient flex-colonne pour que la .card
-   à l'intérieur puisse s'étirer à toute la hauteur de la ligne.        */
+   Chaîne flex complète : row → wrapper → card                            */
 .vault-layout-row > [data-card-id] {
   display: flex;
   flex-direction: column;
 }
+/* La .card directe s'étire — on annule son margin-bottom dans ce contexte */
 .vault-layout-row > [data-card-id] > .card {
   flex: 1;
-  height: 100%;
+  margin-bottom: 0;
 }
-/* Les chart-container dans une row s'adaptent aussi */
+/* Les chart-container s'adaptent à l'espace disponible */
 .vault-layout-row > [data-card-id] .chart-container {
   flex: 1;
+  min-height: 200px;
 }

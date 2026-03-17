@@ -902,6 +902,7 @@ const app = {
             chartColors:        loaded.chartColors          || {},
             hiddenCards:        loaded.hiddenCards          || {},
             cardOrder:          loaded.cardOrder            || {},
+            cardLayout:         loaded.cardLayout           || {},
             categorieColors:    loaded.categorieColors      || {},
             parametres:         loaded.parametres          || this.data.parametres
         };
