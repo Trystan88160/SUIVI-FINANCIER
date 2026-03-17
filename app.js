@@ -297,8 +297,8 @@ const app = {
 
         // Système popup unifié
         this._initVaultPopups();
-        // Appliquer l'ordre des cartes sauvegardé
-        this.applyAllCardOrder();
+        // Appliquer la mise en page sauvegardée — délai > 150ms pour passer après applyTheme
+        setTimeout(() => this.applyAllLayouts(), 200);
     },
 
     /* ── Onboarding ─────────────────────────────────────── */
@@ -4951,34 +4951,26 @@ const app = {
         const layout = this.data.cardLayout?.[tabId] || this._defaultLayout[tabId] || [];
         const hidden = this.data.hiddenCards?.[tabId] || {};
 
-        // 1. Collecter toutes les cartes de cet onglet par id
+        // 1. Collecter les cartes DIRECTES de cet onglet (top-level ou dans un vault-layout-row)
+        //    On cherche uniquement les enfants directs du tab, ou enfants directs d'un vault-layout-row enfant du tab
         const cardEls = {};
-        tab.querySelectorAll('[data-card-id]').forEach(el => {
-            if (el.dataset.tab === tabId || el.closest('#tab-' + tabId)) cardEls[el.dataset.cardId] = el;
-        });
+        const collectCards = (parent) => {
+            [...parent.children].forEach(el => {
+                if (el.dataset && el.dataset.cardId) {
+                    cardEls[el.dataset.cardId] = el;
+                } else if (el.classList && el.classList.contains('vault-layout-row')) {
+                    collectCards(el); // descend dans les rows existantes
+                }
+            });
+        };
+        collectCards(tab);
 
-        // 2. Sortir les cartes de leurs vault-layout-row existants
-        tab.querySelectorAll('.vault-layout-row').forEach(row => {
-            [...row.children].forEach(child => { if (child.dataset?.cardId) tab.appendChild(child); });
-            row.remove();
-        });
+        // 2. Sortir toutes les cartes de leurs vault-layout-row et les stocker hors DOM
+        const fragment = document.createDocumentFragment();
+        Object.values(cardEls).forEach(el => fragment.appendChild(el));
+        tab.querySelectorAll('.vault-layout-row').forEach(row => row.remove());
 
-        // 3. Appliquer l'ordre + regroupement en lignes
-        layout.forEach(rowIds => {
-            const vis = rowIds.filter(id => !hidden[id] && cardEls[id]);
-            if (!vis.length) return;
-            if (vis.length === 1) {
-                cardEls[vis[0]].style.flex = '';
-                tab.appendChild(cardEls[vis[0]]);
-            } else {
-                const row = document.createElement('div');
-                row.className = 'vault-layout-row';
-                vis.forEach(id => { cardEls[id].style.flex = ''; row.appendChild(cardEls[id]); });
-                tab.appendChild(row);
-            }
-        });
-
-        // 4. Gérer les classes hidden/visible
+        // 3. Appliquer les classes hidden/visible
         const config = this._tabCardsConfig[tabId] || [];
         config.forEach(card => {
             const el = cardEls[card.id];
@@ -4987,7 +4979,40 @@ const app = {
             else                  el.classList.remove('tab-card-hidden');
         });
 
-        // 5. Masquer les vault-layout-row dont toutes les cartes sont cachées
+        // 4. Réinsérer dans l'ordre du layout
+        //    On place APRÈS le tab-customize-bar s'il existe, sinon à la fin
+        const anchor = tab.querySelector('.tab-customize-bar');
+        layout.forEach(rowIds => {
+            const vis = rowIds.filter(id => !hidden[id] && cardEls[id]);
+            if (!vis.length) {
+                // Ligne entièrement cachée : on insère quand même les cartes (cachées)
+                rowIds.filter(id => cardEls[id]).forEach(id => {
+                    anchor ? anchor.after(cardEls[id]) : tab.appendChild(cardEls[id]);
+                });
+                return;
+            }
+            if (vis.length === 1 && rowIds.length === 1) {
+                // Carte seule sur sa ligne
+                anchor ? tab.insertBefore(cardEls[vis[0]], null) : tab.appendChild(cardEls[vis[0]]);
+                tab.appendChild(cardEls[vis[0]]);
+            } else {
+                // Plusieurs cartes côte à côte
+                const row = document.createElement('div');
+                row.className = 'vault-layout-row';
+                // Ajouter TOUTES les cartes de la ligne (visibles + cachées) dans la row
+                rowIds.filter(id => cardEls[id]).forEach(id => row.appendChild(cardEls[id]));
+                tab.appendChild(row);
+            }
+        });
+
+        // 5. Cartes absentes du layout (nouvelles cartes ajoutées plus tard) → fin du tab
+        config.forEach(card => {
+            if (cardEls[card.id] && !cardEls[card.id].parentElement) {
+                tab.appendChild(cardEls[card.id]);
+            }
+        });
+
+        // 6. Masquer les vault-layout-row entièrement cachés
         tab.querySelectorAll('.vault-layout-row').forEach(row => {
             const allHidden = [...row.querySelectorAll('[data-card-id]')].every(el => el.classList.contains('tab-card-hidden'));
             row.style.display = allHidden ? 'none' : '';
