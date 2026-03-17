@@ -785,8 +785,6 @@ html{-webkit-text-size-adjust:100%}
 .modal {
   border-radius: 28px !important;
   overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
 }
 /* Barre dégradée en haut — identique aux bs-sheet */
 .modal::before {
@@ -798,6 +796,8 @@ html{-webkit-text-size-adjust:100%}
   flex-shrink: 0;
 }
 .modal.active {
+  display: flex !important;
+  flex-direction: column !important;
   animation: vpModalIn .36s cubic-bezier(.34,1.4,.64,1) both !important;
 }
 .modal.closing {
