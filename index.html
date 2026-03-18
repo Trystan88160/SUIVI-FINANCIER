@@ -10,7 +10,7 @@
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;500;700;800&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="app.css?v=enh27">
+    <link rel="stylesheet" href="app.css?v=enh28">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
     <!-- PWA -->
@@ -602,6 +602,43 @@
     <div id="hist-filter-count" style="font-family:DM Mono,monospace;font-size:.68rem;color:var(--text-tertiary);margin-bottom:.65rem"></div>
     <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:block"></div>
     <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
+  </div>
+</div>
+
+<!-- MODAL EMOJI CATÉGORIE -->
+<div class="budget-modal-box" id="modal-emoji-cat" style="max-width:480px">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(255,152,0,.15),rgba(255,193,7,.1))">😀</div>
+      <div>
+        <div class="budget-modal-title">Choisir un emoji</div>
+        <div class="budget-modal-subtitle" id="emoji-cat-modal-subtitle">Catégorie</div>
+      </div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeEmojiCatModal()">✕</button>
+  </div>
+  <div class="budget-modal-body" style="padding-top:.75rem">
+    <!-- Aperçu + reset -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.85rem;padding:.65rem .85rem;background:var(--bg-secondary);border-radius:14px;border:1px solid var(--border-color)">
+      <div id="emoji-cat-preview" style="font-size:2rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--bg-card);border-radius:12px;border:1px solid var(--border-color)">📦</div>
+      <div style="flex:1">
+        <div style="font-size:.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem">Aperçu</div>
+        <div id="emoji-cat-preview-name" style="font-size:.85rem;font-weight:600;color:var(--text-primary)">—</div>
+      </div>
+      <button onclick="app.resetEmojiCat()" style="padding:.35rem .75rem;border-radius:10px;border:1px solid var(--border-color);background:var(--bg-secondary);font-size:.72rem;font-family:'DM Mono',monospace;color:var(--text-tertiary);cursor:pointer;white-space:nowrap;transition:all .15s" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--text-tertiary)'">↺ Défaut</button>
+    </div>
+    <!-- Recherche -->
+    <input id="emoji-cat-search" type="text" placeholder="🔍 Rechercher un emoji…"
+      class="budget-an-select" style="width:100%;margin-bottom:.65rem;padding:.5rem .85rem;font-size:.85rem"
+      oninput="app._emojiCatSearch(this.value)">
+    <!-- Onglets catégories -->
+    <div id="emoji-cat-tabs-modal" style="display:flex;gap:.3rem;overflow-x:auto;padding-bottom:.4rem;margin-bottom:.55rem;scrollbar-width:none"></div>
+    <!-- Grille -->
+    <div id="emoji-cat-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:.3rem;max-height:240px;overflow-y:auto;padding-right:.2rem"></div>
+  </div>
+  <div class="budget-modal-body" style="padding-top:0;padding-bottom:1rem;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;gap:.6rem">
+    <button class="bs-btn-cancel" onclick="app.closeEmojiCatModal()">Annuler</button>
+    <button class="bs-btn-save" onclick="app.confirmEmojiCat()">Appliquer</button>
   </div>
 </div>
 
@@ -1289,7 +1326,7 @@
 </div>
 
 
-<script src="app.js?v=enh27" defer></script>
+<script src="app.js?v=enh28" defer></script>
 <!-- ── Bottom Sheet : Ajouter un revenu ─────────────────── -->
 <div id="bs-rev-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsRevenus()">
   <div class="bs-sheet">

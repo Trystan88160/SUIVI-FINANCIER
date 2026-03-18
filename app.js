@@ -3747,15 +3747,15 @@ const app = {
                         <div class="hist-date-line"></div>
                     </div>
                     ${grpItems.map(i => {
-                        const isRev   = i.kind === 'rev';
-                        const amtStr  = (isRev ? '+' : '−') + this.formatCurrency(Math.abs(i.montant));
-                        const amtCls  = 'budget-tx-amount' + (isRev ? ' pos' : '');
-                        const iconBg  = isRev ? 'rgba(0,200,83,.12)' : 'var(--bg-secondary)';
+                        const isRev  = i.kind === 'rev';
+                        const amtStr = (isRev ? '+' : '−') + this.formatCurrency(Math.abs(i.montant));
+                        const amtCls = 'budget-tx-amount' + (isRev ? ' pos' : '');
+                        const iconBg = isRev ? 'rgba(0,200,83,.12)' : 'var(--bg-secondary)';
                         const actions = isRev
-                            ? `<button class="btn btn-small btn-secondary" onclick="app.supprimerRevenu('${i.id}')" title="Supprimer">✕</button>`
-                            : `<button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense','${i.id}')" title="Modifier">✏️</button>
-                               <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${i.id}')" title="Supprimer">✕</button>`;
-                        return `<div class="budget-tx-card">
+                            ? `<button class="budget-tx-action-btn" onclick="app.supprimerRevenu('${i.id}')" title="Supprimer">✕</button>`
+                            : `<button class="budget-tx-action-btn" onclick="app.modifierNote('depense','${i.id}')" title="Modifier">✏️</button>
+                               <button class="budget-tx-action-btn" onclick="app.supprimerDepense('${i.id}')" title="Supprimer">✕</button>`;
+                        return `<div class="budget-tx-card budget-tx-card--actions">
                             <div class="budget-tx-icon" style="background:${iconBg}">${i.emoji}</div>
                             <div class="budget-tx-info">
                                 <div class="budget-tx-name">${i.label}</div>
@@ -3763,7 +3763,7 @@ const app = {
                             </div>
                             <div class="budget-tx-date">${dateShort}</div>
                             <div class="${amtCls}">${amtStr}</div>
-                            <div style="display:flex;gap:.3rem;flex-shrink:0">${actions}</div>
+                            <div class="budget-tx-actions">${actions}</div>
                         </div>`;
                     }).join('')}
                 </div>`;
@@ -7902,10 +7902,8 @@ const app = {
 
         document.addEventListener('click', (e) => {
             if (!picker.contains(e.target) &&
-                !e.target.classList.contains('emoji-preview-btn') &&
-                !e.target.classList.contains('cat-emoji-btn')) {
+                !e.target.classList.contains('emoji-preview-btn')) {
                 picker.classList.remove('open');
-                this._emojiCatTarget = null;
             }
         });
     },
@@ -7983,23 +7981,166 @@ const app = {
     },
 
     openEmojiPickerForCat(cat, btn) {
-        this._emojiTarget = null;
         this._emojiCatTarget = cat;
-        const picker = document.getElementById('emojiPicker');
-        const rect = btn.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        picker.style.left = Math.min(rect.left, window.innerWidth - 330) + 'px';
-        if (spaceBelow > 400) {
-            picker.style.top = (rect.bottom + 6) + 'px';
-            picker.style.bottom = 'auto';
-        } else {
-            picker.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
-            picker.style.top = 'auto';
+        this._emojiCatSelected = this.data.catEmojis?.[cat] || this._getCatEmoji(cat);
+
+        // Remplir le subtitle
+        const subtitle = document.getElementById('emoji-cat-modal-subtitle');
+        if (subtitle) subtitle.textContent = cat;
+
+        // Aperçu initial
+        this._updateEmojiCatPreview(this._emojiCatSelected, cat);
+
+        // Remplir les onglets
+        this._initEmojiCatTabs();
+
+        // Reset recherche
+        const search = document.getElementById('emoji-cat-search');
+        if (search) search.value = '';
+
+        // Ouvrir la modal
+        document.getElementById('modal-emoji-cat')?.classList.add('open');
+        document.getElementById('budget-modal-overlay')?.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    },
+
+    _updateEmojiCatPreview(emoji, cat) {
+        const preview = document.getElementById('emoji-cat-preview');
+        const name    = document.getElementById('emoji-cat-preview-name');
+        if (preview) preview.textContent = emoji;
+        if (name)    name.textContent    = cat || this._emojiCatTarget || '—';
+        this._emojiCatSelected = emoji;
+    },
+
+    _initEmojiCatTabs() {
+        const tabs = document.getElementById('emoji-cat-tabs-modal');
+        if (!tabs) return;
+        const cats = Object.keys(this._emojiData);
+        tabs.innerHTML = cats.map((cat, i) => {
+            const icon = cat.split(' ')[0];
+            return `<button class="emoji-cat-btn ${i === 0 ? 'active' : ''}"
+                style="border-radius:10px;padding:.3rem .5rem;font-size:1.1rem;border:1px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;flex-shrink:0;transition:background .15s"
+                onclick="app._emojiCatShowCat('${cat}', this)" title="${cat}">${icon}</button>`;
+        }).join('');
+        this._emojiCatShowCat(cats[0], tabs.firstElementChild);
+    },
+
+    _emojiCatShowCat(cat, btn) {
+        document.querySelectorAll('#emoji-cat-tabs-modal .emoji-cat-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--bg-secondary)';
+        });
+        if (btn) { btn.classList.add('active'); btn.style.background = 'var(--bg-card)'; }
+        this._emojiCatRenderGrid(this._emojiData[cat] || []);
+    },
+
+    _emojiCatRenderGrid(emojis) {
+        const grid = document.getElementById('emoji-cat-grid');
+        if (!grid) return;
+        grid.innerHTML = emojis.map(e =>
+            `<button onclick="app._emojiCatSelect('${e}')"
+             style="font-size:1.3rem;border:none;background:none;cursor:pointer;border-radius:8px;padding:.2rem;transition:background .12s;line-height:1.4"
+             onmouseover="this.style.background='var(--bg-secondary)'"
+             onmouseout="this.style.background='none'"
+             title="${e}">${e}</button>`
+        ).join('');
+    },
+
+    _emojiCatSelect(emoji) {
+        this._updateEmojiCatPreview(emoji, this._emojiCatTarget);
+    },
+
+    _emojiCatSearch(query) {
+        if (!query.trim()) {
+            const firstCat = Object.keys(this._emojiData)[0];
+            this._emojiCatShowCat(firstCat, document.querySelector('#emoji-cat-tabs-modal .emoji-cat-btn'));
+            document.querySelectorAll('#emoji-cat-tabs-modal .emoji-cat-btn').forEach(b => b.style.opacity = '');
+            return;
         }
-        document.getElementById('emoji-search').value = '';
-        const firstCat = Object.keys(this._emojiData)[0];
-        this.emojiShowCat(firstCat, document.querySelector('.emoji-cat-btn'));
-        picker.classList.toggle('open');
+        document.querySelectorAll('#emoji-cat-tabs-modal .emoji-cat-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--bg-secondary)';
+            b.style.opacity = '.4';
+        });
+        const q = query.toLowerCase().trim();
+        const all = this._emojiAllFlat || Object.values(this._emojiData).flat();
+        const byKeyword = all.filter(e => (this._emojiKeywords[e] || '').toLowerCase().includes(q));
+        const byCat = [];
+        Object.entries(this._emojiData).forEach(([cat, emojis]) => {
+            if (cat.toLowerCase().includes(q)) byCat.push(...emojis);
+        });
+        const results = [...new Set([...byKeyword, ...byCat])];
+        if (results.length === 0) {
+            const grid = document.getElementById('emoji-cat-grid');
+            if (grid) grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:1rem;color:var(--text-tertiary);font-size:.8rem">Aucun résultat</div>`;
+        } else {
+            this._emojiCatRenderGrid(results);
+        }
+    },
+
+    resetEmojiCat() {
+        const cat = this._emojiCatTarget;
+        if (!cat) return;
+        const defaultEmoji = this._getCatEmojiDefault(cat);
+        this._updateEmojiCatPreview(defaultEmoji, cat);
+    },
+
+    _getCatEmojiDefault(cat) {
+        // Retourne l'emoji par défaut (sans tenir compte de catEmojis)
+        const match = cat.match(/^\p{Emoji}/u);
+        if (match) return match[0];
+        const MAP = {
+            'ALIMENTATION':'🛒','COURSES':'🛒','MANGER':'🛒','RESTAURANT':'🍽️','RESTAURANTS':'🍽️',
+            'LOGEMENT':'🏠','LOYER':'🏠','LOYERS':'🏠','TRANSPORT':'🚗','CARBU':'⛽','CARBURANT':'⛽',
+            'LOISIR':'🎮','LOISIRS':'🎮','SANTÉ':'💊','SANTE':'💊','ÉPARGNE':'💎','EPARGNE':'💎',
+            'INVESTISSEMENT':'📈','HABILLEMENT':'👔','VETEMENT':'👗','VÊTEMENT':'👗',
+            'VOYAGES':'✈️','VOYAGE':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻',
+            'ABONNEMENT':'📱','ABONNEMENTS':'📱','BAR':'🍺','CIGARETTE':'🚬','TABAC':'🚬',
+            'AUTRE':'📦','AUTRES':'📦','DIVERS':'📦','SHOPPING':'🛍️','FACTURE':'📄',
+        };
+        const up = cat.toUpperCase();
+        for (const k of Object.keys(MAP)) if (up.includes(k)) return MAP[k];
+        return '📦';
+    },
+
+    confirmEmojiCat() {
+        const cat   = this._emojiCatTarget;
+        const emoji = this._emojiCatSelected;
+        if (!cat) return;
+
+        if (!this.data.catEmojis) this.data.catEmojis = {};
+        // Si l'emoji sélectionné == défaut, supprimer l'entrée custom (économie de stockage)
+        if (emoji === this._getCatEmojiDefault(cat)) {
+            delete this.data.catEmojis[cat];
+        } else {
+            this.data.catEmojis[cat] = emoji;
+        }
+        this.save();
+
+        // Mettre à jour le bouton dans la liste sans re-render
+        const btn = document.querySelector(`.cat-emoji-btn[data-cat="${CSS.escape(cat)}"]`);
+        if (btn) btn.textContent = emoji;
+
+        // Rafraîchir les zones budget
+        this._refreshBudgetHeroAndCats();
+        if (document.getElementById('modal-all-cats')?.classList.contains('open')) this._renderAllCatsModal();
+
+        this.closeEmojiCatModal();
+        this.notify(`Emoji de "${cat}" mis à jour`, 'success');
+    },
+
+    closeEmojiCatModal() {
+        document.getElementById('modal-emoji-cat')?.classList.remove('open');
+        this._emojiCatTarget   = null;
+        this._emojiCatSelected = null;
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec',
+            'modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap',
+            'modal-all-cats','modal-emoji-cat']
+            .some(mid => document.getElementById(mid)?.classList.contains('open'));
+        if (!anyOpen) {
+            document.getElementById('budget-modal-overlay')?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
     },
 
     openEmojiPicker(targetInputId, btn) {
@@ -8023,22 +8164,6 @@ const app = {
     },
 
     emojiSelect(emoji) {
-        // Mode catégorie : mise à jour directe sans re-render de la liste
-        if (this._emojiCatTarget) {
-            const cat = this._emojiCatTarget;
-            this._emojiCatTarget = null;
-            if (!this.data.catEmojis) this.data.catEmojis = {};
-            this.data.catEmojis[cat] = emoji;
-            this.save();
-            // Mettre à jour le bouton dans la liste sans re-render
-            const btn = document.querySelector(`.cat-emoji-btn[data-cat="${CSS.escape(cat)}"]`);
-            if (btn) btn.textContent = emoji;
-            // Rafraîchir les widgets budget uniquement
-            this._refreshBudgetHeroAndCats();
-            if (document.getElementById('modal-all-cats')?.classList.contains('open')) this._renderAllCatsModal();
-            document.getElementById('emojiPicker').classList.remove('open');
-            return;
-        }
         // Mode normal (objectifs, récurrences)
         if (this._emojiTarget) {
             const input = document.getElementById(this._emojiTarget);
@@ -8677,7 +8802,7 @@ const app = {
 
     _closeBudgetModalOnOutside(e) {
         if (e.target.id !== 'budget-modal-overlay') return;
-        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats'].forEach(id => {
+        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats','modal-emoji-cat'].forEach(id => {
             document.getElementById(id)?.classList.remove('open');
         });
         document.getElementById('budget-modal-overlay')?.classList.remove('open');
