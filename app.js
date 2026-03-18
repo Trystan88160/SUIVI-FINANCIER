@@ -3621,7 +3621,7 @@ const app = {
                             </div>
                             <div class="hist-card-amount">${this.formatCurrency(d.montant)}</div>
                             <div class="hist-card-actions">
-                                <button class="btn btn-small btn-secondary" onclick="app.ouvrirEditDepense('${d.id}')" title="Modifier">✏️</button>
+                                <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', '${d.id}')" title="Modifier">✏️</button>
                                 <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${d.id}')" title="Supprimer">✕</button>
                             </div>
                         </div>`;
@@ -4170,7 +4170,7 @@ const app = {
                             <span style="font-family:DM Mono,monospace;font-size:0.7rem;color:var(--text-tertiary);min-width:80px">${new Date(d.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})}</span>
                             <span style="font-size:0.82rem;flex:1;color:var(--text-secondary)">${d.note || '—'}</span>
                             <span style="font-family:DM Mono,monospace;font-size:0.82rem;font-weight:600;color:var(--text-primary)">${this.formatCurrency(d.montant)}</span>
-                            <button onclick="app.ouvrirEditDepense('${d.id}')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.82rem;padding:0 0.25rem" title="Modifier">✏️</button>
+                            <button onclick="app.modifierNote('depense', '${d.id}')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.82rem;padding:0 0.25rem" title="Modifier">✏️</button>
                             <button onclick="app.supprimerDepense('${d.id}')" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:0.75rem;padding:0 0.25rem" title="Supprimer">✕</button>
                         </div>`).join('');
                     html += `
