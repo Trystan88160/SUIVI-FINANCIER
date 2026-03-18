@@ -1633,3 +1633,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .hist-type-btn.active{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(124,77,255,.28)}
 .cat-emoji-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-secondary);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
 .cat-emoji-btn:hover{background:var(--bg-card)}
+.budget-tx-card--actions .budget-tx-actions{display:none;gap:.25rem;flex-shrink:0}
+.budget-tx-card--actions:hover .budget-tx-actions{display:flex}
+.budget-tx-action-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border-color);background:var(--bg-primary);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:background .15s,color .15s;flex-shrink:0}
+.budget-tx-action-btn:hover{background:var(--bg-secondary);color:var(--text-primary)}

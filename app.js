@@ -7901,8 +7901,11 @@ const app = {
         this.emojiShowCat(cats[0], catTabs.firstElementChild);
 
         document.addEventListener('click', (e) => {
-            if (!picker.contains(e.target) && !e.target.classList.contains('emoji-preview-btn')) {
+            if (!picker.contains(e.target) &&
+                !e.target.classList.contains('emoji-preview-btn') &&
+                !e.target.classList.contains('cat-emoji-btn')) {
                 picker.classList.remove('open');
+                this._emojiCatTarget = null;
             }
         });
     },
@@ -8624,20 +8627,18 @@ const app = {
         if (!container) return;
         const d = this._budgetMonthDate();
         const y = d.getFullYear(), m = d.getMonth();
-        // Combine dépenses + revenus du mois, triés par date desc
         const deps = (this.data.depenses || [])
             .filter(dep => { const dt = new Date(dep.date); return dt.getFullYear() === y && dt.getMonth() === m; })
-            .map(dep => ({ date: dep.date, label: dep.note || dep.categorie, cat: dep.categorie, montant: -dep.montant, type: 'dep' }));
+            .map(dep => ({ id: dep.id, date: dep.date, label: dep.note || dep.categorie, cat: dep.categorie, montant: -dep.montant, type: 'dep' }));
         const revs = (this.data.revenus || [])
             .filter(rev => { const dt = new Date(rev.date); return dt.getFullYear() === y && dt.getMonth() === m; })
-            .map(rev => ({ date: rev.date, label: rev.source || rev.note || 'Revenu', cat: 'Revenu', montant: rev.montant, type: 'rev' }));
+            .map(rev => ({ id: rev.id, date: rev.date, label: rev.source || rev.note || 'Revenu', cat: 'Revenu', montant: rev.montant, type: 'rev' }));
         const all = [...deps, ...revs].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8);
         if (all.length === 0) {
             container.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-state-icon">💸</div><div>Aucune transaction pour ce mois</div></div>';
             return;
         }
         const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
-        const CAT_EMOJIS = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦','REVENU':'💰'};
         container.innerHTML = all.map(tx => {
             const dt = new Date(tx.date);
             const dateStr = dt.getDate() + ' ' + MONTHS_ABBR[dt.getMonth()];
@@ -8646,7 +8647,11 @@ const app = {
             const amountStr = (tx.montant >= 0 ? '+' : '−') + this.formatCurrency(Math.abs(tx.montant));
             const amountClass = tx.montant >= 0 ? 'budget-tx-amount pos' : 'budget-tx-amount';
             const iconBg = tx.type === 'rev' ? 'rgba(0,200,83,.12)' : 'var(--bg-secondary)';
-            return `<div class="budget-tx-card">
+            const actions = tx.type === 'rev'
+                ? `<button class="budget-tx-action-btn" onclick="app.supprimerRevenu('${tx.id}')" title="Supprimer">✕</button>`
+                : `<button class="budget-tx-action-btn" onclick="app.modifierNote('depense','${tx.id}')" title="Modifier">✏️</button>
+                   <button class="budget-tx-action-btn" onclick="app.supprimerDepense('${tx.id}')" title="Supprimer">✕</button>`;
+            return `<div class="budget-tx-card budget-tx-card--actions">
                 <div class="budget-tx-icon" style="background:${iconBg}">${emoji}</div>
                 <div class="budget-tx-info">
                     <div class="budget-tx-name">${tx.label}</div>
@@ -8654,6 +8659,7 @@ const app = {
                 </div>
                 <div class="budget-tx-date">${dateStr}</div>
                 <div class="${amountClass}">${amountStr}</div>
+                <div class="budget-tx-actions">${actions}</div>
             </div>`;
         }).join('');
     },
