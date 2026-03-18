@@ -3197,32 +3197,30 @@ const app = {
         const container = document.getElementById('budgets-container');
         const catEp = this.data.categoriesEpargne || ['ÉPARGNE'];
         container.innerHTML = Object.keys(this.data.budgets).map(cat => {
-            const isEp = catEp.some(e => cat.toUpperCase().includes(e.toUpperCase()));
-            const emoji = this.data.catEmojis?.[cat] || '';
+            const isEp  = catEp.some(e => cat.toUpperCase().includes(e.toUpperCase()));
+            const emoji = this.data.catEmojis?.[cat] || this._getCatEmoji(cat);
+            const catEsc = cat.replace(/'/g, "\\'");
             return `
             <div class="budget-item" style="align-items:center;gap:.5rem;flex-wrap:nowrap">
-                <input type="text" value="${emoji}" placeholder="😀"
-                       maxlength="2"
-                       title="Emoji de la catégorie"
-                       style="width:42px;flex-shrink:0;text-align:center;font-size:1.1rem;padding:.3rem;border-radius:8px;background:var(--bg-secondary);border:1px solid var(--border-color);cursor:text;color:var(--text-primary)"
-                       oninput="app.setCatEmoji('${cat}', this.value.trim())"
-                       onkeydown="if(event.key==='Enter') this.blur()">
+                <button class="cat-emoji-btn" data-cat="${cat}"
+                        title="Changer l'emoji"
+                        onclick="app.openEmojiPickerForCat('${catEsc}', this)">${emoji}</button>
                 <input type="text" class="form-input" value="${cat}"
-                       onblur="app.renommerCategorie('${cat}', this.value)"
+                       onblur="app.renommerCategorie('${catEsc}', this.value)"
                        onkeydown="if(event.key==='Enter') this.blur()"
                        title="Cliquer pour renommer" style="cursor:text;flex:1;min-width:0">
                 ${isEp
-                    ? `<span title="Catégorie épargne — exclue des dépenses effectives" style="font-size:.7rem;background:rgba(0,200,83,.15);color:var(--success);padding:.2rem .5rem;border-radius:20px;font-weight:700;white-space:nowrap;flex-shrink:0">💰 Épargne</span>`
-                    : `<input type="number" class="form-input" value="${this.data.budgets[cat]}" step="10" onchange="app.updateBudget('${cat}', this.value)" style="width:80px;flex-shrink:0;text-align:right">`
+                    ? `<span title="Catégorie épargne" style="font-size:.7rem;background:rgba(0,200,83,.15);color:var(--success);padding:.2rem .5rem;border-radius:20px;font-weight:700;white-space:nowrap;flex-shrink:0">💰 Épargne</span>`
+                    : `<input type="number" class="form-input" value="${this.data.budgets[cat]}" step="10" onchange="app.updateBudget('${catEsc}', this.value)" style="width:80px;flex-shrink:0;text-align:right">`
                 }
-                <label title="Marquer comme épargne (exclue des dépenses)" style="display:flex;align-items:center;gap:.2rem;cursor:pointer;flex-shrink:0;font-size:.68rem;color:var(--text-tertiary);white-space:nowrap;user-select:none">
-                    <input type="checkbox" ${isEp ? 'checked' : ''} onchange="app.toggleCategorieEpargne('${cat}', this.checked)" style="accent-color:var(--success);width:13px;height:13px;cursor:pointer">
+                <label title="Marquer comme épargne" style="display:flex;align-items:center;gap:.2rem;cursor:pointer;flex-shrink:0;font-size:.68rem;color:var(--text-tertiary);white-space:nowrap;user-select:none">
+                    <input type="checkbox" ${isEp ? 'checked' : ''} onchange="app.toggleCategorieEpargne('${catEsc}', this.checked)" style="accent-color:var(--success);width:13px;height:13px;cursor:pointer">
                 </label>
-                <button class="btn btn-small btn-secondary" onclick="app.supprimerCategorieBudget('${cat}')" style="flex-shrink:0">✕</button>
+                <button class="btn btn-small btn-secondary" onclick="app.supprimerCategorieBudget('${catEsc}')" style="flex-shrink:0">✕</button>
             </div>`;
         }).join('') +
         `<div style="margin-top:.75rem;padding:.6rem .75rem;background:var(--bg-secondary);border-radius:10px;font-size:.68rem;color:var(--text-tertiary);line-height:1.5">
-            😀 = emoji affiché dans l'onglet Budget &nbsp;·&nbsp; 💰 = catégorie <strong>épargne / virement patrimonial</strong>
+            Cliquez sur l'emoji pour le changer · 💰 = catégorie <strong>épargne</strong>
          </div>`;
         this.updateBudgetTotal();
     },
@@ -3629,22 +3627,30 @@ const app = {
         this.notify('Dépense ajoutée', 'success');
     },
 
-    afficherDepenses() {
-        const isMobile = window.innerWidth <= 768;
-        const tbody = document.getElementById('table-depenses');
-        const mobileContainer = document.getElementById('mobile-depenses-cards');
-        const tableWrapper = document.getElementById('depenses-table-wrapper');
-        const btnShowMore = document.getElementById('show-more-depenses');
-        const filterCount = document.getElementById('hist-filter-count');
+    setHistType(type) {
+        this._histType = type;
+        ['all','dep','rev'].forEach(t => {
+            document.getElementById('hist-type-' + t)?.classList.toggle('active', t === type);
+        });
+        // Cacher filtre catégorie sur vue revenus
+        const catWrap = document.getElementById('hist-filter-cat-wrap');
+        if (catWrap) catWrap.style.display = type === 'rev' ? 'none' : '';
+        this.afficherDepenses();
+    },
 
+    afficherDepenses() {
+        const mobileContainer = document.getElementById('mobile-depenses-cards');
+        const tableWrapper    = document.getElementById('depenses-table-wrapper');
+        const btnShowMore     = document.getElementById('show-more-depenses');
+        const filterCount     = document.getElementById('hist-filter-count');
+        const subtitle        = document.getElementById('hist-subtitle');
+        const type            = this._histType || 'all';
+
+        // Peupler select catégories (dépenses seulement)
         const selCat = document.getElementById('hist-filter-cat');
         if (selCat && selCat.options.length <= 1) {
             const cats = [...new Set(this.data.depenses.map(d => d.categorie))].sort();
-            cats.forEach(c => {
-                const o = document.createElement('option');
-                o.value = c; o.textContent = c;
-                selCat.appendChild(o);
-            });
+            cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; selCat.appendChild(o); });
         }
 
         const filterMois = (document.getElementById('hist-filter-mois')?.value || '').trim();
@@ -3652,53 +3658,77 @@ const app = {
         const filterNote = (document.getElementById('hist-filter-note')?.value || '').trim().toLowerCase();
         const sortAsc    = this._histSortAsc || false;
 
-        let depenses = [...this.data.depenses].sort((a, b) =>
-            sortAsc ? (a.date > b.date ? 1 : a.date < b.date ? -1 : a.id - b.id)
-                    : (b.date > a.date ? 1 : b.date < a.date ? -1 : b.id - a.id)
+        // Construire liste unifiée
+        const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+        let items = [];
+
+        if (type !== 'rev') {
+            this.data.depenses.forEach(d => items.push({
+                id: d.id, date: d.date, label: d.note || '—',
+                meta: d.categorie, montant: -d.montant, kind: 'dep',
+                emoji: this._getCatEmoji(d.categorie),
+                metaClean: d.categorie.replace(/^\p{Emoji}\s*/u, '') || d.categorie
+            }));
+        }
+        if (type !== 'dep') {
+            this.data.revenus.forEach(r => {
+                const date = r.date || (r.mois ? r.mois + '-01' : null);
+                if (!date) return;
+                items.push({
+                    id: r.id, date, label: r.note || r.type || 'Revenu',
+                    meta: r.type || 'Revenu', montant: r.montant, kind: 'rev',
+                    emoji: '💰', metaClean: r.type || 'Revenu'
+                });
+            });
+        }
+
+        // Trier
+        items.sort((a, b) => sortAsc
+            ? (a.date > b.date ? 1 : a.date < b.date ? -1 : 0)
+            : (b.date > a.date ? 1 : b.date < a.date ? -1 : 0)
         );
-        const totalAvant = depenses.length;
 
-        if (filterMois) depenses = depenses.filter(d => d.date && d.date.startsWith(filterMois));
-        if (filterCat)  depenses = depenses.filter(d => d.categorie === filterCat);
-        if (filterNote) depenses = depenses.filter(d => (d.note || '').toLowerCase().includes(filterNote));
+        const totalAvant = items.length;
 
-        const totalApres = depenses.length;
+        // Filtres
+        if (filterMois) items = items.filter(i => i.date?.startsWith(filterMois));
+        if (filterCat && type !== 'rev')  items = items.filter(i => i.kind === 'rev' || i.meta === filterCat);
+        if (filterNote) items = items.filter(i => i.label.toLowerCase().includes(filterNote) || i.meta.toLowerCase().includes(filterNote));
+
+        const totalApres = items.length;
         const filtersActive = filterMois || filterCat || filterNote;
-        if (filterCount) {
-            filterCount.textContent = filtersActive
-                ? totalApres + ' résultat' + (totalApres > 1 ? 's' : '') + ' sur ' + totalAvant
-                : '';
+
+        if (filterCount) filterCount.textContent = filtersActive
+            ? totalApres + ' résultat' + (totalApres > 1 ? 's' : '') + ' sur ' + totalAvant : '';
+
+        // Subtitle
+        const totalDep = items.filter(i => i.kind === 'dep').reduce((s, i) => s + Math.abs(i.montant), 0);
+        const totalRev = items.filter(i => i.kind === 'rev').reduce((s, i) => s + i.montant, 0);
+        if (subtitle) {
+            if (type === 'dep') subtitle.textContent = totalApres + ' dépense' + (totalApres > 1 ? 's' : '') + ' · ' + this.formatCurrency(totalDep);
+            else if (type === 'rev') subtitle.textContent = totalApres + ' revenu' + (totalApres > 1 ? 's' : '') + ' · ' + this.formatCurrency(totalRev);
+            else subtitle.textContent = totalApres + ' transaction' + (totalApres > 1 ? 's' : '') + ' · solde ' + this.formatCurrency(totalRev - totalDep);
         }
 
-        if (isMobile) {
-            if (tableWrapper) tableWrapper.style.display = 'none';
-            if (mobileContainer) mobileContainer.style.display = 'flex';
-        } else {
-            if (tableWrapper) tableWrapper.style.display = 'none';
-            if (mobileContainer) { mobileContainer.style.display = 'block'; mobileContainer.style.flexDirection = 'column'; }
-        }
+        if (tableWrapper) tableWrapper.style.display = 'none';
+        if (mobileContainer) mobileContainer.style.display = 'block';
 
-        const limit = this.showMoreState.depenses ? depenses.length : 15;
-        const toShow = depenses.slice(0, limit);
+        const limit   = this.showMoreState.depenses ? items.length : 20;
+        const toShow  = items.slice(0, limit);
 
-        if (depenses.length === 0) {
-            const msg = filtersActive ? 'Aucune dépense ne correspond aux filtres' : 'Aucune dépense enregistrée';
-            const _illuDep = (this._emptyIllus||{}).depenses||'';
-            const _emptyDep = `<div class="v-empty">${_illuDep}<div class="v-empty-title">${msg}</div><p class="v-empty-desc">Utilise ＋ ou importe un relevé CSV pour démarrer.</p></div>`;
-            if (mobileContainer) mobileContainer.innerHTML = _emptyDep;
+        if (items.length === 0) {
+            const msg = filtersActive ? 'Aucun résultat' : type === 'rev' ? 'Aucun revenu enregistré' : 'Aucune dépense enregistrée';
+            if (mobileContainer) mobileContainer.innerHTML = `<div class="v-empty"><div class="v-empty-title">${msg}</div></div>`;
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
 
+        // Grouper par date
         const groups = {};
-        toShow.forEach(d => {
-            const dateKey = d.date || 'Date inconnue';
-            if (!groups[dateKey]) groups[dateKey] = [];
-            groups[dateKey].push(d);
-        });
+        toShow.forEach(i => { if (!groups[i.date]) groups[i.date] = []; groups[i.date].push(i); });
 
         const fmt = dateStr => {
-            if (!dateStr || dateStr === 'Date inconnue') return 'Date inconnue';
+            if (!dateStr) return '—';
             const dt = new Date(dateStr + 'T00:00:00');
             const today = new Date(); today.setHours(0,0,0,0);
             const yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
@@ -3708,30 +3738,32 @@ const app = {
         };
 
         if (mobileContainer) {
-            mobileContainer.innerHTML = Object.entries(groups).map(([dateKey, items]) => {
-                const groupTotal = items.reduce((s, d) => s + d.montant, 0);
-                const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+            mobileContainer.innerHTML = Object.entries(groups).map(([dateKey, grpItems]) => {
+                const dt = new Date(dateKey + 'T00:00:00');
+                const dateShort = dt.getDate() + ' ' + MONTHS_ABBR[dt.getMonth()];
                 return `<div class="hist-date-group">
                     <div class="hist-date-label">
                         <span class="hist-date-text">${fmt(dateKey)}</span>
                         <div class="hist-date-line"></div>
-                        <span class="hist-date-total">−${this.formatCurrency(groupTotal)}</span>
                     </div>
-                    ${items.map(d => {
-                        const emoji = this._getCatEmoji(d.categorie);
-                        const catName = d.categorie.replace(/^\p{Emoji}\s*/u, '') || d.categorie;
+                    ${grpItems.map(i => {
+                        const isRev   = i.kind === 'rev';
+                        const amtStr  = (isRev ? '+' : '−') + this.formatCurrency(Math.abs(i.montant));
+                        const amtCls  = 'budget-tx-amount' + (isRev ? ' pos' : '');
+                        const iconBg  = isRev ? 'rgba(0,200,83,.12)' : 'var(--bg-secondary)';
+                        const actions = isRev
+                            ? `<button class="btn btn-small btn-secondary" onclick="app.supprimerRevenu('${i.id}')" title="Supprimer">✕</button>`
+                            : `<button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense','${i.id}')" title="Modifier">✏️</button>
+                               <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${i.id}')" title="Supprimer">✕</button>`;
                         return `<div class="budget-tx-card">
-                            <div class="budget-tx-icon" style="background:var(--bg-secondary)">${emoji}</div>
+                            <div class="budget-tx-icon" style="background:${iconBg}">${i.emoji}</div>
                             <div class="budget-tx-info">
-                                <div class="budget-tx-name">${d.note || '—'}</div>
-                                <div class="budget-tx-meta">${catName}</div>
+                                <div class="budget-tx-name">${i.label}</div>
+                                <div class="budget-tx-meta">${i.metaClean}</div>
                             </div>
-                            <div class="budget-tx-date"></div>
-                            <div class="budget-tx-amount">−${this.formatCurrency(d.montant)}</div>
-                            <div style="display:flex;gap:.3rem;flex-shrink:0">
-                                <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', '${d.id}')" title="Modifier">✏️</button>
-                                <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${d.id}')" title="Supprimer">✕</button>
-                            </div>
+                            <div class="budget-tx-date">${dateShort}</div>
+                            <div class="${amtCls}">${amtStr}</div>
+                            <div style="display:flex;gap:.3rem;flex-shrink:0">${actions}</div>
                         </div>`;
                     }).join('')}
                 </div>`;
@@ -3739,9 +3771,9 @@ const app = {
         }
 
         if (btnShowMore) {
-            if (depenses.length > 15) {
+            if (items.length > 20) {
                 btnShowMore.style.display = 'block';
-                btnShowMore.textContent = this.showMoreState.depenses ? 'Afficher moins' : 'Afficher plus (' + (depenses.length - 15) + ' autres)';
+                btnShowMore.textContent = this.showMoreState.depenses ? 'Afficher moins' : 'Afficher plus (' + (items.length - 20) + ' autres)';
             } else {
                 btnShowMore.style.display = 'none';
             }
@@ -3763,6 +3795,10 @@ const app = {
         if (c) c.value = '';
         if (n) n.value = '';
         this._histSortAsc = false;
+        this._histType = 'all';
+        ['all','dep','rev'].forEach(t => document.getElementById('hist-type-' + t)?.classList.toggle('active', t === 'all'));
+        const catWrap = document.getElementById('hist-filter-cat-wrap');
+        if (catWrap) catWrap.style.display = '';
         const btn = document.getElementById('hist-sort-btn');
         if (btn) btn.textContent = '🕐 Récent';
         this.afficherDepenses();
@@ -7943,6 +7979,26 @@ const app = {
         ).join('');
     },
 
+    openEmojiPickerForCat(cat, btn) {
+        this._emojiTarget = null;
+        this._emojiCatTarget = cat;
+        const picker = document.getElementById('emojiPicker');
+        const rect = btn.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        picker.style.left = Math.min(rect.left, window.innerWidth - 330) + 'px';
+        if (spaceBelow > 400) {
+            picker.style.top = (rect.bottom + 6) + 'px';
+            picker.style.bottom = 'auto';
+        } else {
+            picker.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+            picker.style.top = 'auto';
+        }
+        document.getElementById('emoji-search').value = '';
+        const firstCat = Object.keys(this._emojiData)[0];
+        this.emojiShowCat(firstCat, document.querySelector('.emoji-cat-btn'));
+        picker.classList.toggle('open');
+    },
+
     openEmojiPicker(targetInputId, btn) {
         this._emojiTarget = targetInputId;
         const picker = document.getElementById('emojiPicker');
@@ -7964,11 +8020,27 @@ const app = {
     },
 
     emojiSelect(emoji) {
+        // Mode catégorie : mise à jour directe sans re-render de la liste
+        if (this._emojiCatTarget) {
+            const cat = this._emojiCatTarget;
+            this._emojiCatTarget = null;
+            if (!this.data.catEmojis) this.data.catEmojis = {};
+            this.data.catEmojis[cat] = emoji;
+            this.save();
+            // Mettre à jour le bouton dans la liste sans re-render
+            const btn = document.querySelector(`.cat-emoji-btn[data-cat="${CSS.escape(cat)}"]`);
+            if (btn) btn.textContent = emoji;
+            // Rafraîchir les widgets budget uniquement
+            this._refreshBudgetHeroAndCats();
+            if (document.getElementById('modal-all-cats')?.classList.contains('open')) this._renderAllCatsModal();
+            document.getElementById('emojiPicker').classList.remove('open');
+            return;
+        }
+        // Mode normal (objectifs, récurrences)
         if (this._emojiTarget) {
             const input = document.getElementById(this._emojiTarget);
             if (input) {
                 input.value = emoji;
-
                 const btn = input.closest('.emoji-picker-wrap')?.querySelector('.emoji-preview-btn');
                 if (btn) btn.textContent = emoji;
             }
@@ -8530,6 +8602,9 @@ const app = {
         // Initialise le filtre mois sur le mois budget courant
         const histMois = document.getElementById('hist-filter-mois');
         if (histMois && this._budgetMonth) histMois.value = this._budgetMonth;
+        // Reset type sur "Tout"
+        if (!this._histType) this._histType = 'all';
+        ['all','dep','rev'].forEach(t => document.getElementById('hist-type-' + t)?.classList.toggle('active', t === (this._histType || 'all')));
         this.afficherDepenses();
     },
 

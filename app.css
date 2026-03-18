@@ -1629,3 +1629,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .budget-tx-date{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--text-tertiary);flex-shrink:0}
 .budget-tx-amount{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--danger);flex-shrink:0}
 .budget-tx-amount.pos{color:var(--success)}
+.hist-type-btn{padding:.35rem .85rem;border-radius:20px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-secondary);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .18s;font-weight:500}
+.hist-type-btn.active{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(124,77,255,.28)}
+.cat-emoji-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border-color);background:var(--bg-secondary);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.cat-emoji-btn:hover{background:var(--bg-card)}

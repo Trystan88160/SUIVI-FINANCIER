@@ -571,32 +571,36 @@
   <div class="budget-modal-header">
     <div class="budget-modal-header-left">
       <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(63,81,181,.1),rgba(124,77,255,.08))">📋</div>
-      <div><div class="budget-modal-title">Historique complet</div><div class="budget-modal-subtitle">Toutes vos transactions — filtrez par mois, catégorie ou mot-clé</div></div>
+      <div><div class="budget-modal-title">Historique complet</div><div class="budget-modal-subtitle" id="hist-subtitle">Toutes vos transactions</div></div>
     </div>
     <button class="budget-modal-close" onclick="app.closeBudgetHistoriqueComplet()">✕</button>
   </div>
   <div class="budget-modal-body">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem;align-items:end">
+    <!-- Toggle type -->
+    <div style="display:flex;gap:.4rem;margin-bottom:.85rem">
+      <button id="hist-type-all"  onclick="app.setHistType('all')"     class="hist-type-btn active">Tout</button>
+      <button id="hist-type-dep"  onclick="app.setHistType('dep')"     class="hist-type-btn">Dépenses</button>
+      <button id="hist-type-rev"  onclick="app.setHistType('rev')"     class="hist-type-btn">Revenus</button>
+    </div>
+    <!-- Filtres -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:.75rem;align-items:end">
       <div>
         <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
         <input type="month" class="budget-an-select" id="hist-filter-mois" style="padding:.45rem .7rem;font-size:.82rem;width:100%" oninput="app.afficherDepenses()">
       </div>
-      <div>
+      <div id="hist-filter-cat-wrap">
         <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Catégorie</div>
         <select class="budget-an-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem;width:100%" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
       </div>
       <div>
-        <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche note</div>
+        <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche</div>
         <input type="text" class="budget-an-select" id="hist-filter-note" placeholder="Mot-clé…" style="padding:.45rem .7rem;font-size:.82rem;width:100%" oninput="app.afficherDepenses()">
       </div>
       <button id="hist-sort-btn" onclick="app.toggleHistSort()" title="Changer l'ordre" style="padding:.45rem .75rem;height:fit-content;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;cursor:pointer;font-size:.78rem;color:var(--text-secondary);white-space:nowrap;transition:all .2s">🕐 Récent</button>
       <button class="btn btn-secondary btn-small" onclick="app.resetHistFilters()" title="Effacer les filtres" style="padding:.45rem .85rem;height:fit-content">✕</button>
     </div>
     <div id="hist-filter-count" style="font-family:DM Mono,monospace;font-size:.68rem;color:var(--text-tertiary);margin-bottom:.65rem"></div>
-    <div id="depenses-table-wrapper" class="table-container">
-      <table class="table"><thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead><tbody id="table-depenses"></tbody></table>
-    </div>
-    <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
+    <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:block"></div>
     <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
   </div>
 </div>
