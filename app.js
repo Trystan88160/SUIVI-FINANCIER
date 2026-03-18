@@ -2924,8 +2924,8 @@ const app = {
         }
 
         document.getElementById('inputModal').classList.add('active');
-        document.getElementById('overlay').classList.add('active');
-        document.getElementById('input-overlay').style.display = 'block';
+        const vpO = document.getElementById('vp-global-overlay');
+        if (vpO) { vpO.classList.add('vp-active'); requestAnimationFrame(() => vpO.classList.add('vp-visible')); }
         this.inputCallback = callback;
 
         setTimeout(() => document.getElementById('inputField').focus(), 100);
@@ -2933,9 +2933,9 @@ const app = {
 
     closeInputModal() {
         document.getElementById('inputModal').classList.remove('active');
-        document.getElementById('input-overlay').style.display = 'none';
-        if (!document.getElementById('confirmModal').classList.contains('active')) {
-            document.getElementById('overlay').classList.remove('active');
+        if (!document.querySelector('.modal.active')) {
+            const vpO = document.getElementById('vp-global-overlay');
+            if (vpO) { vpO.classList.remove('vp-visible'); setTimeout(() => vpO.classList.remove('vp-active'), 260); }
         }
         this.inputCallback = null;
     },
