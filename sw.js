@@ -1,5 +1,5 @@
 /* ── Service Worker — Vault ── */
-const CACHE_NAME = 'vault-v23';
+const CACHE_NAME = 'vault-v24';
 
 /* Fichiers à mettre en cache dès l'installation */
 const STATIC_ASSETS = [

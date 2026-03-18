@@ -357,7 +357,6 @@
 
 <!-- Dépenses -->
 <div id="tab-depenses" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
 
 <!-- ══ NOUVELLE TOPBAR BUDGET ══ -->
 <div class="budget-topbar">
@@ -384,6 +383,7 @@
     </div>
     <div class="budget-an-wrap" id="budget-an-wrap">
       <button class="budget-an-btn" id="budget-an-btn" onclick="app.toggleBudgetAnalyseMenu()">🔍 Analyse <span class="budget-an-chevron">▾</span></button>
+      <button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide" style="margin-left:.5rem">❓ Aide</button>
       <div class="budget-an-menu" id="budget-an-menu">
         <div class="budget-an-menu-header"><span class="budget-an-menu-label">Choisissez un outil</span></div>
         <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('comp')">
@@ -459,7 +459,7 @@
   </div>
 </div>
 
-<!-- ══ CATÉGORIES TOP 6 ══ -->
+<!-- ══ CATÉGORIES TOP 8 ══ -->
 <div class="budget-section-header">
   <span class="budget-section-title">État des catégories</span>
   <button class="budget-section-link" onclick="app.toggleBudgetsPanel()">Toutes les catégories ›</button>

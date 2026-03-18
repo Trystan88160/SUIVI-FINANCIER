@@ -8574,7 +8574,7 @@ const app = {
         const allCats = new Set([...Object.keys(this.data.budgets), ...Object.keys(bycat)]);
         const catData = Array.from(allCats)
             .map(cat => ({ cat, spent: bycat[cat] || 0, budget: this.data.budgets[cat] || 0 }))
-            .filter(c => c.spent > 0 || c.budget > 0)
+            .filter(c => c.cat in this.data.budgets || c.spent > 0)
             .sort((a, b) => b.spent - a.spent)
             .slice(0, 8);
         if (catData.length === 0) {
