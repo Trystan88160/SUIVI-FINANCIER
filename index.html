@@ -416,6 +416,26 @@
   </div>
 </div>
 
+<!-- ══ HERO BUDGET ══ -->
+<div class="budget-hero" id="budget-hero-wrap">
+  <div class="budget-hero-inner">
+    <div>
+      <div class="budget-hero-period">Dépenses · <span id="budget-hero-period">—</span></div>
+      <div class="budget-hero-amount" id="budget-hero-amount">0 €</div>
+      <div class="budget-hero-sub" id="budget-hero-sub">sur <span id="budget-hero-total-label">0 €</span> de budget mensuel · <strong id="budget-hero-restant" style="color:rgba(255,255,255,.9)">0 € restants</strong></div>
+    </div>
+    <span class="budget-hero-badge" id="budget-hero-badge">0% utilisé</span>
+  </div>
+  <div style="position:relative;z-index:1">
+    <div class="budget-hero-prog-labels">
+      <span>0 €</span>
+      <strong id="budget-hero-days">—</strong>
+      <span id="budget-hero-total-label2">0 €</span>
+    </div>
+    <div class="budget-prog-bar"><div class="budget-prog-fill" id="budget-hero-prog"></div></div>
+  </div>
+</div>
+
 <!-- ══ SOLDE BANCAIRE (markup existant préservé) ══ -->
 <div data-card-id="dep-pointage" data-tab="depenses">
   <div class="vault-solde-card">
@@ -439,26 +459,6 @@
   </div>
 </div>
 
-<!-- ══ HERO BUDGET ══ -->
-<div class="budget-hero" id="budget-hero-wrap">
-  <div class="budget-hero-inner">
-    <div>
-      <div class="budget-hero-period">Dépenses · <span id="budget-hero-period">—</span></div>
-      <div class="budget-hero-amount" id="budget-hero-amount">0 €</div>
-      <div class="budget-hero-sub" id="budget-hero-sub">sur <span id="budget-hero-total-label">0 €</span> de budget mensuel · <strong id="budget-hero-restant" style="color:rgba(255,255,255,.9)">0 € restants</strong></div>
-    </div>
-    <span class="budget-hero-badge" id="budget-hero-badge">0% utilisé</span>
-  </div>
-  <div style="position:relative;z-index:1">
-    <div class="budget-hero-prog-labels">
-      <span>0 €</span>
-      <strong id="budget-hero-days">—</strong>
-      <span id="budget-hero-total-label2">0 €</span>
-    </div>
-    <div class="budget-prog-bar"><div class="budget-prog-fill" id="budget-hero-prog"></div></div>
-  </div>
-</div>
-
 <!-- ══ CATÉGORIES TOP 8 ══ -->
 <div class="budget-section-header">
   <span class="budget-section-title">État des catégories</span>
@@ -473,26 +473,28 @@
 </div>
 <div id="budget-recent-txs" class="budget-recent-list"></div>
 
-<!-- ══ HISTORIQUE COMPLET (collapsible, masqué par défaut) ══ -->
-<div id="budget-hist-complet-wrap" style="display:none;margin-top:1rem">
-<div class="card" style="padding:0;overflow:hidden">
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border-color)">
-    <h2 class="card-title" style="margin:0;font-size:1.1rem">📋 Historique complet</h2>
-    <button onclick="app.closeBudgetHistoriqueComplet()" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:1.1rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='none'">✕</button>
+<!-- ══ HISTORIQUE COMPLET (modal) ══ -->
+<div class="budget-modal-box" id="budget-hist-complet-wrap">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(63,81,181,.1),rgba(124,77,255,.08))">📋</div>
+      <div><div class="budget-modal-title">Historique complet</div><div class="budget-modal-subtitle">Toutes vos transactions — filtrez par mois, catégorie ou mot-clé</div></div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeBudgetHistoriqueComplet()">✕</button>
   </div>
-  <div style="padding:1.25rem 1.5rem">
+  <div class="budget-modal-body">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem;align-items:end">
       <div>
         <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
-        <input type="month" class="form-input" id="hist-filter-mois" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
+        <input type="month" class="budget-an-select" id="hist-filter-mois" style="padding:.45rem .7rem;font-size:.82rem;width:100%" oninput="app.afficherDepenses()">
       </div>
       <div>
         <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Catégorie</div>
-        <select class="form-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
+        <select class="budget-an-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem;width:100%" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
       </div>
       <div>
         <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche note</div>
-        <input type="text" class="form-input" id="hist-filter-note" placeholder="Mot-clé…" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
+        <input type="text" class="budget-an-select" id="hist-filter-note" placeholder="Mot-clé…" style="padding:.45rem .7rem;font-size:.82rem;width:100%" oninput="app.afficherDepenses()">
       </div>
       <button id="hist-sort-btn" onclick="app.toggleHistSort()" title="Changer l'ordre" style="padding:.45rem .75rem;height:fit-content;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;cursor:pointer;font-size:.78rem;color:var(--text-secondary);white-space:nowrap;transition:all .2s">🕐 Récent</button>
       <button class="btn btn-secondary btn-small" onclick="app.resetHistFilters()" title="Effacer les filtres" style="padding:.45rem .85rem;height:fit-content">✕</button>
@@ -504,7 +506,6 @@
     <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
     <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
   </div>
-</div>
 </div>
 
 <!-- ══ ÉLÉMENTS CACHÉS — COMPATIBILITÉ JS (ne pas supprimer) ══ -->
@@ -716,18 +717,34 @@
   </div>
   <div class="budget-modal-body">
     <!-- Filtres période/catégorie -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.65rem">
       <div>
         <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Période</div>
         <select class="budget-an-select" id="budget-an-periode" style="width:100%" onchange="app._budgetAnalysePeriodeChange()">
           <option value="mois" selected>Mois en cours</option>
           <option value="mois-choisi">Choisir un mois</option>
           <option value="annee">Année en cours</option>
+          <option value="annee-choisie">Choisir une année</option>
+          <option value="plage">Période de dates</option>
         </select>
       </div>
       <div id="budget-an-periode-mois-wrap" style="display:none">
         <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
         <input type="month" class="budget-an-select" id="budget-an-mois" style="width:100%" onchange="app._renderBudgetAnCats()">
+      </div>
+      <div id="budget-an-periode-annee-wrap" style="display:none">
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Année</div>
+        <select class="budget-an-select" id="budget-an-annee" style="width:100%" onchange="app._renderBudgetAnCats()"></select>
+      </div>
+    </div>
+    <div id="budget-an-periode-plage-wrap" style="display:none;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.65rem">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Du</div>
+        <input type="date" class="budget-an-select" id="budget-an-debut" style="width:100%" onchange="app._renderBudgetAnCats()">
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Au</div>
+        <input type="date" class="budget-an-select" id="budget-an-fin" style="width:100%" onchange="app._renderBudgetAnCats()">
       </div>
     </div>
     <!-- Stats résumé -->
@@ -741,7 +758,7 @@
         <div id="budget-an-count" style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary)">0</div>
       </div>
       <div style="background:var(--bg-card);border-radius:14px;padding:.85rem;border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);text-align:center">
-        <div style="font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Moy. / jour</div>
+        <div id="budget-an-avg-label" style="font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Moy. / jour</div>
         <div id="budget-an-avg" style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary)">0 €</div>
       </div>
     </div>

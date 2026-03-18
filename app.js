@@ -8444,17 +8444,24 @@ const app = {
     openBudgetHistoriqueComplet() {
         const wrap = document.getElementById('budget-hist-complet-wrap');
         if (!wrap) return;
-        wrap.style.display = 'block';
+        wrap.classList.add('open');
+        document.getElementById('budget-modal-overlay')?.classList.add('open');
+        document.body.style.overflow = 'hidden';
         // Initialise le filtre mois sur le mois budget courant
         const histMois = document.getElementById('hist-filter-mois');
         if (histMois && this._budgetMonth) histMois.value = this._budgetMonth;
         this.afficherDepenses();
-        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     },
 
     closeBudgetHistoriqueComplet() {
-        const wrap = document.getElementById('budget-hist-complet-wrap');
-        if (wrap) wrap.style.display = 'none';
+        document.getElementById('budget-hist-complet-wrap')?.classList.remove('open');
+        // Ferme overlay seulement si aucune autre modal ouverte
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse']
+            .some(mid => document.getElementById(mid)?.classList.contains('open'));
+        if (!anyOpen) {
+            document.getElementById('budget-modal-overlay')?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
     },
 
     _refreshBudgetRecentTxs() {
@@ -8500,7 +8507,7 @@ const app = {
     closeBudgetAnalyseModal(id) {
         document.getElementById(id)?.classList.remove('open');
         // Ferme overlay si aucune modal ouverte
-        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse']
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap']
             .some(mid => document.getElementById(mid)?.classList.contains('open'));
         if (!anyOpen) {
             document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -8510,7 +8517,7 @@ const app = {
 
     _closeBudgetModalOnOutside(e) {
         if (e.target.id !== 'budget-modal-overlay') return;
-        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse'].forEach(id => {
+        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap'].forEach(id => {
             document.getElementById(id)?.classList.remove('open');
         });
         document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -8606,8 +8613,34 @@ const app = {
     /* Analyse détaillée — catégories dépliables */
     _budgetAnalysePeriodeChange() {
         const val = document.getElementById('budget-an-periode')?.value;
-        const moisWrap = document.getElementById('budget-an-periode-mois-wrap');
-        if (moisWrap) moisWrap.style.display = val === 'mois-choisi' ? 'block' : 'none';
+        const moisWrap  = document.getElementById('budget-an-periode-mois-wrap');
+        const anneeWrap = document.getElementById('budget-an-periode-annee-wrap');
+        const plageWrap = document.getElementById('budget-an-periode-plage-wrap');
+        if (moisWrap)  moisWrap.style.display  = val === 'mois-choisi'   ? 'block' : 'none';
+        if (anneeWrap) anneeWrap.style.display  = val === 'annee-choisie' ? 'block' : 'none';
+        if (plageWrap) plageWrap.style.display  = val === 'plage'         ? 'grid'  : 'none';
+
+        // Peupler le select des années
+        if (val === 'annee-choisie') {
+            const sel = document.getElementById('budget-an-annee');
+            if (sel && sel.options.length === 0) {
+                const years = [...new Set(this.data.depenses.map(d => new Date(d.date).getFullYear()))].sort().reverse();
+                const now = new Date().getFullYear();
+                if (!years.includes(now)) years.unshift(now);
+                sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+            }
+        }
+        // Dates par défaut pour la plage
+        if (val === 'plage') {
+            const debutEl = document.getElementById('budget-an-debut');
+            const finEl   = document.getElementById('budget-an-fin');
+            const now = new Date();
+            if (finEl   && !finEl.value)   finEl.value   = now.toISOString().slice(0,10);
+            if (debutEl && !debutEl.value) {
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                debutEl.value = firstDay.toISOString().slice(0,10);
+            }
+        }
         this._renderBudgetAnCats();
     },
 
@@ -8618,6 +8651,7 @@ const app = {
         const periode = periodeEl ? periodeEl.value : 'mois';
         const now = new Date();
         let depsFiltrees = this.data.depenses;
+
         if (periode === 'mois') {
             depsFiltrees = depsFiltrees.filter(d => {
                 const dt = new Date(d.date);
@@ -8634,15 +8668,55 @@ const app = {
             }
         } else if (periode === 'annee') {
             depsFiltrees = depsFiltrees.filter(d => new Date(d.date).getFullYear() === now.getFullYear());
+        } else if (periode === 'annee-choisie') {
+            const anneeVal = parseInt(document.getElementById('budget-an-annee')?.value);
+            if (anneeVal) {
+                depsFiltrees = depsFiltrees.filter(d => new Date(d.date).getFullYear() === anneeVal);
+            }
+        } else if (periode === 'plage') {
+            const debut = document.getElementById('budget-an-debut')?.value;
+            const fin   = document.getElementById('budget-an-fin')?.value;
+            if (debut) depsFiltrees = depsFiltrees.filter(d => d.date >= debut);
+            if (fin)   depsFiltrees = depsFiltrees.filter(d => d.date <= fin);
         }
+
         const totalAll = depsFiltrees.reduce((s, d) => s + d.montant, 0);
         const nbTx = depsFiltrees.length;
-        const daysInPeriod = periode === 'mois' ? now.getDate() : (periode === 'annee' ? Math.ceil((now - new Date(now.getFullYear(),0,1))/(1000*3600*24)) : 30);
-        const avg = daysInPeriod > 0 ? totalAll / daysInPeriod : 0;
+
+        // Calcul de la métrique 3e stat : moy/jour pour mois unique, moy/mois sinon
+        let avgValue = 0;
+        let avgLabel = 'Moy. / jour';
+        const isMultiMonth = ['annee','annee-choisie','plage'].includes(periode);
+
+        if (isMultiMonth) {
+            avgLabel = 'Moy. / mois';
+            if (depsFiltrees.length > 0) {
+                // Nombre de mois distincts dans la sélection
+                const moisDistincts = new Set(depsFiltrees.map(d => d.date.slice(0,7))).size;
+                avgValue = moisDistincts > 0 ? totalAll / moisDistincts : 0;
+            }
+        } else {
+            // Mois unique → moy/jour comme avant
+            let daysInPeriod = 1;
+            if (periode === 'mois') {
+                daysInPeriod = now.getDate();
+            } else if (periode === 'mois-choisi') {
+                const moisVal = document.getElementById('budget-an-mois')?.value;
+                if (moisVal) {
+                    const [y, m] = moisVal.split('-').map(Number);
+                    const isCurrentMonth = y === now.getFullYear() && m === now.getMonth() + 1;
+                    daysInPeriod = isCurrentMonth ? now.getDate() : new Date(y, m, 0).getDate();
+                }
+            }
+            avgValue = daysInPeriod > 0 ? totalAll / daysInPeriod : 0;
+        }
+
         const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
         set('budget-an-total', this.formatCurrency(totalAll));
         set('budget-an-count', nbTx);
-        set('budget-an-avg', this.formatCurrency(avg));
+        set('budget-an-avg',   this.formatCurrency(avgValue));
+        set('budget-an-avg-label', avgLabel);
+
         const bycat = {};
         depsFiltrees.forEach(d => {
             if (!bycat[d.categorie]) bycat[d.categorie] = { txs: [], total: 0 };
@@ -8668,7 +8742,7 @@ const app = {
                     const dt = new Date(t.date);
                     const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
                     return `<div class="an-tx-row">
-                        <span class="an-tx-date">${dt.getDate()} ${MONTHS_ABBR[dt.getMonth()]}</span>
+                        <span class="an-tx-date">${dt.getDate()} ${MONTHS_ABBR[dt.getMonth()]}${isMultiMonth ? ' ' + dt.getFullYear() : ''}</span>
                         <span class="an-tx-note">${t.note || '—'}</span>
                         <span class="an-tx-amount">−${this.formatCurrency(t.montant)}</span>
                     </div>`;
