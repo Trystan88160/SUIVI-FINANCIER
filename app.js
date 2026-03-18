@@ -7203,10 +7203,16 @@ const app = {
     },
 
     supprimerNote(id) {
-        this.data.notes = this.data.notes.filter(n => n.id !== id);
-        this.save();
-        this.refreshNotes();
-        this.notify('Note supprimée', 'success');
+        this.showModal(
+            'Supprimer la note',
+            'Voulez-vous vraiment supprimer cette note ?',
+            () => {
+                this.data.notes = this.data.notes.filter(n => String(n.id) !== String(id));
+                this.save();
+                this.refreshNotes();
+                this.notify('Note supprimée', 'success');
+            }
+        );
     },
 
     refreshNotes() {
@@ -7234,7 +7240,7 @@ const app = {
                         <span style="font-family:DM Mono,monospace;font-size:0.78rem;color:${color};font-weight:600">${dateLabel}</span>
                         <span style="font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:4px;background:${color}22;color:${color}">${n.tag}</span>
                     </div>
-                    <button class="btn btn-small btn-secondary" onclick="app.supprimerNote(${n.id})">✕</button>
+                    <button class="btn btn-small btn-secondary" onclick="app.supprimerNote('${n.id}')">✕</button>
                 </div>
                 <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5">${n.texte}</div>
             </div>`;
