@@ -2891,13 +2891,17 @@ const app = {
         document.getElementById('confirmTitle').textContent = title;
         document.getElementById('confirmBody').textContent = message;
         document.getElementById('confirmModal').classList.add('active');
-        document.getElementById('confirm-overlay').classList.add('active');
+        const vpO = document.getElementById('vp-global-overlay');
+        if (vpO) { vpO.classList.add('vp-active'); requestAnimationFrame(() => vpO.classList.add('vp-visible')); }
         this.confirmCallback = callback;
     },
 
     closeModal() {
         document.getElementById('confirmModal').classList.remove('active');
-        document.getElementById('confirm-overlay').classList.remove('active');
+        if (!document.querySelector('.modal.active')) {
+            const vpO = document.getElementById('vp-global-overlay');
+            if (vpO) { vpO.classList.remove('vp-visible'); setTimeout(() => vpO.classList.remove('vp-active'), 260); }
+        }
         this.confirmCallback = null;
     },
 
