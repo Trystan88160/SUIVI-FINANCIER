@@ -1637,3 +1637,6 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .budget-tx-card--actions:hover .budget-tx-actions{display:flex}
 .budget-tx-action-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border-color);background:var(--bg-primary);cursor:pointer;font-size:.72rem;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:background .15s,color .15s;flex-shrink:0}
 .budget-tx-action-btn:hover{background:var(--bg-secondary);color:var(--text-primary)}
+#modal-emoji-cat{z-index:1100!important}
+#emoji-cat-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1099;display:none}
+#emoji-cat-overlay.open{display:block}

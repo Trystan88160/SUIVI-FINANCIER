@@ -7998,9 +7998,9 @@ const app = {
         const search = document.getElementById('emoji-cat-search');
         if (search) search.value = '';
 
-        // Ouvrir la modal
+        // Ouvrir la modal avec son propre overlay (z-index > budgetsModal)
+        document.getElementById('emoji-cat-overlay')?.classList.add('open');
         document.getElementById('modal-emoji-cat')?.classList.add('open');
-        document.getElementById('budget-modal-overlay')?.classList.add('open');
         document.body.style.overflow = 'hidden';
     },
 
@@ -8131,16 +8131,10 @@ const app = {
 
     closeEmojiCatModal() {
         document.getElementById('modal-emoji-cat')?.classList.remove('open');
+        document.getElementById('emoji-cat-overlay')?.classList.remove('open');
         this._emojiCatTarget   = null;
         this._emojiCatSelected = null;
-        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec',
-            'modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap',
-            'modal-all-cats','modal-emoji-cat']
-            .some(mid => document.getElementById(mid)?.classList.contains('open'));
-        if (!anyOpen) {
-            document.getElementById('budget-modal-overlay')?.classList.remove('open');
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = '';
     },
 
     openEmojiPicker(targetInputId, btn) {
