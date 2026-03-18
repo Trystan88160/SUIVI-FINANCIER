@@ -3713,17 +3713,33 @@ const app = {
               <button class="vp-btn-save" onclick="app._sauvegarderEditDepense('${id}')">Enregistrer</button>
             </div>`;
         document.body.appendChild(modal);
-
-        const overlay = document.getElementById('overlay');
-        if (overlay) { overlay.classList.add('active'); overlay.onclick = () => this._fermerEditDepense(); }
         modal.classList.add('active');
+
+        // Utiliser vp-global-overlay (overlay réel du système VP)
+        const vpOverlay = document.getElementById('vp-global-overlay');
+        if (vpOverlay) {
+            vpOverlay.classList.add('vp-active');
+            requestAnimationFrame(() => vpOverlay.classList.add('vp-visible'));
+            vpOverlay._editDepHandler = () => this._fermerEditDepense();
+            vpOverlay.addEventListener('click', vpOverlay._editDepHandler);
+        }
     },
 
     _fermerEditDepense() {
         const modal = document.getElementById('edit-dep-modal');
-        if (modal) { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); }
-        const overlay = document.getElementById('overlay');
-        if (overlay) { overlay.classList.remove('active'); overlay.onclick = null; }
+        if (modal) {
+            modal.classList.add('closing');
+            setTimeout(() => modal.remove(), 210);
+        }
+        const vpOverlay = document.getElementById('vp-global-overlay');
+        if (vpOverlay && vpOverlay._editDepHandler) {
+            vpOverlay.removeEventListener('click', vpOverlay._editDepHandler);
+            delete vpOverlay._editDepHandler;
+        }
+        if (!document.querySelector('.modal.active')) {
+            const o = document.getElementById('vp-global-overlay');
+            if (o) { o.classList.remove('vp-visible'); setTimeout(() => o.classList.remove('vp-active'), 260); }
+        }
     },
 
     _sauvegarderEditDepense(id) {
