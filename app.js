@@ -251,6 +251,7 @@ const app = {
         const wrapper = document.getElementById('zoom-wrapper');
         if (wrapper) wrapper.style.display = '';
         this.initDates();
+        this._initBudgetMonthLabel();
         this.applyTheme();
         if (this.data.parametres.zoom) this.setZoom(this.data.parametres.zoom);
         this.genererLignes();
@@ -297,6 +298,29 @@ const app = {
 
         // Système popup unifié
         this._initVaultPopups();
+        // Fermeture dropdowns budget au clic extérieur
+        document.addEventListener('click', e => {
+            const depWrap = document.getElementById('budget-dep-wrap');
+            if (depWrap && !depWrap.contains(e.target)) {
+                document.getElementById('budget-dep-menu')?.classList.remove('open');
+            }
+            const anWrap = document.getElementById('budget-an-wrap');
+            if (anWrap && !anWrap.contains(e.target)) {
+                document.getElementById('budget-an-menu')?.classList.remove('open');
+                document.getElementById('budget-an-btn')?.classList.remove('open-state');
+            }
+        });
+        // Fermeture modales budget avec Échap
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse'].forEach(id => {
+                    document.getElementById(id)?.classList.remove('open');
+                });
+                const ov = document.getElementById('budget-modal-overlay');
+                if (ov) ov.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        });
         // Appliquer la mise en page sauvegardée — délai > 150ms pour passer après applyTheme
         setTimeout(() => this.applyAllLayouts(), 200);
     },
@@ -4023,6 +4047,8 @@ const app = {
                 </div>
             `;
         }).join('');
+        // Mise à jour du nouveau hero + cats budget
+        this._refreshBudgetHeroAndCats();
     },
 
     toggleAnalyseFilters() {
@@ -8322,7 +8348,292 @@ const app = {
         toast.textContent = msg;
         requestAnimationFrame(() => toast.classList.add('show'));
         this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    },
+
+    /* ══════════════════════════════════════════════════════
+       VAULT BUDGET v4 — Nouvelles fonctions
+    ══════════════════════════════════════════════════════ */
+
+    _budgetMonth: null, // "YYYY-MM" ou null = mois courant
+
+    _budgetMonthDate() {
+        if (this._budgetMonth) {
+            const [y, m] = this._budgetMonth.split('-').map(Number);
+            return new Date(y, m - 1, 1);
+        }
+        return new Date();
+    },
+
+    _initBudgetMonthLabel() {
+        const MONTHS_FR = ['Jan.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sep.','Oct.','Nov.','Déc.'];
+        const now = new Date();
+        this._budgetMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+        const label = MONTHS_FR[now.getMonth()] + ' ' + now.getFullYear();
+        const el = document.getElementById('budget-month-label');
+        if (el) el.textContent = label;
+        const periodEl = document.getElementById('budget-hero-period');
+        if (periodEl) periodEl.textContent = label;
+    },
+
+    budgetPrevMonth() {
+        const d = this._budgetMonthDate();
+        d.setMonth(d.getMonth() - 1);
+        this._setBudgetMonth(d);
+    },
+
+    budgetNextMonth() {
+        const d = this._budgetMonthDate();
+        d.setMonth(d.getMonth() + 1);
+        const now = new Date();
+        if (d.getFullYear() > now.getFullYear() || (d.getFullYear() === now.getFullYear() && d.getMonth() > now.getMonth())) return;
+        this._setBudgetMonth(d);
+    },
+
+    _setBudgetMonth(d) {
+        const MONTHS_FR = ['Jan.','Fév.','Mars','Avr.','Mai','Juin','Juil.','Août','Sep.','Oct.','Nov.','Déc.'];
+        this._budgetMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        const label = MONTHS_FR[d.getMonth()] + ' ' + d.getFullYear();
+        const labelEl = document.getElementById('budget-month-label');
+        if (labelEl) labelEl.textContent = label;
+        const periodEl = document.getElementById('budget-hero-period');
+        if (periodEl) periodEl.textContent = label;
+        const histMois = document.getElementById('hist-filter-mois');
+        if (histMois) histMois.value = this._budgetMonth;
+        this._refreshBudgetHeroAndCats();
+        this.afficherDepenses();
+    },
+
+    toggleBudgetDepDropdown() {
+        document.getElementById('budget-dep-menu')?.classList.toggle('open');
+    },
+
+    toggleBudgetAnalyseMenu() {
+        const menu = document.getElementById('budget-an-menu');
+        const btn = document.getElementById('budget-an-btn');
+        if (!menu || !btn) return;
+        const open = menu.classList.toggle('open');
+        btn.classList.toggle('open-state', open);
+    },
+
+    openBudgetAnalyseModal(type) {
+        // Ferme dropdown
+        document.getElementById('budget-an-menu')?.classList.remove('open');
+        document.getElementById('budget-an-btn')?.classList.remove('open-state');
+        // Rafraîchit le contenu selon le type
+        if (type === 'comp') this.refreshComparaison();
+        if (type === 'regle') this.refreshRegle503020();
+        if (type === 'rec') this.refreshRecurrences();
+        if (type === 'analyse') this._renderBudgetAnCats();
+        // Ouvre overlay + modal
+        document.getElementById('budget-modal-overlay')?.classList.add('open');
+        document.getElementById('modal-budget-' + type)?.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    },
+
+    closeBudgetAnalyseModal(id) {
+        document.getElementById(id)?.classList.remove('open');
+        // Ferme overlay si aucune modal ouverte
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse']
+            .some(mid => document.getElementById(mid)?.classList.contains('open'));
+        if (!anyOpen) {
+            document.getElementById('budget-modal-overlay')?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    },
+
+    _closeBudgetModalOnOutside(e) {
+        if (e.target.id !== 'budget-modal-overlay') return;
+        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse'].forEach(id => {
+            document.getElementById(id)?.classList.remove('open');
+        });
+        document.getElementById('budget-modal-overlay')?.classList.remove('open');
+        document.body.style.overflow = '';
+    },
+
+    _refreshBudgetHeroAndCats() {
+        const d = this._budgetMonthDate();
+        const y = d.getFullYear(), m = d.getMonth();
+        const exclus = this.data.categoriesEpargne || ['ÉPARGNE'];
+        const depMois = this.data.depenses.filter(dep => {
+            const dt = new Date(dep.date);
+            return dt.getFullYear() === y && dt.getMonth() === m;
+        });
+        const totalDep = depMois
+            .filter(dep => !exclus.some(e => dep.categorie.toUpperCase().includes(e.toUpperCase())))
+            .reduce((s, dep) => s + dep.montant, 0);
+        const budgetTotal = Object.entries(this.data.budgets)
+            .filter(([cat]) => !exclus.some(e => cat.toUpperCase().includes(e.toUpperCase())))
+            .reduce((s, [, v]) => s + v, 0);
+        const restant = budgetTotal - totalDep;
+        const pct = budgetTotal > 0 ? Math.min((totalDep / budgetTotal) * 100, 100) : 0;
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const today = new Date();
+        const isCurrentMonth = today.getFullYear() === y && today.getMonth() === m;
+        const daysLeft = isCurrentMonth ? daysInMonth - today.getDate() + 1 : 0;
+
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        set('budget-hero-amount', this.formatCurrency(totalDep));
+        set('budget-hero-badge', Math.round(pct) + '% utilisé');
+        set('budget-hero-restant', this.formatCurrency(restant) + ' restants');
+        set('budget-hero-total-label', this.formatCurrency(budgetTotal));
+        set('budget-hero-total-label2', this.formatCurrency(budgetTotal));
+        if (daysLeft > 0) set('budget-hero-days', daysLeft + ' jour' + (daysLeft > 1 ? 's' : '') + ' restants');
+        else set('budget-hero-days', '');
+        const sub = document.getElementById('budget-hero-sub');
+        if (sub) sub.innerHTML = 'sur <span id="budget-hero-total-label">' + this.formatCurrency(budgetTotal) + '</span> de budget mensuel · <strong id="budget-hero-restant" style="color:rgba(255,255,255,.9)">' + this.formatCurrency(restant) + ' restants</strong>';
+        const progEl = document.getElementById('budget-hero-prog');
+        if (progEl) {
+            progEl.style.width = pct + '%';
+        }
+        this._refreshBudgetTopCats(depMois);
+    },
+
+    _refreshBudgetTopCats(depMois) {
+        const container = document.getElementById('budget-top-cats');
+        if (!container) return;
+        if (!depMois) {
+            const d = this._budgetMonthDate();
+            depMois = this.data.depenses.filter(dep => {
+                const dt = new Date(dep.date);
+                return dt.getFullYear() === d.getFullYear() && dt.getMonth() === d.getMonth();
+            });
+        }
+        const bycat = {};
+        depMois.forEach(dep => {
+            if (!bycat[dep.categorie]) bycat[dep.categorie] = 0;
+            bycat[dep.categorie] += dep.montant;
+        });
+        const allCats = new Set([...Object.keys(this.data.budgets), ...Object.keys(bycat)]);
+        const catData = Array.from(allCats)
+            .map(cat => ({ cat, spent: bycat[cat] || 0, budget: this.data.budgets[cat] || 0 }))
+            .filter(c => c.spent > 0 || c.budget > 0)
+            .sort((a, b) => b.spent - a.spent)
+            .slice(0, 6);
+        if (catData.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-state-icon">📂</div><div>Aucune catégorie active pour ce mois</div></div>';
+            return;
+        }
+        const getBar = pct => pct >= 100 ? 'linear-gradient(90deg,#f44336,#e57373)' : pct >= 80 ? 'linear-gradient(90deg,#ff9800,#ffb74d)' : 'linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end))';
+        const getBadge = pct => pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok';
+        const CAT_EMOJIS = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦'};
+        container.innerHTML = catData.map(({ cat, spent, budget }) => {
+            const pct = budget > 0 ? Math.round(spent / budget * 100) : (spent > 0 ? 100 : 0);
+            const fillPct = budget > 0 ? Math.min(spent / budget * 100, 100) : (spent > 0 ? 100 : 0);
+            const emojiMatch = cat.match(/^\p{Emoji}/u);
+            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS[cat.toUpperCase()] || '📦');
+            const catName = cat.replace(/^\p{Emoji}\s*/u, '') || cat;
+            return `<div class="budget-cat-card">
+                <div class="budget-cat-top">
+                    <div class="budget-cat-left">
+                        <div class="budget-cat-icon">${emoji}</div>
+                        <div><div class="budget-cat-name">${catName}</div><div class="budget-cat-amounts">${this.formatCurrency(spent)} / ${this.formatCurrency(budget)}</div></div>
+                    </div>
+                    <span class="cat-pct-badge ${getBadge(pct)}">${pct}%</span>
+                </div>
+                <div class="budget-cat-progress"><div class="budget-cat-progress-fill" style="width:${fillPct}%;background:${getBar(pct)}"></div></div>
+            </div>`;
+        }).join('');
+    },
+
+    /* Analyse détaillée — catégories dépliables */
+    _budgetAnalysePeriodeChange() {
+        const val = document.getElementById('budget-an-periode')?.value;
+        const moisWrap = document.getElementById('budget-an-periode-mois-wrap');
+        if (moisWrap) moisWrap.style.display = val === 'mois-choisi' ? 'block' : 'none';
+        this._renderBudgetAnCats();
+    },
+
+    _renderBudgetAnCats() {
+        const container = document.getElementById('budget-an-cats-list');
+        if (!container) return;
+        const periodeEl = document.getElementById('budget-an-periode');
+        const periode = periodeEl ? periodeEl.value : 'mois';
+        const now = new Date();
+        let depsFiltrees = this.data.depenses;
+        if (periode === 'mois') {
+            depsFiltrees = depsFiltrees.filter(d => {
+                const dt = new Date(d.date);
+                return dt.getFullYear() === now.getFullYear() && dt.getMonth() === now.getMonth();
+            });
+        } else if (periode === 'mois-choisi') {
+            const moisVal = document.getElementById('budget-an-mois')?.value;
+            if (moisVal) {
+                const [y, m] = moisVal.split('-').map(Number);
+                depsFiltrees = depsFiltrees.filter(d => {
+                    const dt = new Date(d.date);
+                    return dt.getFullYear() === y && dt.getMonth() === m - 1;
+                });
+            }
+        } else if (periode === 'annee') {
+            depsFiltrees = depsFiltrees.filter(d => new Date(d.date).getFullYear() === now.getFullYear());
+        }
+        const totalAll = depsFiltrees.reduce((s, d) => s + d.montant, 0);
+        const nbTx = depsFiltrees.length;
+        const daysInPeriod = periode === 'mois' ? now.getDate() : (periode === 'annee' ? Math.ceil((now - new Date(now.getFullYear(),0,1))/(1000*3600*24)) : 30);
+        const avg = daysInPeriod > 0 ? totalAll / daysInPeriod : 0;
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        set('budget-an-total', this.formatCurrency(totalAll));
+        set('budget-an-count', nbTx);
+        set('budget-an-avg', this.formatCurrency(avg));
+        const bycat = {};
+        depsFiltrees.forEach(d => {
+            if (!bycat[d.categorie]) bycat[d.categorie] = { txs: [], total: 0 };
+            bycat[d.categorie].txs.push(d);
+            bycat[d.categorie].total += d.montant;
+        });
+        const cats = Object.entries(bycat).sort((a, b) => b[1].total - a[1].total);
+        if (cats.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📈</div><div>Aucune dépense pour cette période</div></div>';
+            return;
+        }
+        const BAR_COLORS = ['linear-gradient(90deg,#f44336,#e57373)','linear-gradient(90deg,#ff9800,#ffb74d)','linear-gradient(90deg,#ff9800,#ffd54f)','linear-gradient(90deg,#00c853,#69f0ae)','linear-gradient(90deg,#3f51b5,#7c4dff)','linear-gradient(90deg,#5c6bc0,#9fa8da)','linear-gradient(90deg,#7c4dff,#b259ff)','linear-gradient(90deg,#e91e63,#f48fb1)'];
+        const CAT_EMOJIS2 = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦'};
+        container.innerHTML = cats.map(([cat, data], i) => {
+            const pct = totalAll > 0 ? Math.round(data.total / totalAll * 100) : 0;
+            const barColor = BAR_COLORS[i % BAR_COLORS.length];
+            const emojiMatch = cat.match(/^\p{Emoji}/u);
+            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS2[cat.toUpperCase()] || '📦');
+            const catName = cat.replace(/^\p{Emoji}\s*/u, '') || cat;
+            const txsHtml = data.txs
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map(t => {
+                    const dt = new Date(t.date);
+                    const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+                    return `<div class="an-tx-row">
+                        <span class="an-tx-date">${dt.getDate()} ${MONTHS_ABBR[dt.getMonth()]}</span>
+                        <span class="an-tx-note">${t.note || '—'}</span>
+                        <span class="an-tx-amount">−${this.formatCurrency(t.montant)}</span>
+                    </div>`;
+                }).join('');
+            return `<div class="an-cat-block" id="an-cat-block-${i}">
+                <div class="an-cat-header" onclick="app._toggleBudgetAnCat(${i})">
+                    <div class="an-cat-emoji" style="background:var(--bg-secondary)">${emoji}</div>
+                    <div class="an-cat-label">
+                        <div class="an-cat-name">${catName}</div>
+                        <div class="an-cat-bar-row">
+                            <div class="an-cat-bar-bg"><div class="an-cat-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+                            <span class="an-cat-pct">${pct}%</span>
+                        </div>
+                    </div>
+                    <div class="an-cat-right">
+                        <span class="an-cat-amount">${this.formatCurrency(data.total)}</span>
+                        <span class="an-cat-count">${data.txs.length} transaction${data.txs.length > 1 ? 's' : ''}</span>
+                    </div>
+                    <span class="an-cat-chevron">›</span>
+                </div>
+                <div class="an-cat-txs">${txsHtml}</div>
+            </div>`;
+        }).join('');
+    },
+
+    _toggleBudgetAnCat(i) {
+        const block = document.getElementById('an-cat-block-' + i);
+        if (!block) return;
+        const wasOpen = block.classList.contains('expanded');
+        document.querySelectorAll('.an-cat-block').forEach(b => b.classList.remove('expanded'));
+        if (!wasOpen) block.classList.add('expanded');
     }
+
 };
 
 document.addEventListener('DOMContentLoaded', () => {

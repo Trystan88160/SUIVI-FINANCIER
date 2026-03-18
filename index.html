@@ -359,27 +359,59 @@
 <div id="tab-depenses" class="tab-content">
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('depenses')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('depenses')" title="Aide">❓ Aide</button></div>
 
-<!-- Card Revenus + Cashflow -->
+<!-- ══ NOUVELLE TOPBAR BUDGET ══ -->
+<div class="budget-topbar">
+  <div class="budget-topbar-left">
+    <span class="budget-topbar-title">Budget</span>
+  </div>
+  <div class="budget-topbar-center">
+    <div class="budget-month-nav">
+      <button class="budget-month-btn" onclick="app.budgetPrevMonth()">‹</button>
+      <span class="budget-month-label" id="budget-month-label">—</span>
+      <button class="budget-month-btn" onclick="app.budgetNextMonth()">›</button>
+    </div>
+  </div>
+  <div class="budget-topbar-right">
+    <button class="btn-vault-secondary" onclick="app.openBsRevenus()">↑ Revenu</button>
+    <div class="budget-dep-wrap" id="budget-dep-wrap">
+      <button class="btn-vault-primary" onclick="app.toggleBudgetDepDropdown()">＋ Dépense <span style="font-size:.6rem;opacity:.75">▾</span></button>
+      <div class="budget-dropdown-menu" id="budget-dep-menu">
+        <div class="budget-dropdown-item" onclick="app.openBsDepenses()"><span>➕</span> Nouvelle dépense</div>
+        <div class="budget-dropdown-sep"></div>
+        <div class="budget-dropdown-item" onclick="app.toggleBudgetsPanel()"><span>⚙</span> Gérer les catégories</div>
+        <div class="budget-dropdown-item" onclick="app.toggleImportBancaire()"><span>🏦</span> Import CSV bancaire</div>
+      </div>
+    </div>
+    <div class="budget-an-wrap" id="budget-an-wrap">
+      <button class="budget-an-btn" id="budget-an-btn" onclick="app.toggleBudgetAnalyseMenu()">🔍 Analyse <span class="budget-an-chevron">▾</span></button>
+      <div class="budget-an-menu" id="budget-an-menu">
+        <div class="budget-an-menu-header"><span class="budget-an-menu-label">Choisissez un outil</span></div>
+        <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('comp')">
+          <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(63,81,181,.1),rgba(124,77,255,.08))">📊</div>
+          <div class="budget-an-item-text"><div class="budget-an-item-label">Comparaison mois à mois</div><div class="budget-an-item-desc">Comparez deux mois par catégorie</div></div>
+          <span class="budget-an-item-arrow">›</span>
+        </div>
+        <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('regle')">
+          <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(0,200,83,.1),rgba(0,150,60,.06))">⚖️</div>
+          <div class="budget-an-item-text"><div class="budget-an-item-label">Règle 50 / 30 / 20</div><div class="budget-an-item-desc">Besoins, envies et épargne</div></div>
+          <span class="budget-an-item-arrow">›</span>
+        </div>
+        <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('rec')">
+          <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(255,152,0,.1),rgba(230,115,0,.06))">🔄</div>
+          <div class="budget-an-item-text"><div class="budget-an-item-label">Dépenses récurrentes</div><div class="budget-an-item-desc">Abonnements et charges fixes</div></div>
+          <span class="budget-an-item-arrow">›</span>
+        </div>
+        <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('analyse')">
+          <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(92,107,192,.1),rgba(63,81,181,.06))">📈</div>
+          <div class="budget-an-item-text"><div class="budget-an-item-label">Analyse détaillée</div><div class="budget-an-item-desc">Répartition par période et catégorie</div></div>
+          <span class="budget-an-item-arrow">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div class="grid grid-3 grid-stats" style="margin-bottom:2rem">
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Dépensé ce mois</div>
-  <div class="stat-value" id="s-depenses-mois">0 €</div>
-  <div id="s-depenses-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— vs budget</div>
-</div>
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Budget restant</div>
-  <div class="stat-value" id="s-budget-restant">0 €</div>
-  <div class="progress-bar" style="margin:.4rem 0 0"><div class="progress-fill" id="s-progress-global"></div></div>
-</div>
-<div class="stat-card stat-card-main" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
-  <div class="stat-label">Budget total</div>
-  <div class="stat-value accent" id="s-budget-total">0 €</div>
-  <div id="s-budget-delta" class="stat-delta-pill neutral" style="margin-top:.35rem">— catégories actives</div>
-</div>
-</div>
-
-<!-- Pointage bancaire -->
+<!-- ══ SOLDE BANCAIRE (markup existant préservé) ══ -->
 <div data-card-id="dep-pointage" data-tab="depenses">
   <div class="vault-solde-card">
     <div class="vault-solde-inner">
@@ -402,189 +434,45 @@
   </div>
 </div>
 
-<div data-card-id="dep-revenus" data-tab="depenses">
-  <div class="vault-action-tile vault-action-rev">
-    <div class="vault-action-icon">↑</div>
-    <div class="vault-action-label">Revenu</div>
-    <button class="vault-action-cta" onclick="app.openBsRevenus()">＋ Ajouter</button>
-  </div>
-</div>
-
-
-<div data-card-id="dep-saisie" data-tab="depenses">
-  <div class="vault-action-tile vault-action-exp">
-    <div class="vault-action-icon">↓</div>
-    <div class="vault-action-label">Dépense</div>
-    <button class="vault-action-cta" onclick="app.openBsDepenses()">＋ Ajouter</button>
-    <div class="vault-action-links">
-      <span onclick="app.toggleBudgetsPanel()">⚙ Catégories</span>
-      <span onclick="app.toggleImportBancaire()">🏦 Import</span>
+<!-- ══ HERO BUDGET ══ -->
+<div class="budget-hero" id="budget-hero-wrap">
+  <div class="budget-hero-inner">
+    <div>
+      <div class="budget-hero-period">Dépenses · <span id="budget-hero-period">—</span></div>
+      <div class="budget-hero-amount" id="budget-hero-amount">0 €</div>
+      <div class="budget-hero-sub" id="budget-hero-sub">sur <span id="budget-hero-total-label">0 €</span> de budget mensuel · <strong id="budget-hero-restant" style="color:rgba(255,255,255,.9)">0 € restants</strong></div>
     </div>
+    <span class="budget-hero-badge" id="budget-hero-badge">0% utilisé</span>
   </div>
-  <!-- Inputs cachés pour compatibilité JS -->
-  <div style="display:none">
-    <select id="dep-cat"></select>
-    <div id="dep-pills"></div>
-    <input type="number" id="dep-montant">
-    <div id="dep-amount-underline"></div>
-    <input type="date" id="dep-date">
-    <input type="text" id="dep-note">
-    <button id="btn-toggle-import" onclick="app.toggleImportBancaire()"></button>
-  </div>
-  <div id="import-bancaire-panel" style="display:none"></div>
-</div>
-
-<!-- 2. État des catégories (dépliant) -->
-<div data-card-id="dep-etat-cat" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleCatBreakdown()" style="display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;cursor:pointer;user-select:none">
-  <h2 class="card-title" style="margin:0;font-size:1.2rem">État des catégories</h2>
-  <span id="cat-breakdown-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;display:inline-block">›</span>
-</div>
-<div id="cat-breakdown-body" style="display:none;padding:0 2rem 1.5rem">
-  <div class="grid grid-3" id="stats-categories"></div>
-</div>
-</div></div>
-
-<!-- Grille 3 boutons indépendants -->
-  <div data-card-id="dep-comparaison" data-tab="depenses">
-    <div class="card" onclick="app.toggleTriPanel('comp')" id="comp-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
-      <h2 class="card-title" style="margin:0;font-size:.95rem">📊 Comparaison mois à mois</h2>
-      <span id="comp-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
+  <div style="position:relative;z-index:1">
+    <div class="budget-hero-prog-labels">
+      <span>0 €</span>
+      <strong id="budget-hero-days">—</strong>
+      <span id="budget-hero-total-label2">0 €</span>
     </div>
+    <div class="budget-prog-bar"><div class="budget-prog-fill" id="budget-hero-prog"></div></div>
   </div>
-
-  <div data-card-id="dep-regle5030" data-tab="depenses">
-    <div class="card" onclick="app.toggleTriPanel('regle')" id="regle-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
-      <h2 class="card-title" style="margin:0;font-size:.95rem">⚖️ Règle 50 / 30 / 20</h2>
-      <span id="regle-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
-    </div>
-  </div>
-
-  <div data-card-id="dep-recurrentes" data-tab="depenses">
-    <div class="card" onclick="app.toggleTriPanel('recurrences')" id="recurrences-trigger" style="padding:1.1rem 1.5rem;cursor:pointer;user-select:none;margin-bottom:0;display:flex;justify-content:space-between;align-items:center">
-      <h2 class="card-title" style="margin:0;font-size:.95rem">🔄 Dépenses Récurrentes</h2>
-      <span id="recurrences-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
-    </div>
-  </div>
-
-  <!-- Contenu pleine largeur -->
-  <div id="tripanel-content" style="display:none;margin-top:1rem;margin-bottom:1rem">
-    <div class="card" style="margin-bottom:0">
-
-      <!-- Contenu Comparaison -->
-      <div id="comparaison-body" style="display:none">
-        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
-          <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Référence</span>
-          <select class="form-select" id="comp-mois-a" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
-          <span style="font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:700;color:var(--text-tertiary);padding:0.2rem 0.5rem;background:var(--bg-primary);border-radius:6px">VS</span>
-          <select class="form-select" id="comp-mois-b" style="padding:0.4rem 0.75rem;font-size:0.82rem;width:auto" onchange="app.refreshComparaison()"></select>
-          <span style="font-size:0.65rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary)">Actuel</span>
-        </div>
-        <div id="comparaison-container"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Ajoute des dépenses sur 2 mois différents pour comparer</div></div></div>
-      </div>
-
-      <!-- Contenu Règle 50/30/20 -->
-      <div id="regle-body" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:1rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border-color)">
-          <div>
-            <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Dépenses ce mois</div>
-            <div id="regle-total-dep" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <button class="btn btn-small btn-secondary" onclick="app.ouvrirClassif503020()" style="font-size:.72rem;display:flex;align-items:center;gap:.35rem">🏷 Classifier</button>
-            <div style="text-align:right">
-              <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Salaire net</div>
-              <div id="regle-total-sal" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
-            </div>
-          </div>
-        </div>
-        <div class="grid grid-3" id="comparaison-503020" style="gap:.75rem;margin-bottom:1rem"></div>
-        <!-- barre globale segmentée -->
-        <div id="regle-global-bar" class="regle-global-bar-wrap" style="display:none">
-          <div class="regle-global-bar-track">
-            <div id="rbar-besoins" class="regle-bar-seg" style="width:0%;background:var(--accent-primary)"></div>
-            <div id="rbar-envies"  class="regle-bar-seg" style="width:0%;background:var(--accent-secondary)"></div>
-            <div id="rbar-epargne" class="regle-bar-seg" style="width:0%;background:var(--success)"></div>
-          </div>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--accent-primary)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-besoins">Besoins</span></div>
-            <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--accent-secondary)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-envies">Envies</span></div>
-            <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--success)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-epargne">Épargne</span></div>
-          </div>
-        </div>
-        <div id="regle-conseil" style="display:none;font-size:.75rem;color:var(--text-secondary);line-height:1.6;padding:.65rem .9rem;background:var(--bg-secondary);border-radius:12px;border-left:3px solid var(--success)"></div>
-      </div>
-
-      <!-- Contenu Récurrentes -->
-      <div id="recurrences-body" style="display:none">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
-          <button class="btn-vault-primary" onclick="app.ouvrirAjoutRecurrence()">＋ Dépense récurrente</button>
-        </div>
-        <div id="recurrences-list"><div class="empty-state"><div class="empty-state-icon">🔄</div><div>Aucune récurrence définie</div></div></div>
-        <div style="margin-top:1rem;padding:0.75rem;background:var(--bg-secondary);border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-color)" id="recurrences-total-wrap">
-          <span style="color:var(--text-secondary);font-size:0.85rem">Total mensuel récurrences</span>
-          <span class="stat-value" id="recurrences-total" style="font-size:1.2rem">0 €</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-<!-- fin bloc tri-panel -->
-
-<!-- 5. Analyse -->
-<div data-card-id="dep-analyse" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleSection('analyse-body','analyse-arrow','analyse-trigger')" id="analyse-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
-  <h2 class="card-title" style="margin:0;font-size:1.2rem">🔍 Analyse des dépenses</h2>
-  <span id="analyse-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
 </div>
-<div id="analyse-body" style="display:none;padding:1.5rem 2rem">
-<div class="filter-bar">
-<div class="form-group" style="margin:0">
-<label class="form-label">Période</label>
-<select class="form-select" id="analyse-periode" onchange="app.analyseDepenses()">
-<option value="mois">Mois en cours</option>
-<option value="mois-choisi">Choisir un mois</option>
-<option value="annee">Année en cours</option>
-<option value="annee-choisie">Choisir une année</option>
-<option value="plage">Plage de dates</option>
-</select>
-</div>
-<div class="form-group" style="margin:0;display:none" id="filter-mois-choisi">
-<label class="form-label">Mois</label>
-<input type="month" class="form-input" id="analyse-mois" onchange="app.analyseDepenses()">
-</div>
-<div class="form-group" style="margin:0;display:none" id="filter-annee-choisie">
-<label class="form-label">Année</label>
-<input type="number" class="form-input" id="analyse-annee" placeholder="2025" onchange="app.analyseDepenses()">
-</div>
-<div class="form-group" style="margin:0;display:none" id="filter-plage-debut">
-<label class="form-label">Du</label>
-<input type="date" class="form-input" id="analyse-debut" onchange="app.analyseDepenses()">
-</div>
-<div class="form-group" style="margin:0;display:none" id="filter-plage-fin">
-<label class="form-label">Au</label>
-<input type="date" class="form-input" id="analyse-fin" onchange="app.analyseDepenses()">
-</div>
-<div class="form-group" style="margin:0">
-<label class="form-label">Catégorie</label>
-<select class="form-select" id="analyse-categorie" onchange="app.analyseDepenses()">
-<option value="toutes">Toutes</option>
-</select>
-</div>
-</div>
-<div id="analyse-results"></div>
-</div>
-</div></div>
 
-<!-- 6. Historique -->
+<!-- ══ CATÉGORIES TOP 6 ══ -->
+<div class="budget-section-header">
+  <span class="budget-section-title">État des catégories</span>
+  <button class="budget-section-link" onclick="app.toggleBudgetsPanel()">Toutes les catégories ›</button>
+</div>
+<div id="budget-top-cats" class="budget-cats-grid"></div>
+
+<!-- ══ HISTORIQUE (section visible, collapsible) ══ -->
+<div class="budget-section-header" style="margin-top:1rem">
+  <span class="budget-section-title">Transactions récentes</span>
+  <button class="budget-section-link" onclick="app.toggleSection('hist-dep-body','hist-dep-arrow','hist-dep-trigger')">Historique complet ›</button>
+</div>
+
 <div data-card-id="dep-historique" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">
 <div onclick="app.toggleSection('hist-dep-body','hist-dep-arrow','hist-dep-trigger')" id="hist-dep-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
   <h2 class="card-title" style="margin:0;font-size:1.2rem">📋 Historique</h2>
   <span id="hist-dep-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
 </div>
 <div id="hist-dep-body" style="display:none;padding:1.5rem 2rem">
-
-<!-- Barre de filtres -->
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem;align-items:end">
   <div>
     <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
@@ -592,9 +480,7 @@
   </div>
   <div>
     <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Catégorie</div>
-    <select class="form-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem" onchange="app.afficherDepenses()">
-      <option value="">Toutes</option>
-    </select>
+    <select class="form-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
   </div>
   <div>
     <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche note</div>
@@ -604,18 +490,14 @@
   <button class="btn btn-secondary btn-small" onclick="app.resetHistFilters()" title="Effacer les filtres" style="padding:.45rem .85rem;height:fit-content">✕</button>
 </div>
 <div id="hist-filter-count" style="font-family:DM Mono,monospace;font-size:.68rem;color:var(--text-tertiary);margin-bottom:.65rem"></div>
-
 <div id="depenses-table-wrapper" class="table-container">
-<table class="table">
-<thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead>
-<tbody id="table-depenses"></tbody>
-</table>
+<table class="table"><thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead><tbody id="table-depenses"></tbody></table>
 </div>
 <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
 <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
 </div>
 </div></div>
-<!-- Historique mensuel Revenus & Cashflow -->
+
 <div data-card-id="dep-hist-revenus" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden;margin-top:.5rem">
   <div onclick="app.toggleSection('hist-rev-body','hist-rev-arrow','hist-rev-trigger')" id="hist-rev-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.75rem;cursor:pointer;user-select:none">
     <h2 class="card-title" style="margin:0;font-size:1.2rem">📊 Historique Revenus &amp; Cashflow</h2>
@@ -633,7 +515,210 @@
   </div>
 </div></div>
 
-</div> <!-- fin tab-depenses -->
+<!-- ══ ÉLÉMENTS CACHÉS — COMPATIBILITÉ JS (ne pas supprimer) ══ -->
+<div style="display:none" aria-hidden="true" id="budget-compat-layer">
+  <!-- stat IDs écrits par refreshStatsDepenses -->
+  <span id="s-depenses-mois">0 €</span>
+  <span id="s-budget-restant">0 €</span>
+  <span id="s-budget-total">0 €</span>
+  <span id="s-depenses-delta" class="stat-delta-pill neutral">—</span>
+  <span id="s-budget-delta" class="stat-delta-pill neutral">—</span>
+  <div class="progress-bar"><div class="progress-fill" id="s-progress-global"></div></div>
+  <!-- stats-categories (old) -->
+  <div id="cat-breakdown-body"><div class="grid grid-3" id="stats-categories"></div></div>
+  <span id="cat-breakdown-arrow"></span>
+  <!-- action tiles (pour onboarding + switchTab focus) -->
+  <div data-card-id="dep-revenus" data-tab="depenses">
+    <div class="vault-action-tile vault-action-rev">
+      <div class="vault-action-icon">↑</div>
+      <div class="vault-action-label">Revenu</div>
+      <button class="vault-action-cta" onclick="app.openBsRevenus()">＋ Ajouter</button>
+    </div>
+  </div>
+  <div data-card-id="dep-saisie" data-tab="depenses">
+    <div class="vault-action-tile vault-action-exp">
+      <div class="vault-action-icon">↓</div>
+      <div class="vault-action-label">Dépense</div>
+      <button class="vault-action-cta" onclick="app.openBsDepenses()">＋ Ajouter</button>
+      <div class="vault-action-links">
+        <span onclick="app.toggleBudgetsPanel()">⚙ Catégories</span>
+        <span onclick="app.toggleImportBancaire()">🏦 Import</span>
+      </div>
+    </div>
+    <select id="dep-cat"></select>
+    <div id="dep-pills"></div>
+    <input type="number" id="dep-montant">
+    <div id="dep-amount-underline"></div>
+    <input type="date" id="dep-date">
+    <input type="text" id="dep-note">
+    <button id="btn-toggle-import" onclick="app.toggleImportBancaire()"></button>
+    <div id="import-bancaire-panel" style="display:none"></div>
+  </div>
+  <!-- tripanel vide (toggleTriPanel cherche ces IDs) -->
+  <div id="comp-trigger"><span id="comp-arrow"></span></div>
+  <div id="regle-trigger"><span id="regle-arrow"></span></div>
+  <div id="recurrences-trigger"><span id="recurrences-arrow"></span></div>
+  <div id="tripanel-content"></div>
+  <!-- analyse IDs (analyseDepenses / initDates y écrit) -->
+  <div data-card-id="dep-analyse" data-tab="depenses">
+    <select id="analyse-periode">
+      <option value="mois">Mois en cours</option>
+      <option value="mois-choisi">Choisir un mois</option>
+      <option value="annee">Année en cours</option>
+      <option value="annee-choisie">Choisir une année</option>
+      <option value="plage">Plage de dates</option>
+    </select>
+    <div id="filter-mois-choisi"><input type="month" id="analyse-mois"></div>
+    <div id="filter-annee-choisie"><input type="number" id="analyse-annee"></div>
+    <div id="filter-plage-debut"><input type="date" id="analyse-debut"></div>
+    <div id="filter-plage-fin"><input type="date" id="analyse-fin"></div>
+    <select id="analyse-categorie"><option value="toutes">Toutes</option></select>
+    <div id="analyse-results"></div>
+  </div>
+  <!-- vieille carte etat cat -->
+  <div data-card-id="dep-etat-cat" data-tab="depenses"></div>
+  <div data-card-id="dep-comparaison" data-tab="depenses"></div>
+  <div data-card-id="dep-regle5030" data-tab="depenses"></div>
+  <div data-card-id="dep-recurrentes" data-tab="depenses"></div>
+</div>
+
+</div><!-- fin tab-depenses -->
+
+<!-- ══════════════════════════════════════════════════════
+     MODALS ANALYSE BUDGET
+══════════════════════════════════════════════════════ -->
+
+<!-- Overlay commun -->
+<div class="budget-modal-overlay" id="budget-modal-overlay" onclick="app._closeBudgetModalOnOutside(event)"></div>
+
+<!-- MODAL COMPARAISON -->
+<div class="budget-modal-box" id="modal-budget-comp">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(63,81,181,.1),rgba(124,77,255,.08))">📊</div>
+      <div><div class="budget-modal-title">Comparaison mois à mois</div><div class="budget-modal-subtitle">Sélectionnez deux mois à comparer par catégorie</div></div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeBudgetAnalyseModal('modal-budget-comp')">✕</button>
+  </div>
+  <div class="budget-modal-body">
+    <div class="budget-an-card">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap">
+        <select class="budget-an-select" id="comp-mois-a" onchange="app.refreshComparaison()" style="flex:1"></select>
+        <span style="font-family:'DM Mono',monospace;font-size:.62rem;font-weight:700;color:var(--text-tertiary);padding:.2rem .6rem;background:var(--bg-secondary);border-radius:8px;border:1px solid var(--border-color)">VS</span>
+        <select class="budget-an-select" id="comp-mois-b" onchange="app.refreshComparaison()" style="flex:1"></select>
+      </div>
+      <div id="comparaison-container"><div class="empty-state"><div class="empty-state-icon">📊</div><div>Ajoutez des dépenses sur 2 mois différents pour comparer</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RÈGLE 50/30/20 -->
+<div class="budget-modal-box" id="modal-budget-regle">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(0,200,83,.12),rgba(0,150,60,.08))">⚖️</div>
+      <div><div class="budget-modal-title">Règle 50 / 30 / 20</div><div class="budget-modal-subtitle">Répartition idéale de votre revenu mensuel net</div></div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeBudgetAnalyseModal('modal-budget-regle')">✕</button>
+  </div>
+  <div class="budget-modal-body">
+    <div class="budget-an-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:1rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border-color)">
+        <div>
+          <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Dépenses ce mois</div>
+          <div id="regle-total-dep" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="btn btn-small btn-secondary" onclick="app.ouvrirClassif503020()" style="font-size:.72rem;display:flex;align-items:center;gap:.35rem">🏷 Classifier</button>
+          <div style="text-align:right">
+            <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.15rem">Salaire net</div>
+            <div id="regle-total-sal" style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text-primary)">— €</div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-3" id="comparaison-503020" style="gap:.75rem;margin-bottom:1rem"></div>
+      <div id="regle-global-bar" class="regle-global-bar-wrap" style="display:none">
+        <div class="regle-global-bar-track">
+          <div id="rbar-besoins" class="regle-bar-seg" style="width:0%;background:var(--accent-primary)"></div>
+          <div id="rbar-envies"  class="regle-bar-seg" style="width:0%;background:var(--accent-secondary)"></div>
+          <div id="rbar-epargne" class="regle-bar-seg" style="width:0%;background:var(--success)"></div>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--accent-primary)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-besoins">Besoins</span></div>
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--accent-secondary)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-envies">Envies</span></div>
+          <div style="display:flex;align-items:center;gap:.35rem"><div style="width:10px;height:10px;border-radius:3px;background:var(--success)"></div><span style="font-size:.65rem;font-family:'DM Mono',monospace;color:var(--text-secondary)" id="rbar-lbl-epargne">Épargne</span></div>
+        </div>
+      </div>
+      <div id="regle-conseil" style="display:none;font-size:.75rem;color:var(--text-secondary);line-height:1.6;padding:.65rem .9rem;background:var(--bg-secondary);border-radius:12px;border-left:3px solid var(--success)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RÉCURRENTES -->
+<div class="budget-modal-box" id="modal-budget-rec">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(255,152,0,.12),rgba(230,115,0,.08))">🔄</div>
+      <div><div class="budget-modal-title">Dépenses récurrentes</div><div class="budget-modal-subtitle">Abonnements et charges fixes du mois</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <button class="btn-vault-primary" style="font-size:.72rem;padding:.42rem .9rem" onclick="app.ouvrirAjoutRecurrence()">＋ Ajouter</button>
+      <button class="budget-modal-close" onclick="app.closeBudgetAnalyseModal('modal-budget-rec')">✕</button>
+    </div>
+  </div>
+  <div class="budget-modal-body">
+    <div id="recurrences-list"><div class="empty-state"><div class="empty-state-icon">🔄</div><div>Aucune récurrence définie</div></div></div>
+    <div style="margin-top:1rem;padding:.75rem;background:var(--bg-secondary);border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-color)" id="recurrences-total-wrap">
+      <span style="color:var(--text-secondary);font-size:.85rem">Total mensuel récurrences</span>
+      <span class="stat-value" id="recurrences-total" style="font-size:1.2rem">0 €</span>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ANALYSE DÉTAILLÉE -->
+<div class="budget-modal-box" id="modal-budget-analyse">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(92,107,192,.12),rgba(63,81,181,.08))">📈</div>
+      <div><div class="budget-modal-title">Analyse détaillée</div><div class="budget-modal-subtitle">Répartition et statistiques — cliquez une catégorie pour le détail</div></div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeBudgetAnalyseModal('modal-budget-analyse')">✕</button>
+  </div>
+  <div class="budget-modal-body">
+    <!-- Filtres période/catégorie -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Période</div>
+        <select class="budget-an-select" id="budget-an-periode" style="width:100%" onchange="app._budgetAnalysePeriodeChange()">
+          <option value="mois" selected>Mois en cours</option>
+          <option value="mois-choisi">Choisir un mois</option>
+          <option value="annee">Année en cours</option>
+        </select>
+      </div>
+      <div id="budget-an-periode-mois-wrap" style="display:none">
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
+        <input type="month" class="budget-an-select" id="budget-an-mois" style="width:100%" onchange="app._renderBudgetAnCats()">
+      </div>
+    </div>
+    <!-- Stats résumé -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;margin-bottom:1rem">
+      <div style="background:var(--bg-card);border-radius:14px;padding:.85rem;border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Total dépensé</div>
+        <div id="budget-an-total" style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary)">0 €</div>
+      </div>
+      <div style="background:var(--bg-card);border-radius:14px;padding:.85rem;border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Transactions</div>
+        <div id="budget-an-count" style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary)">0</div>
+      </div>
+      <div style="background:var(--bg-card);border-radius:14px;padding:.85rem;border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.3rem">Moy. / jour</div>
+        <div id="budget-an-avg" style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-primary)">0 €</div>
+      </div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-tertiary);margin-bottom:.65rem">Catégories — cliquez pour voir les dépenses</div>
+    <div id="budget-an-cats-list"></div>
+  </div>
+</div>
 
 <!-- PEA -->
 <div id="tab-pea" class="tab-content">
