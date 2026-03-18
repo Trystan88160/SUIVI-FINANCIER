@@ -3664,6 +3664,9 @@ const app = {
         const dep = this.data.depenses.find(d => d.id === id);
         if (!dep) return;
 
+        // Nettoyer une éventuelle modale précédente
+        document.getElementById('edit-dep-modal')?.remove();
+
         const cats = Object.keys(this.data.budgets).sort();
         const catsOpts = cats.map(c => `<option value="${c}" ${c === dep.categorie ? 'selected' : ''}>${c}</option>`).join('');
         const hasComptes = (this.data.comptesPointage || []).length > 0;
@@ -3680,11 +3683,9 @@ const app = {
             : '';
 
         const modal = document.createElement('div');
-        modal.id = 'edit-dep-modal-wrap';
-        modal.style.cssText = 'position:fixed;inset:0;z-index:1900;display:flex;align-items:center;justify-content:center';
+        modal.id = 'edit-dep-modal';
+        modal.className = 'modal';
         modal.innerHTML = `
-          <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)" onclick="document.getElementById('edit-dep-modal-wrap').remove()"></div>
-          <div class="modal" style="display:flex;position:relative;z-index:1901;max-width:420px;width:92%">
             <div class="modal-header">
               <h2 class="modal-title">✏️ Modifier la dépense</h2>
             </div>
@@ -3708,11 +3709,21 @@ const app = {
               ${compteHtml}
             </div>
             <div class="modal-footer">
-              <button class="vp-btn-cancel" onclick="document.getElementById('edit-dep-modal-wrap').remove()">Annuler</button>
+              <button class="vp-btn-cancel" onclick="app._fermerEditDepense()">Annuler</button>
               <button class="vp-btn-save" onclick="app._sauvegarderEditDepense('${id}')">Enregistrer</button>
-            </div>
-          </div>`;
+            </div>`;
         document.body.appendChild(modal);
+
+        const overlay = document.getElementById('overlay');
+        if (overlay) { overlay.classList.add('active'); overlay.onclick = () => this._fermerEditDepense(); }
+        modal.classList.add('active');
+    },
+
+    _fermerEditDepense() {
+        const modal = document.getElementById('edit-dep-modal');
+        if (modal) { modal.classList.remove('active'); setTimeout(() => modal.remove(), 250); }
+        const overlay = document.getElementById('overlay');
+        if (overlay) { overlay.classList.remove('active'); overlay.onclick = null; }
     },
 
     _sauvegarderEditDepense(id) {
@@ -3729,7 +3740,7 @@ const app = {
         dep.date      = date;
         dep.note      = note;
         if (compteEl) dep.compteId = compteEl.value || null;
-        document.getElementById('edit-dep-modal-wrap')?.remove();
+        this._fermerEditDepense();
         this.save();
         this.afficherDepenses();
         this.refreshStatsDepenses();
