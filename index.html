@@ -462,7 +462,7 @@
 <!-- ══ CATÉGORIES TOP 8 ══ -->
 <div class="budget-section-header">
   <span class="budget-section-title">État des catégories</span>
-  <button class="budget-section-link" onclick="app.toggleBudgetsPanel()">Toutes les catégories ›</button>
+  <button class="budget-section-link" onclick="app.openAllCatsModal()">Toutes les catégories ›</button>
 </div>
 <div id="budget-top-cats" class="budget-cats-grid"></div>
 
@@ -598,6 +598,23 @@
     </div>
     <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
     <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
+  </div>
+</div>
+
+<!-- MODAL TOUTES LES CATÉGORIES -->
+<div class="budget-modal-box" id="modal-all-cats" style="max-width:860px">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(124,77,255,.12),rgba(63,81,181,.08))">🗂️</div>
+      <div><div class="budget-modal-title">Toutes les catégories</div><div class="budget-modal-subtitle" id="all-cats-subtitle">Vue d'ensemble du budget mensuel</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <button class="btn btn-small btn-secondary" onclick="app.toggleBudgetsPanel()" style="font-size:.72rem">⚙️ Gérer</button>
+      <button class="budget-modal-close" onclick="app.closeAllCatsModal()">✕</button>
+    </div>
+  </div>
+  <div class="budget-modal-body">
+    <div id="all-cats-grid" class="budget-cats-grid" style="margin-bottom:0"></div>
   </div>
 </div>
 

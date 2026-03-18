@@ -28,6 +28,7 @@ const app = {
         lignesPEA: [],
         allocationCible: {},
         classif503020: {},
+        catEmojis: {},
         parametres: {
             theme: 'auto',
             lastBackup: null,
@@ -895,6 +896,7 @@ const app = {
             cardOrder:          loaded.cardOrder            || {},
             cardLayout:         loaded.cardLayout           || {},
             categorieColors:    loaded.categorieColors      || {},
+            catEmojis:          loaded.catEmojis             || {},
             parametres:         loaded.parametres          || this.data.parametres
         };
         if (!this.data.parametres.theme)  this.data.parametres.theme  = 'auto';
@@ -3099,13 +3101,112 @@ const app = {
         setTimeout(() => { this.refreshCharts(); this._refreshAllChartColorBtns(); this.applyAllTabCards(); }, 150);
     },
 
+    /* ── Emoji helper centralisé ─────────────────────────────────────────── */
+    _getCatEmoji(cat) {
+        if (!cat) return '📦';
+        // 1. Emoji défini manuellement par l'utilisateur
+        if (this.data.catEmojis?.[cat]) return this.data.catEmojis[cat];
+        // 2. Emoji en préfixe du nom de catégorie
+        const match = cat.match(/^\p{Emoji}/u);
+        if (match) return match[0];
+        // 3. Map par correspondance de mot-clé
+        const MAP = {
+            'ALIMENTATION':'🛒','COURSES':'🛒','MANGER':'🛒','RESTAURANT':'🍽️','RESTAURANTS':'🍽️',
+            'LOGEMENT':'🏠','LOYER':'🏠','LOYERS':'🏠','TRANSPORT':'🚗','CARBU':'⛽','CARBURANT':'⛽',
+            'LOISIR':'🎮','LOISIRS':'🎮','SANTÉ':'💊','SANTE':'💊','ÉPARGNE':'💎','EPARGNE':'💎',
+            'INVESTISSEMENT':'📈','HABILLEMENT':'👔','VETEMENT':'👗','VÊTEMENT':'👗',
+            'VOYAGES':'✈️','VOYAGE':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻',
+            'ABONNEMENT':'📱','ABONNEMENTS':'📱','BAR':'🍺','CIGARETTE':'🚬','TABAC':'🚬',
+            'AUTRE':'📦','AUTRES':'📦','DIVERS':'📦','SHOPPING':'🛍️','FACTURE':'📄',
+        };
+        const up = cat.toUpperCase();
+        for (const k of Object.keys(MAP)) if (up.includes(k)) return MAP[k];
+        return '📦';
+    },
+
+    setCatEmoji(cat, emoji) {
+        if (!this.data.catEmojis) this.data.catEmojis = {};
+        if (emoji) this.data.catEmojis[cat] = emoji;
+        else delete this.data.catEmojis[cat];
+        this.save();
+        this.updateBudgetsUI();
+        this._refreshBudgetHeroAndCats();
+    },
+
+    openAllCatsModal() {
+        this._renderAllCatsModal();
+        document.getElementById('modal-all-cats')?.classList.add('open');
+        document.getElementById('budget-modal-overlay')?.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    },
+
+    closeAllCatsModal() {
+        document.getElementById('modal-all-cats')?.classList.remove('open');
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats']
+            .some(mid => document.getElementById(mid)?.classList.contains('open'));
+        if (!anyOpen) {
+            document.getElementById('budget-modal-overlay')?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    },
+
+    _renderAllCatsModal() {
+        const container = document.getElementById('all-cats-grid');
+        const subtitle  = document.getElementById('all-cats-subtitle');
+        if (!container) return;
+        const d = this._budgetMonthDate();
+        const y = d.getFullYear(), m = d.getMonth();
+        const depMois = this.data.depenses.filter(dep => {
+            const dt = new Date(dep.date);
+            return dt.getFullYear() === y && dt.getMonth() === m;
+        });
+        const bycat = {};
+        depMois.forEach(dep => { bycat[dep.categorie] = (bycat[dep.categorie] || 0) + dep.montant; });
+        const allCats = new Set([...Object.keys(this.data.budgets), ...Object.keys(bycat)]);
+        const catData = Array.from(allCats)
+            .map(cat => ({ cat, spent: bycat[cat] || 0, budget: this.data.budgets[cat] || 0 }))
+            .filter(c => c.cat in this.data.budgets || c.spent > 0)
+            .sort((a, b) => b.spent - a.spent);
+        const totalSpent = catData.reduce((s, c) => s + c.spent, 0);
+        if (subtitle) subtitle.textContent = catData.length + ' catégorie' + (catData.length > 1 ? 's' : '') + ' · ' + this.formatCurrency(totalSpent) + ' dépensés';
+        if (catData.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><div>Aucune catégorie active</div></div>';
+            return;
+        }
+        const getBar = pct => pct >= 100 ? 'linear-gradient(90deg,#f44336,#e57373)' : pct >= 80 ? 'linear-gradient(90deg,#ff9800,#ffb74d)' : 'linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end))';
+        const getBadge = pct => pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok';
+        container.innerHTML = catData.map(({ cat, spent, budget }) => {
+            const pct = budget > 0 ? Math.round(spent / budget * 100) : (spent > 0 ? 100 : 0);
+            const fillPct = budget > 0 ? Math.min(spent / budget * 100, 100) : (spent > 0 ? 100 : 0);
+            const emoji = this._getCatEmoji(cat);
+            const catName = cat.replace(/^\p{Emoji}\s*/u, '') || cat;
+            return `<div class="budget-cat-card">
+                <div class="budget-cat-top">
+                    <div class="budget-cat-left">
+                        <div class="budget-cat-icon">${emoji}</div>
+                        <div><div class="budget-cat-name">${catName}</div><div class="budget-cat-amounts">${this.formatCurrency(spent)} / ${this.formatCurrency(budget)}</div></div>
+                    </div>
+                    <span class="cat-pct-badge ${getBadge(pct)}">${pct}%</span>
+                </div>
+                <div class="budget-cat-progress"><div class="budget-cat-progress-fill" style="width:${fillPct}%;background:${getBar(pct)}"></div></div>
+            </div>`;
+        }).join('');
+    },
+
     updateBudgetsUI() {
         const container = document.getElementById('budgets-container');
         const catEp = this.data.categoriesEpargne || ['ÉPARGNE'];
         container.innerHTML = Object.keys(this.data.budgets).map(cat => {
             const isEp = catEp.some(e => cat.toUpperCase().includes(e.toUpperCase()));
+            const emoji = this.data.catEmojis?.[cat] || '';
             return `
             <div class="budget-item" style="align-items:center;gap:.5rem;flex-wrap:nowrap">
+                <input type="text" value="${emoji}" placeholder="😀"
+                       maxlength="2"
+                       title="Emoji de la catégorie"
+                       style="width:42px;flex-shrink:0;text-align:center;font-size:1.1rem;padding:.3rem;border-radius:8px;background:var(--bg-secondary);border:1px solid var(--border-color);cursor:text;color:var(--text-primary)"
+                       oninput="app.setCatEmoji('${cat}', this.value.trim())"
+                       onkeydown="if(event.key==='Enter') this.blur()">
                 <input type="text" class="form-input" value="${cat}"
                        onblur="app.renommerCategorie('${cat}', this.value)"
                        onkeydown="if(event.key==='Enter') this.blur()"
@@ -3121,8 +3222,7 @@ const app = {
             </div>`;
         }).join('') +
         `<div style="margin-top:.75rem;padding:.6rem .75rem;background:var(--bg-secondary);border-radius:10px;font-size:.68rem;color:var(--text-tertiary);line-height:1.5">
-            💰 = catégorie <strong>épargne / virement patrimonial</strong><br>
-            Exclue des dépenses effectives et de la règle 50/30/20 — comptée dans le <strong style="color:var(--success)">20% Épargne</strong>
+            😀 = emoji affiché dans l'onglet Budget &nbsp;·&nbsp; 💰 = catégorie <strong>épargne / virement patrimonial</strong>
          </div>`;
         this.updateBudgetTotal();
     },
@@ -3581,28 +3681,6 @@ const app = {
         const limit = this.showMoreState.depenses ? depenses.length : 15;
         const toShow = depenses.slice(0, limit);
 
-        const catColorMap = {
-            MANGER:'#f97316',COURSES:'#f97316',RESTAURANT:'#ef4444',LOISIR:'#a855f7',TRANSPORT:'#38bdf8',
-            SHOPPING:'#ec4899',LOYER:'#6366f1',LOYERS:'#6366f1',SANTE:'#4ade80',SANTÉ:'#4ade80',
-            ÉPARGNE:'#fbbf24',EPARGNE:'#fbbf24',ABONNEMENT:'#06b6d4',FACTURE:'#64748b',BAR:'#f43f5e',
-            VETEMENT:'#e879f9',VÊTEMENT:'#e879f9',SORTIE:'#f59e0b',CARBURANT:'#84cc16'
-        };
-        const catIconMap = {
-            MANGER:'🛒',COURSES:'🛒',RESTAURANT:'🍽️',LOISIR:'🎭',TRANSPORT:'🚇',SHOPPING:'🛍️',
-            LOYER:'🏠',LOYERS:'🏠',SANTE:'💊',SANTÉ:'💊',ÉPARGNE:'💰',EPARGNE:'💰',
-            ABONNEMENT:'📱',FACTURE:'📄',BAR:'🍺',VETEMENT:'👗',VÊTEMENT:'👗',SORTIE:'🎉',CARBURANT:'⛽'
-        };
-        const getCatColor = cat => {
-            const up = cat.toUpperCase();
-            for (const k of Object.keys(catColorMap)) if (up.includes(k)) return catColorMap[k];
-            return 'var(--accent-primary)';
-        };
-        const getCatIcon = cat => {
-            const up = cat.toUpperCase();
-            for (const k of Object.keys(catIconMap)) if (up.includes(k)) return catIconMap[k];
-            return '💳';
-        };
-
         if (depenses.length === 0) {
             const msg = filtersActive ? 'Aucune dépense ne correspond aux filtres' : 'Aucune dépense enregistrée';
             const _illuDep = (this._emptyIllus||{}).depenses||'';
@@ -3632,6 +3710,7 @@ const app = {
         if (mobileContainer) {
             mobileContainer.innerHTML = Object.entries(groups).map(([dateKey, items]) => {
                 const groupTotal = items.reduce((s, d) => s + d.montant, 0);
+                const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
                 return `<div class="hist-date-group">
                     <div class="hist-date-label">
                         <span class="hist-date-text">${fmt(dateKey)}</span>
@@ -3639,16 +3718,17 @@ const app = {
                         <span class="hist-date-total">−${this.formatCurrency(groupTotal)}</span>
                     </div>
                     ${items.map(d => {
-                        const color = getCatColor(d.categorie);
-                        const icon  = getCatIcon(d.categorie);
-                        return `<div class="hist-card">
-                            <div class="hist-card-icon" style="background:${color}20">${icon}</div>
-                            <div class="hist-card-body">
-                                <div class="hist-card-note">${d.note || '—'}</div>
-                                <div class="hist-card-cat" style="color:${color}">${d.categorie}</div>
+                        const emoji = this._getCatEmoji(d.categorie);
+                        const catName = d.categorie.replace(/^\p{Emoji}\s*/u, '') || d.categorie;
+                        return `<div class="budget-tx-card">
+                            <div class="budget-tx-icon" style="background:var(--bg-secondary)">${emoji}</div>
+                            <div class="budget-tx-info">
+                                <div class="budget-tx-name">${d.note || '—'}</div>
+                                <div class="budget-tx-meta">${catName}</div>
                             </div>
-                            <div class="hist-card-amount">${this.formatCurrency(d.montant)}</div>
-                            <div class="hist-card-actions">
+                            <div class="budget-tx-date"></div>
+                            <div class="budget-tx-amount">−${this.formatCurrency(d.montant)}</div>
+                            <div style="display:flex;gap:.3rem;flex-shrink:0">
                                 <button class="btn btn-small btn-secondary" onclick="app.modifierNote('depense', '${d.id}')" title="Modifier">✏️</button>
                                 <button class="btn btn-small btn-secondary" onclick="app.supprimerDepense('${d.id}')" title="Supprimer">✕</button>
                             </div>
@@ -8486,8 +8566,7 @@ const app = {
         container.innerHTML = all.map(tx => {
             const dt = new Date(tx.date);
             const dateStr = dt.getDate() + ' ' + MONTHS_ABBR[dt.getMonth()];
-            const emojiMatch = tx.cat.match(/^\p{Emoji}/u);
-            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS[tx.cat.toUpperCase()] || (tx.type === 'rev' ? '💰' : '📦'));
+            const emoji = tx.type === 'rev' ? '💰' : this._getCatEmoji(tx.cat);
             const catName = tx.cat.replace(/^\p{Emoji}\s*/u, '') || tx.cat;
             const amountStr = (tx.montant >= 0 ? '+' : '−') + this.formatCurrency(Math.abs(tx.montant));
             const amountClass = tx.montant >= 0 ? 'budget-tx-amount pos' : 'budget-tx-amount';
@@ -8517,7 +8596,7 @@ const app = {
 
     _closeBudgetModalOnOutside(e) {
         if (e.target.id !== 'budget-modal-overlay') return;
-        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap'].forEach(id => {
+        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats'].forEach(id => {
             document.getElementById(id)?.classList.remove('open');
         });
         document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -8590,12 +8669,10 @@ const app = {
         }
         const getBar = pct => pct >= 100 ? 'linear-gradient(90deg,#f44336,#e57373)' : pct >= 80 ? 'linear-gradient(90deg,#ff9800,#ffb74d)' : 'linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end))';
         const getBadge = pct => pct >= 100 ? 'danger' : pct >= 80 ? 'warn' : 'ok';
-        const CAT_EMOJIS = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦'};
         container.innerHTML = catData.map(({ cat, spent, budget }) => {
             const pct = budget > 0 ? Math.round(spent / budget * 100) : (spent > 0 ? 100 : 0);
             const fillPct = budget > 0 ? Math.min(spent / budget * 100, 100) : (spent > 0 ? 100 : 0);
-            const emojiMatch = cat.match(/^\p{Emoji}/u);
-            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS[cat.toUpperCase()] || '📦');
+            const emoji = this._getCatEmoji(cat);
             const catName = cat.replace(/^\p{Emoji}\s*/u, '') || cat;
             return `<div class="budget-cat-card">
                 <div class="budget-cat-top">
@@ -8729,12 +8806,10 @@ const app = {
             return;
         }
         const BAR_COLORS = ['linear-gradient(90deg,#f44336,#e57373)','linear-gradient(90deg,#ff9800,#ffb74d)','linear-gradient(90deg,#ff9800,#ffd54f)','linear-gradient(90deg,#00c853,#69f0ae)','linear-gradient(90deg,#3f51b5,#7c4dff)','linear-gradient(90deg,#5c6bc0,#9fa8da)','linear-gradient(90deg,#7c4dff,#b259ff)','linear-gradient(90deg,#e91e63,#f48fb1)'];
-        const CAT_EMOJIS2 = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦'};
         container.innerHTML = cats.map(([cat, data], i) => {
             const pct = totalAll > 0 ? Math.round(data.total / totalAll * 100) : 0;
             const barColor = BAR_COLORS[i % BAR_COLORS.length];
-            const emojiMatch = cat.match(/^\p{Emoji}/u);
-            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS2[cat.toUpperCase()] || '📦');
+            const emoji = this._getCatEmoji(cat);
             const catName = cat.replace(/^\p{Emoji}\s*/u, '') || cat;
             const txsHtml = data.txs
                 .sort((a, b) => new Date(b.date) - new Date(a.date))
