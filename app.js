@@ -313,7 +313,7 @@ const app = {
         // Fermeture modales budget avec Échap
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse'].forEach(id => {
+                ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse'].forEach(id => {
                     document.getElementById(id)?.classList.remove('open');
                 });
                 const ov = document.getElementById('budget-modal-overlay');
@@ -8423,6 +8423,7 @@ const app = {
         if (type === 'comp') this.refreshComparaison();
         if (type === 'regle') this.refreshRegle503020();
         if (type === 'rec') this.refreshRecurrences();
+        if (type === 'cashflow') this._refreshBudgetCashflowModal();
         if (type === 'analyse') this._renderBudgetAnCats();
         // Ouvre overlay + modal
         document.getElementById('budget-modal-overlay')?.classList.add('open');
@@ -8430,10 +8431,76 @@ const app = {
         document.body.style.overflow = 'hidden';
     },
 
+    _refreshBudgetCashflowModal() {
+        // Redirige refreshHistoriqueRevenus vers le container de la modal
+        const realContainer = document.getElementById('historique-revenus-container');
+        const modalContainer = document.getElementById('modal-historique-revenus-container');
+        this.refreshHistoriqueRevenus();
+        if (realContainer && modalContainer) {
+            modalContainer.innerHTML = realContainer.innerHTML;
+        }
+    },
+
+    openBudgetHistoriqueComplet() {
+        const wrap = document.getElementById('budget-hist-complet-wrap');
+        if (!wrap) return;
+        wrap.style.display = 'block';
+        // Initialise le filtre mois sur le mois budget courant
+        const histMois = document.getElementById('hist-filter-mois');
+        if (histMois && this._budgetMonth) histMois.value = this._budgetMonth;
+        this.afficherDepenses();
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+
+    closeBudgetHistoriqueComplet() {
+        const wrap = document.getElementById('budget-hist-complet-wrap');
+        if (wrap) wrap.style.display = 'none';
+    },
+
+    _refreshBudgetRecentTxs() {
+        const container = document.getElementById('budget-recent-txs');
+        if (!container) return;
+        const d = this._budgetMonthDate();
+        const y = d.getFullYear(), m = d.getMonth();
+        // Combine dépenses + revenus du mois, triés par date desc
+        const deps = (this.data.depenses || [])
+            .filter(dep => { const dt = new Date(dep.date); return dt.getFullYear() === y && dt.getMonth() === m; })
+            .map(dep => ({ date: dep.date, label: dep.note || dep.categorie, cat: dep.categorie, montant: -dep.montant, type: 'dep' }));
+        const revs = (this.data.revenus || [])
+            .filter(rev => { const dt = new Date(rev.date); return dt.getFullYear() === y && dt.getMonth() === m; })
+            .map(rev => ({ date: rev.date, label: rev.source || rev.note || 'Revenu', cat: 'Revenu', montant: rev.montant, type: 'rev' }));
+        const all = [...deps, ...revs].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8);
+        if (all.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-state-icon">💸</div><div>Aucune transaction pour ce mois</div></div>';
+            return;
+        }
+        const MONTHS_ABBR = ['jan','fév','mars','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+        const CAT_EMOJIS = {'ALIMENTATION':'🛒','LOGEMENT':'🏠','TRANSPORT':'🚗','LOISIRS':'🎮','SANTÉ':'💊','RESTAURANTS':'🍽️','ÉPARGNE':'💎','INVESTISSEMENT':'📈','HABILLEMENT':'👔','VOYAGES':'✈️','SPORT':'🏋️','EDUCATION':'📚','HIGH-TECH':'💻','ABONNEMENTS':'📱','DIVERS':'📦','REVENU':'💰'};
+        container.innerHTML = all.map(tx => {
+            const dt = new Date(tx.date);
+            const dateStr = dt.getDate() + ' ' + MONTHS_ABBR[dt.getMonth()];
+            const emojiMatch = tx.cat.match(/^\p{Emoji}/u);
+            const emoji = emojiMatch ? emojiMatch[0] : (CAT_EMOJIS[tx.cat.toUpperCase()] || (tx.type === 'rev' ? '💰' : '📦'));
+            const catName = tx.cat.replace(/^\p{Emoji}\s*/u, '') || tx.cat;
+            const amountStr = (tx.montant >= 0 ? '+' : '−') + this.formatCurrency(Math.abs(tx.montant));
+            const amountClass = tx.montant >= 0 ? 'budget-tx-amount pos' : 'budget-tx-amount';
+            const iconBg = tx.type === 'rev' ? 'rgba(0,200,83,.12)' : 'var(--bg-secondary)';
+            return `<div class="budget-tx-card">
+                <div class="budget-tx-icon" style="background:${iconBg}">${emoji}</div>
+                <div class="budget-tx-info">
+                    <div class="budget-tx-name">${tx.label}</div>
+                    <div class="budget-tx-meta">${catName}</div>
+                </div>
+                <div class="budget-tx-date">${dateStr}</div>
+                <div class="${amountClass}">${amountStr}</div>
+            </div>`;
+        }).join('');
+    },
+
     closeBudgetAnalyseModal(id) {
         document.getElementById(id)?.classList.remove('open');
         // Ferme overlay si aucune modal ouverte
-        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse']
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse']
             .some(mid => document.getElementById(mid)?.classList.contains('open'));
         if (!anyOpen) {
             document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -8443,7 +8510,7 @@ const app = {
 
     _closeBudgetModalOnOutside(e) {
         if (e.target.id !== 'budget-modal-overlay') return;
-        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-analyse'].forEach(id => {
+        ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse'].forEach(id => {
             document.getElementById(id)?.classList.remove('open');
         });
         document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -8486,6 +8553,7 @@ const app = {
             progEl.style.width = pct + '%';
         }
         this._refreshBudgetTopCats(depMois);
+        this._refreshBudgetRecentTxs();
     },
 
     _refreshBudgetTopCats(depMois) {
@@ -8508,7 +8576,7 @@ const app = {
             .map(cat => ({ cat, spent: bycat[cat] || 0, budget: this.data.budgets[cat] || 0 }))
             .filter(c => c.spent > 0 || c.budget > 0)
             .sort((a, b) => b.spent - a.spent)
-            .slice(0, 6);
+            .slice(0, 8);
         if (catData.length === 0) {
             container.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-state-icon">📂</div><div>Aucune catégorie active pour ce mois</div></div>';
             return;

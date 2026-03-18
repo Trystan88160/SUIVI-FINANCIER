@@ -1617,3 +1617,15 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
   .budget-modal-body{padding:1rem 1.1rem}
   .budget-hero-amount{font-size:2.2rem}
 }
+
+/* ── Transactions récentes (budget tab) ── */
+.budget-recent-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.5rem}
+.budget-tx-card{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:14px;transition:all .2s;cursor:default}
+.budget-tx-card:hover{background:var(--bg-card);transform:translateX(3px);box-shadow:var(--glass-shadow,0 8px 28px rgba(99,102,241,.18),inset 0 1px 0 rgba(255,255,255,.9))}
+.budget-tx-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.budget-tx-info{flex:1;min-width:0}
+.budget-tx-name{font-size:.85rem;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.budget-tx-meta{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--text-tertiary);margin-top:.04rem}
+.budget-tx-date{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--text-tertiary);flex-shrink:0}
+.budget-tx-amount{font-family:'DM Mono',monospace;font-size:.88rem;font-weight:600;color:var(--danger);flex-shrink:0}
+.budget-tx-amount.pos{color:var(--success)}

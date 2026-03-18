@@ -401,6 +401,11 @@
           <div class="budget-an-item-text"><div class="budget-an-item-label">Dépenses récurrentes</div><div class="budget-an-item-desc">Abonnements et charges fixes</div></div>
           <span class="budget-an-item-arrow">›</span>
         </div>
+        <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('cashflow')">
+          <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(0,200,83,.1),rgba(0,150,100,.06))">📊</div>
+          <div class="budget-an-item-text"><div class="budget-an-item-label">Revenus &amp; Cashflow</div><div class="budget-an-item-desc">Historique mensuel revenus et solde</div></div>
+          <span class="budget-an-item-arrow">›</span>
+        </div>
         <div class="budget-an-item" onclick="app.openBudgetAnalyseModal('analyse')">
           <div class="budget-an-item-icon" style="background:linear-gradient(135deg,rgba(92,107,192,.1),rgba(63,81,181,.06))">📈</div>
           <div class="budget-an-item-text"><div class="budget-an-item-label">Analyse détaillée</div><div class="budget-an-item-desc">Répartition par période et catégorie</div></div>
@@ -461,59 +466,46 @@
 </div>
 <div id="budget-top-cats" class="budget-cats-grid"></div>
 
-<!-- ══ HISTORIQUE (section visible, collapsible) ══ -->
+<!-- ══ TRANSACTIONS RÉCENTES ══ -->
 <div class="budget-section-header" style="margin-top:1rem">
   <span class="budget-section-title">Transactions récentes</span>
-  <button class="budget-section-link" onclick="app.toggleSection('hist-dep-body','hist-dep-arrow','hist-dep-trigger')">Historique complet ›</button>
+  <button class="budget-section-link" onclick="app.openBudgetHistoriqueComplet()">Historique complet ›</button>
 </div>
+<div id="budget-recent-txs" class="budget-recent-list"></div>
 
-<div data-card-id="dep-historique" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleSection('hist-dep-body','hist-dep-arrow','hist-dep-trigger')" id="hist-dep-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
-  <h2 class="card-title" style="margin:0;font-size:1.2rem">📋 Historique</h2>
-  <span id="hist-dep-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
-</div>
-<div id="hist-dep-body" style="display:none;padding:1.5rem 2rem">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem;align-items:end">
-  <div>
-    <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
-    <input type="month" class="form-input" id="hist-filter-mois" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
+<!-- ══ HISTORIQUE COMPLET (collapsible, masqué par défaut) ══ -->
+<div id="budget-hist-complet-wrap" style="display:none;margin-top:1rem">
+<div class="card" style="padding:0;overflow:hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border-color)">
+    <h2 class="card-title" style="margin:0;font-size:1.1rem">📋 Historique complet</h2>
+    <button onclick="app.closeBudgetHistoriqueComplet()" style="background:none;border:none;cursor:pointer;color:var(--text-tertiary);font-size:1.1rem;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='none'">✕</button>
   </div>
-  <div>
-    <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Catégorie</div>
-    <select class="form-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
-  </div>
-  <div>
-    <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche note</div>
-    <input type="text" class="form-input" id="hist-filter-note" placeholder="Mot-clé…" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
-  </div>
-  <button id="hist-sort-btn" onclick="app.toggleHistSort()" title="Changer l'ordre" style="padding:.45rem .75rem;height:fit-content;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;cursor:pointer;font-size:.78rem;color:var(--text-secondary);white-space:nowrap;transition:all .2s">🕐 Récent</button>
-  <button class="btn btn-secondary btn-small" onclick="app.resetHistFilters()" title="Effacer les filtres" style="padding:.45rem .85rem;height:fit-content">✕</button>
-</div>
-<div id="hist-filter-count" style="font-family:DM Mono,monospace;font-size:.68rem;color:var(--text-tertiary);margin-bottom:.65rem"></div>
-<div id="depenses-table-wrapper" class="table-container">
-<table class="table"><thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead><tbody id="table-depenses"></tbody></table>
-</div>
-<div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
-<button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
-</div>
-</div></div>
-
-<div data-card-id="dep-hist-revenus" data-tab="depenses"><div class="card" style="padding:0;overflow:hidden;margin-top:.5rem">
-  <div onclick="app.toggleSection('hist-rev-body','hist-rev-arrow','hist-rev-trigger')" id="hist-rev-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.75rem;cursor:pointer;user-select:none">
-    <h2 class="card-title" style="margin:0;font-size:1.2rem">📊 Historique Revenus &amp; Cashflow</h2>
-    <span id="hist-rev-arrow" style="font-size:1.3rem;color:var(--text-tertiary);line-height:1">›</span>
-  </div>
-  <div id="hist-rev-body" style="display:none;padding:0 1.5rem 1.5rem">
-    <div style="display:flex;justify-content:flex-end;margin-bottom:.85rem" onclick="event.stopPropagation()">
-      <div class="hist-rev-switcher">
-        <button onclick="app.setHistRevMode('tableau')" id="hist-rev-btn-tableau" class="hist-rev-mode-btn active" title="Tableau">⊞</button>
-        <button onclick="app.setHistRevMode('timeline')" id="hist-rev-btn-timeline" class="hist-rev-mode-btn" title="Timeline">☰</button>
-        <button onclick="app.setHistRevMode('cards')" id="hist-rev-btn-cards" class="hist-rev-mode-btn" title="Cartes">⊟</button>
+  <div style="padding:1.25rem 1.5rem">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem;align-items:end">
+      <div>
+        <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Mois</div>
+        <input type="month" class="form-input" id="hist-filter-mois" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
       </div>
+      <div>
+        <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Catégorie</div>
+        <select class="form-select" id="hist-filter-cat" style="padding:.45rem .7rem;font-size:.82rem" onchange="app.afficherDepenses()"><option value="">Toutes</option></select>
+      </div>
+      <div>
+        <div style="font-size:.62rem;font-family:DM Mono,monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--text-tertiary);margin-bottom:.3rem">Recherche note</div>
+        <input type="text" class="form-input" id="hist-filter-note" placeholder="Mot-clé…" style="padding:.45rem .7rem;font-size:.82rem" oninput="app.afficherDepenses()">
+      </div>
+      <button id="hist-sort-btn" onclick="app.toggleHistSort()" title="Changer l'ordre" style="padding:.45rem .75rem;height:fit-content;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;cursor:pointer;font-size:.78rem;color:var(--text-secondary);white-space:nowrap;transition:all .2s">🕐 Récent</button>
+      <button class="btn btn-secondary btn-small" onclick="app.resetHistFilters()" title="Effacer les filtres" style="padding:.45rem .85rem;height:fit-content">✕</button>
     </div>
-    <div id="historique-revenus-container"></div>
+    <div id="hist-filter-count" style="font-family:DM Mono,monospace;font-size:.68rem;color:var(--text-tertiary);margin-bottom:.65rem"></div>
+    <div id="depenses-table-wrapper" class="table-container">
+      <table class="table"><thead><tr><th>Date</th><th>Catégorie</th><th>Montant</th><th>Note</th><th>Actions</th></tr></thead><tbody id="table-depenses"></tbody></table>
+    </div>
+    <div id="mobile-depenses-cards" class="mobile-cards-container" style="display:none"></div>
+    <button class="show-more-btn" id="show-more-depenses" onclick="app.toggleShowMore('depenses')" style="display:none">Afficher plus</button>
   </div>
-</div></div>
+</div>
+</div>
 
 <!-- ══ ÉLÉMENTS CACHÉS — COMPATIBILITÉ JS (ne pas supprimer) ══ -->
 <div style="display:none" aria-hidden="true" id="budget-compat-layer">
@@ -580,6 +572,23 @@
   <div data-card-id="dep-comparaison" data-tab="depenses"></div>
   <div data-card-id="dep-regle5030" data-tab="depenses"></div>
   <div data-card-id="dep-recurrentes" data-tab="depenses"></div>
+  <!-- hist-dep stubs (toggleSection cherche ces IDs) -->
+  <div id="hist-dep-trigger" style="display:none"></div>
+  <span id="hist-dep-arrow" style="display:none"></span>
+  <div id="hist-dep-body" style="display:none"></div>
+  <!-- hist-revenus (déplacé dans outil Analyse) -->
+  <div data-card-id="dep-hist-revenus" data-tab="depenses">
+    <div id="hist-rev-trigger" style="display:none"></div>
+    <span id="hist-rev-arrow" style="display:none"></span>
+    <div id="hist-rev-body" style="display:none">
+      <div class="hist-rev-switcher" style="display:none">
+        <button onclick="app.setHistRevMode('tableau')" id="hist-rev-btn-tableau" class="hist-rev-mode-btn active">⊞</button>
+        <button onclick="app.setHistRevMode('timeline')" id="hist-rev-btn-timeline" class="hist-rev-mode-btn">☰</button>
+        <button onclick="app.setHistRevMode('cards')" id="hist-rev-btn-cards" class="hist-rev-mode-btn">⊟</button>
+      </div>
+      <div id="historique-revenus-container" style="display:none"></div>
+    </div>
+  </div>
 </div>
 
 </div><!-- fin tab-depenses -->
@@ -672,6 +681,27 @@
       <span style="color:var(--text-secondary);font-size:.85rem">Total mensuel récurrences</span>
       <span class="stat-value" id="recurrences-total" style="font-size:1.2rem">0 €</span>
     </div>
+  </div>
+</div>
+
+<!-- MODAL CASHFLOW / REVENUS -->
+<div class="budget-modal-box" id="modal-budget-cashflow">
+  <div class="budget-modal-header">
+    <div class="budget-modal-header-left">
+      <div class="budget-modal-icon" style="background:linear-gradient(135deg,rgba(0,200,83,.12),rgba(0,150,100,.08))">📊</div>
+      <div><div class="budget-modal-title">Revenus &amp; Cashflow</div><div class="budget-modal-subtitle">Historique mensuel de vos revenus et de votre solde</div></div>
+    </div>
+    <button class="budget-modal-close" onclick="app.closeBudgetAnalyseModal('modal-budget-cashflow')">✕</button>
+  </div>
+  <div class="budget-modal-body">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+      <div class="hist-rev-switcher">
+        <button onclick="app.setHistRevMode('tableau')" id="modal-hist-rev-btn-tableau" class="hist-rev-mode-btn active" title="Tableau" onclick="app._syncHistRevBtns('tableau')">⊞</button>
+        <button onclick="app.setHistRevMode('timeline')" id="modal-hist-rev-btn-timeline" class="hist-rev-mode-btn" title="Timeline">☰</button>
+        <button onclick="app.setHistRevMode('cards')" id="modal-hist-rev-btn-cards" class="hist-rev-mode-btn" title="Cartes">⊟</button>
+      </div>
+    </div>
+    <div id="modal-historique-revenus-container"></div>
   </div>
 </div>
 
