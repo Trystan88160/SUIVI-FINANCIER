@@ -2827,7 +2827,10 @@ const app = {
             const oldEl = document.getElementById('pat-' + compte.replace(/\s/g,''));
             if (oldEl) oldEl.value = values[compte];
         });
-        this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
+        this.data.patrimoine = this.data.patrimoine.filter(p => {
+            const entryMois = p.mois || (p.date || '').substring(0, 7);
+            return entryMois !== mois;
+        });
         this.data.patrimoine.push({ id: crypto.randomUUID(), date: dateVal, mois, ...values, total });
         this.save();
         this.afficherPatrimoine();
@@ -4570,7 +4573,10 @@ const app = {
             total += val;
         });
 
-        this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
+        this.data.patrimoine = this.data.patrimoine.filter(p => {
+            const entryMois = p.mois || (p.date || '').substring(0, 7);
+            return entryMois !== mois;
+        });
         this.data.patrimoine.push({
             id: crypto.randomUUID(),
             date: dateVal,
@@ -4685,7 +4691,7 @@ const app = {
             return;
         }
 
-        const sorted = [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois));
+        const sorted = [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); });
         const dernier = sorted[0];
 
         let securise = 0;
@@ -4875,7 +4881,7 @@ const app = {
 
     refreshDashboard() {
         const patrimoineTotal = this.data.patrimoine.length > 0 ?
-            [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois))[0].total : 0;
+            [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); })[0].total : 0;
 
         const now = new Date();
         const year = now.getFullYear();
@@ -4906,7 +4912,7 @@ const app = {
         }
 
         if (this.data.patrimoine.length > 1) {
-            const sorted = [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois));
+            const sorted = [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); });
             const precedent = sorted[1];
             const diff = patrimoineTotal - precedent.total;
             const pct = ((diff / precedent.total) * 100).toFixed(2);
@@ -5665,7 +5671,7 @@ const app = {
 
     chartRepartition() {
         if (this.data.patrimoine.length === 0) return;
-        const dernier = [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois))[0];
+        const dernier = [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); })[0];
         const labels = [];
         const values = [];
         this.data.comptes.forEach(compte => {
@@ -6592,7 +6598,7 @@ const app = {
     refreshVueRapide() {
         const now = new Date();
         const patrimoineActuel = this.data.patrimoine.length > 0 ?
-            [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois))[0] : null;
+            [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); })[0] : null;
         const depensesMois = this.data.depenses.filter(d => {
             const date = new Date(d.date);
             return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
@@ -6675,7 +6681,7 @@ const app = {
         }
 
         const dernierPat = this.data.patrimoine.length > 0
-            ? [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois))[0] : null;
+            ? [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); })[0] : null;
         if (dernierPat) {
             const liquides = this.data.comptesLiquides || [];
             if (liquides.length === 0) {
@@ -7841,7 +7847,7 @@ const app = {
         const taux = parseFloat(document.getElementById('ret-taux').value) / 100 || 0.06;
         const annees = Math.max(1, ageCible - age);
         const patrimoineActuel = this.data.patrimoine.length > 0 ?
-            [...this.data.patrimoine].sort((a, b) => b.mois.localeCompare(a.mois))[0].total : 0;
+            [...this.data.patrimoine].sort((a, b) => { const mc = b.mois.localeCompare(a.mois); return mc !== 0 ? mc : (b.date||b.mois).localeCompare(a.date||a.mois); })[0].total : 0;
 
         const calculer = (t) => {
             const tm = t / 12;
