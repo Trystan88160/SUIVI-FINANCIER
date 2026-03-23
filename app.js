@@ -1653,7 +1653,7 @@ const app = {
         const catsSorted = Object.entries(parCat).sort((a,b) => b[1]-a[1]);
         const catMax = catsSorted[0];
 
-        const patAnnee = (this.data.patrimoine||[]).filter(p => p.mois && p.mois.startsWith(annee)).sort((a,b) => (a.date||a.mois).localeCompare(b.date||b.mois));
+        const patAnnee = (this.data.patrimoine||[]).filter(p => p.mois && p.mois.startsWith(annee)).sort((a,b) => a.mois.localeCompare(b.mois));
         const patDebut = patAnnee[0]?.total || 0;
         const patFin = patAnnee[patAnnee.length-1]?.total || 0;
         const patDelta = patFin - patDebut;
@@ -5882,8 +5882,8 @@ const app = {
     },
 
     chartPatEv() {
-        const data = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
-        const labels = data.map(p => new Date(p.date||p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'2-digit'}));
+        const data = [...this.data.patrimoine].sort((a, b) => a.mois.localeCompare(b.mois));
+        const labels = data.map(p => new Date(p.mois).toLocaleDateString('fr-FR', {month: 'short'}));
         const colors = this.getThemePalette();
         const _ccEv = this.getChartCustomColors('chart-pat-evol');
         const datasets = this.data.comptes.map((compte, i) => {
@@ -5992,7 +5992,7 @@ const app = {
     },
 
     chartCompare() {
-        const patReel = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
+        const patReel = [...this.data.patrimoine].sort((a, b) => a.mois.localeCompare(b.mois));
 
         if (this.charts.compare) this.charts.compare.destroy();
         const c = this.getChartColors();
