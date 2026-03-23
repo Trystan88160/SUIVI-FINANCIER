@@ -840,34 +840,62 @@ const app = {
     },
 
     async load() {
+        /* Score de complétude d'un jeu de données */
+        const _score = d => !d ? 0 :
+            (d.depenses||[]).length +
+            (d.patrimoine||[]).length +
+            (d.suiviPEA||[]).length +
+            (d.lignesPEA||[]).length +
+            (d.revenus||[]).length +
+            (d.objectifs||[]).length +
+            (d.recurrences||[]).length +
+            (d.notes||[]).length;
 
+        let cloudData = null;
+        let cloudTime = 0;
         try {
             const rows = await this._sbFetch('GET');
-            const cloudData = rows?.[0]?.data;
-            const hasCloudData = cloudData && (
-                (cloudData.depenses||[]).length > 0      ||
-                (cloudData.patrimoine||[]).length > 0     ||
-                (cloudData.suiviPEA||[]).length > 0       ||
-                (cloudData.lignesPEA||[]).length > 0      ||
-                (cloudData.objectifs||[]).length > 0      ||
-                (cloudData.recurrences||[]).length > 0    ||
-                (cloudData.revenus||[]).length > 0        ||
-                (cloudData.notes||[]).length > 0          ||
-                (cloudData.parametres?.salaire > 0)
-            );
-            if (hasCloudData) {
-                this._applyLoaded(cloudData);
-                localStorage.setItem('suiviFinancier', JSON.stringify(cloudData));
-                localStorage.setItem('suiviFinancierTime', new Date(rows[0].updated_at).getTime().toString());
-                return;
-            }
+            cloudData = rows?.[0]?.data || null;
+            cloudTime = rows?.[0]?.updated_at ? new Date(rows[0].updated_at).getTime() : 0;
         } catch(e) {
             console.warn('Supabase indisponible, fallback localStorage:', e.message);
         }
 
-        const local = localStorage.getItem('suiviFinancier');
-        if (local) {
-            try { this._applyLoaded(JSON.parse(local)); } catch(e) {}
+        let localData = null;
+        let localTime = 0;
+        try {
+            const raw = localStorage.getItem('suiviFinancier');
+            if (raw) localData = JSON.parse(raw);
+            localTime = parseInt(localStorage.getItem('suiviFinancierTime') || '0');
+        } catch(e) {}
+
+        const cloudScore = _score(cloudData);
+        const localScore = _score(localData);
+
+        /* Prendre la source la plus complète.
+           En cas d'égalité, prendre la plus récente. */
+        let best = null;
+        if (cloudScore > 0 || localScore > 0) {
+            if (cloudScore > localScore) {
+                best = cloudData;
+            } else if (localScore > cloudScore) {
+                best = localData;
+            } else {
+                /* Scores égaux → plus récent */
+                best = (cloudTime >= localTime) ? cloudData : localData;
+            }
+        }
+
+        if (best) {
+            this._applyLoaded(best);
+            /* Resynchroniser localStorage et Supabase sur la meilleure source */
+            try { localStorage.setItem('suiviFinancier', JSON.stringify(best)); } catch(e) {}
+            if (best === localData && cloudScore < localScore) {
+                /* localStorage plus complet → remonter vers Supabase */
+                this._syncToSupabase();
+            } else if (best === cloudData) {
+                localStorage.setItem('suiviFinancierTime', cloudTime.toString());
+            }
         }
     },
 
@@ -1653,7 +1681,7 @@ const app = {
         const catsSorted = Object.entries(parCat).sort((a,b) => b[1]-a[1]);
         const catMax = catsSorted[0];
 
-        const patAnnee = (this.data.patrimoine||[]).filter(p => p.mois && p.mois.startsWith(annee)).sort((a,b) => a.mois.localeCompare(b.mois));
+        const patAnnee = (this.data.patrimoine||[]).filter(p => p.mois && p.mois.startsWith(annee)).sort((a,b) => (a.date||a.mois).localeCompare(b.date||b.mois));
         const patDebut = patAnnee[0]?.total || 0;
         const patFin = patAnnee[patAnnee.length-1]?.total || 0;
         const patDelta = patFin - patDebut;
@@ -5882,8 +5910,8 @@ const app = {
     },
 
     chartPatEv() {
-        const data = [...this.data.patrimoine].sort((a, b) => a.mois.localeCompare(b.mois));
-        const labels = data.map(p => new Date(p.mois).toLocaleDateString('fr-FR', {month: 'short'}));
+        const data = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
+        const labels = data.map(p => new Date(p.date||p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'2-digit'}));
         const colors = this.getThemePalette();
         const _ccEv = this.getChartCustomColors('chart-pat-evol');
         const datasets = this.data.comptes.map((compte, i) => {
@@ -5992,7 +6020,7 @@ const app = {
     },
 
     chartCompare() {
-        const patReel = [...this.data.patrimoine].sort((a, b) => a.mois.localeCompare(b.mois));
+        const patReel = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
 
         if (this.charts.compare) this.charts.compare.destroy();
         const c = this.getChartColors();
