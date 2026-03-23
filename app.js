@@ -5632,8 +5632,8 @@ const app = {
     },
 
     chartPatrimoine() {
-        const data = [...this.data.patrimoine].sort((a, b) => a.mois.localeCompare(b.mois));
-        const labels = data.map(p => new Date(p.mois).toLocaleDateString('fr-FR', {month: 'short', year: '2-digit'}));
+        const data = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
+        const labels = data.map(p => new Date(p.date||p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'2-digit'}));
         const values = data.map(p => p.total);
         const c = this.getChartColors();
         const _cc0 = this.getChartCustomColors('chart-patrimoine');
