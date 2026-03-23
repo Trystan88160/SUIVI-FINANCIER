@@ -3611,6 +3611,7 @@ const app = {
 
     updatePatTableHeaders() {
         const th = document.getElementById('pat-table-headers');
+        if (!th) return; // timeline remplace le tableau, cet élément n'existe plus
         th.outerHTML = this.data.comptes.map(c => `<th>${c}</th>`).join('') + '<th id="pat-table-headers" style="display:none"></th>';
     },
 
