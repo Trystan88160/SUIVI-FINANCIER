@@ -4599,10 +4599,7 @@ const app = {
             if (histTrigger) histTrigger.style.borderBottomColor = 'var(--border-color)';
         }
 
-        const isMobile = window.innerWidth <= 768;
-        const tbody = document.getElementById('table-patrimoine');
-        const mobileContainer = document.getElementById('mobile-patrimoine-cards');
-        const tableWrapper = document.getElementById('patrimoine-table-wrapper');
+        const container = document.getElementById('pat-timeline');
         const btnShowMore = document.getElementById('show-more-patrimoine');
         const historique = [...this.data.patrimoine].sort((a, b) => {
             const da = (a.date || a.mois || '');
@@ -4610,19 +4607,11 @@ const app = {
             return db.localeCompare(da);
         });
 
-        if (isMobile) {
-            if (tableWrapper) tableWrapper.style.display = 'none';
-            if (mobileContainer) mobileContainer.style.display = 'flex';
-        } else {
-            if (tableWrapper) tableWrapper.style.display = '';
-            if (mobileContainer) mobileContainer.style.display = 'none';
-        }
+        if (!container) return;
 
         if (historique.length === 0) {
             const _illuPat = (this._emptyIllus||{}).patrimoine||'';
-        const emptyHtml = `<div class="v-empty">${_illuPat}<div class="v-empty-title">Aucune entrée patrimoine</div><p class="v-empty-desc">Saisis ton premier point de patrimoine pour démarrer le suivi.</p></div>`;
-            if (isMobile && mobileContainer) mobileContainer.innerHTML = emptyHtml;
-            else if (tbody) tbody.innerHTML = '<tr><td colspan="' + (this.data.comptes.length + 2) + '" class="empty-state"><div class="empty-state-icon">💰</div><div>Aucune entrée patrimoine</div></td></tr>';
+            container.innerHTML = `<div class="v-empty">${_illuPat}<div class="v-empty-title">Aucune entrée patrimoine</div><p class="v-empty-desc">Saisis ton premier point de patrimoine pour démarrer le suivi.</p></div>`;
             if (btnShowMore) btnShowMore.style.display = 'none';
             return;
         }
@@ -4630,37 +4619,34 @@ const app = {
         const limit = this.showMoreState.patrimoine ? historique.length : 15;
         const toShow = historique.slice(0, limit);
 
-        if (isMobile && mobileContainer) {
-            mobileContainer.innerHTML = toShow.map(p => {
-                const compteLines = this.data.comptes.map(c => `<span style="font-size:.65rem;color:var(--text-tertiary)">${c}: <strong style="color:var(--text-primary)">${this.formatCurrency(p[c] || 0)}</strong></span>`).join(' · ');
-                return `
-                <div class="mobile-dep-card" style="border-color:var(--accent-primary)">
-                    <div class="mdc-top">
-                        <span class="mdc-cat">🏦 Patrimoine</span>
-                        <span class="mdc-amount">${this.formatCurrency(p.total)}</span>
+        container.innerHTML = toShow.map((p, i) => {
+            const prev = historique[i + 1];
+            const delta = prev ? (p.total - prev.total) : null;
+            const deltaHtml = delta !== null
+                ? `<span class="pat-tl-delta ${delta >= 0 ? 'pos' : 'neg'}">${delta >= 0 ? '▲' : '▼'} ${this.formatCurrency(Math.abs(delta))}</span>`
+                : `<span class="pat-tl-delta neu">—</span>`;
+            const dotClass = i === 0 ? 'pat-tl-dot pat-tl-dot--first' : 'pat-tl-dot';
+            const dateLabel = new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+            const chips = this.data.comptes
+                .filter(c => p[c] > 0)
+                .map(c => `<span class="pat-tl-chip">${c} · ${this.formatCurrency(p[c])}</span>`)
+                .join('');
+            return `
+            <div class="pat-tl-item">
+                <div class="${dotClass}"></div>
+                <div class="pat-tl-card">
+                    <div class="pat-tl-left">
+                        <div class="pat-tl-date">${dateLabel}</div>
+                        <div class="pat-tl-chips">${chips}</div>
                     </div>
-                    <div class="mdc-note" style="display:flex;flex-wrap:wrap;gap:.3rem">${compteLines}</div>
-                    <div class="mdc-bottom">
-                        <span class="mdc-date">${new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day:'numeric', year:'numeric', month:'long'})}</span>
-                        <div class="mdc-actions">
-                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPatrimoine('${p.id}')">🗑 Supprimer</button>
-                        </div>
+                    <div class="pat-tl-right">
+                        <div class="pat-tl-total">${this.formatCurrency(p.total)}</div>
+                        ${deltaHtml}
+                        <button class="pat-tl-del" onclick="app.supprimerPatrimoine('${p.id}')">✕ supprimer</button>
                     </div>
-                </div>`;
-            }).join('');
-        } else if (tbody) {
-            tbody.innerHTML = toShow.map(p => {
-                let html = '<tr>';
-                html += `<td>${new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day: 'numeric', year: 'numeric', month: 'long'})}</td>`;
-                this.data.comptes.forEach(compte => {
-                    html += `<td>${this.formatCurrency(p[compte] || 0)}</td>`;
-                });
-                html += `<td><strong>${this.formatCurrency(p.total)}</strong></td>`;
-                html += `<td><button class="btn btn-small btn-secondary" onclick="app.supprimerPatrimoine('${p.id}')">✕</button></td>`;
-                html += '</tr>';
-                return html;
-            }).join('');
-        }
+                </div>
+            </div>`;
+        }).join('');
 
         if (btnShowMore) {
             if (historique.length > 15) {
