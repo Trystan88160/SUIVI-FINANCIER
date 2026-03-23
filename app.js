@@ -2833,6 +2833,7 @@ const app = {
         this.afficherPatrimoine();
         this.refreshStatsPatrimoine();
         this.refreshCharts();
+        this.refreshDashboard();
         this.closeBsPatrimoine();
         this.notify('Patrimoine mis à jour', 'success');
     },
@@ -4591,7 +4592,11 @@ const app = {
         const mobileContainer = document.getElementById('mobile-patrimoine-cards');
         const tableWrapper = document.getElementById('patrimoine-table-wrapper');
         const btnShowMore = document.getElementById('show-more-patrimoine');
-        const historique = this.data.patrimoine.sort((a, b) => b.id - a.id);
+        const historique = [...this.data.patrimoine].sort((a, b) => {
+            const da = (a.date || a.mois || '');
+            const db = (b.date || b.mois || '');
+            return db.localeCompare(da);
+        });
 
         if (isMobile) {
             if (tableWrapper) tableWrapper.style.display = 'none';
