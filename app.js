@@ -6131,7 +6131,10 @@ const app = {
             (nouvelleNote) => {
                 item.note = nouvelleNote;
                 this.save();
-                if (type === 'depense') this.afficherDepenses();
+                if (type === 'depense') {
+                    this.afficherDepenses();
+                    this._refreshBudgetRecentTxs();
+                }
                 if (type === 'pea') this.afficherPEA();
                 this.notify('Note modifiée', 'success');
             }
