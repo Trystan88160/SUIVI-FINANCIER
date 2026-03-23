@@ -4593,6 +4593,28 @@ const app = {
     },
 
     afficherPatrimoine() {
+        /* Dédupliquer : garder la saisie la plus récente par mois */
+        const byMois = {};
+        this.data.patrimoine.forEach(p => {
+            const key = p.mois || (p.date || '').substring(0, 7);
+            const existing = byMois[key];
+            if (!existing) { byMois[key] = p; return; }
+            const dNew = (p.date || p.mois || '');
+            const dOld = (existing.date || existing.mois || '');
+            if (dNew.localeCompare(dOld) >= 0) byMois[key] = p;
+        });
+        this.data.patrimoine = Object.values(byMois);
+
+        /* Auto-expand la section historique */
+        const histBody    = document.getElementById('hist-pat-body');
+        const histArrow   = document.getElementById('hist-pat-arrow');
+        const histTrigger = document.getElementById('hist-pat-trigger');
+        if (histBody && histBody.style.display === 'none') {
+            histBody.style.display = 'block';
+            if (histArrow)   histArrow.style.transform = 'rotate(90deg)';
+            if (histTrigger) histTrigger.style.borderBottomColor = 'var(--border-color)';
+        }
+
         const isMobile = window.innerWidth <= 768;
         const tbody = document.getElementById('table-patrimoine');
         const mobileContainer = document.getElementById('mobile-patrimoine-cards');
@@ -4637,7 +4659,7 @@ const app = {
                     <div class="mdc-bottom">
                         <span class="mdc-date">${new Date(p.date || p.mois).toLocaleDateString('fr-FR', {day:'numeric', year:'numeric', month:'long'})}</span>
                         <div class="mdc-actions">
-                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPatrimoine(${p.id})">🗑 Supprimer</button>
+                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPatrimoine('${p.id}')">🗑 Supprimer</button>
                         </div>
                     </div>
                 </div>`;
@@ -4650,7 +4672,7 @@ const app = {
                     html += `<td>${this.formatCurrency(p[compte] || 0)}</td>`;
                 });
                 html += `<td><strong>${this.formatCurrency(p.total)}</strong></td>`;
-                html += `<td><button class="btn btn-small btn-secondary" onclick="app.supprimerPatrimoine(${p.id})">✕</button></td>`;
+                html += `<td><button class="btn btn-small btn-secondary" onclick="app.supprimerPatrimoine('${p.id}')">✕</button></td>`;
                 html += '</tr>';
                 return html;
             }).join('');
@@ -4671,7 +4693,7 @@ const app = {
             'Supprimer l\'entrée',
             'Voulez-vous vraiment supprimer cette entrée de patrimoine ?',
             () => {
-                this.data.patrimoine = this.data.patrimoine.filter(p => p.id !== id);
+                this.data.patrimoine = this.data.patrimoine.filter(p => String(p.id) !== String(id));
                 this.save();
                 this.afficherPatrimoine();
                 this.refreshStatsPatrimoine();
