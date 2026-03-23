@@ -2827,10 +2827,8 @@ const app = {
             const oldEl = document.getElementById('pat-' + compte.replace(/\s/g,''));
             if (oldEl) oldEl.value = values[compte];
         });
-        this.data.patrimoine = this.data.patrimoine.filter(p => {
-            const entryMois = p.mois || (p.date || '').substring(0, 7);
-            return entryMois !== mois;
-        });
+        // Remplacer uniquement une entrée ayant exactement la même date (même jour)
+        this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
         this.data.patrimoine.push({ id: crypto.randomUUID(), date: dateVal, mois, ...values, total });
         this.save();
         this.afficherPatrimoine();
@@ -4573,10 +4571,8 @@ const app = {
             total += val;
         });
 
-        this.data.patrimoine = this.data.patrimoine.filter(p => {
-            const entryMois = p.mois || (p.date || '').substring(0, 7);
-            return entryMois !== mois;
-        });
+        // Remplacer uniquement une entrée ayant exactement la même date (même jour)
+        this.data.patrimoine = this.data.patrimoine.filter(p => (p.date || p.mois) !== dateVal);
         this.data.patrimoine.push({
             id: crypto.randomUUID(),
             date: dateVal,
@@ -4593,18 +4589,6 @@ const app = {
     },
 
     afficherPatrimoine() {
-        /* Dédupliquer : garder la saisie la plus récente par mois */
-        const byMois = {};
-        this.data.patrimoine.forEach(p => {
-            const key = p.mois || (p.date || '').substring(0, 7);
-            const existing = byMois[key];
-            if (!existing) { byMois[key] = p; return; }
-            const dNew = (p.date || p.mois || '');
-            const dOld = (existing.date || existing.mois || '');
-            if (dNew.localeCompare(dOld) >= 0) byMois[key] = p;
-        });
-        this.data.patrimoine = Object.values(byMois);
-
         /* Auto-expand la section historique */
         const histBody    = document.getElementById('hist-pat-body');
         const histArrow   = document.getElementById('hist-pat-arrow');
