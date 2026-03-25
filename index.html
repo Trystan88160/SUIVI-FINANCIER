@@ -1031,67 +1031,95 @@
 <div id="tab-patrimoine" class="tab-content">
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('patrimoine')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('patrimoine')" title="Aide">❓ Aide</button></div>
 
-<div data-card-id="pat-stats" data-tab="patrimoine" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-  <div class="stat-label">Total</div>
-  <div class="stat-value accent" id="pat-total">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-  <div class="stat-label">Épargne sécurisée</div>
-  <div class="stat-value" id="pat-securise">0 €</div>
-  <div id="pat-securise-pct" style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--success);margin-top:.2rem;font-weight:600"></div>
-</div>
-<div class="stat-card stat-card-main">
-  <div class="stat-label">Investissements</div>
-  <div class="stat-value" id="pat-invest">0 €</div>
-  <div id="pat-invest-pct" style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--accent-primary);margin-top:.2rem;font-weight:600"></div>
-</div>
-</div></div>
+<!-- ══ GLASSMORPHISM BLOC PRINCIPAL ══ -->
+<div data-card-id="pat-glass-wrap" data-tab="patrimoine" class="pat-gl-bg">
 
-<!-- Barre répartition liquidités / investissements -->
-<div data-card-id="pat-barre" data-tab="patrimoine"><div id="pat-repartition-bar" class="card" style="display:none;padding:1rem 1.5rem;margin-bottom:1.5rem">
-  <div style="font-family:'DM Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.65rem">Répartition du patrimoine</div>
-  <div style="height:12px;border-radius:100px;overflow:hidden;display:flex;margin-bottom:.6rem;gap:2px">
-    <div id="pat-bar-securise" style="height:100%;background:var(--success);transition:width .8s cubic-bezier(.34,1.1,.64,1);box-shadow:0 0 14px rgba(74,222,128,.45)"></div>
-    <div id="pat-bar-invest" style="height:100%;background:linear-gradient(90deg,var(--accent-gradient-start),var(--accent-gradient-end));transition:width .8s cubic-bezier(.34,1.1,.64,1) .15s;box-shadow:0 0 14px rgba(99,102,241,.4)"></div>
-  </div>
-  <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-    <div style="display:flex;align-items:center;gap:.4rem">
-      <div style="width:10px;height:10px;border-radius:3px;background:var(--success);box-shadow:0 0 6px var(--success);flex-shrink:0"></div>
-      <span style="font-size:.72rem;color:var(--text-secondary)">🛡️ Liquidités · <strong id="pat-lbl-securise">—</strong></span>
-    </div>
-    <div style="display:flex;align-items:center;gap:.4rem">
-      <div style="width:10px;height:10px;border-radius:3px;background:var(--accent-primary);box-shadow:0 0 6px var(--accent-primary);flex-shrink:0"></div>
-      <span style="font-size:.72rem;color:var(--text-secondary)">📈 Investissements · <strong id="pat-lbl-invest">—</strong></span>
+  <!-- Topbar -->
+  <div class="pat-gl-topbar">
+    <div class="pat-gl-topbar-title">Patrimoine</div>
+    <div style="display:flex;gap:.5rem">
+      <button class="btn-vault-secondary" onclick="app.toggleComptesPanel()">⚙ Comptes</button>
+      <button class="btn-vault-primary" onclick="app.openBsPatrimoine()">＋ Mettre à jour</button>
     </div>
   </div>
-</div>
-</div>
 
-<!-- 1. Mise à jour -->
-<div data-card-id="pat-saisie" data-tab="patrimoine"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
-  <div>
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">Patrimoine</div>
-    <div class="card-title" style="margin:0">Mise à jour</div>
+  <!-- 2 colonnes : gauche total/barre/stats · droite comptes -->
+  <div class="pat-gl-main">
+
+    <!-- Gauche -->
+    <div>
+      <div class="pat-gl-glass">
+        <div class="pat-gl-total-label">Patrimoine total · <span id="pat-gl-date">—</span></div>
+        <div class="pat-gl-total" id="pat-total">0 €</div>
+        <div class="pat-gl-delta" id="pat-gl-delta"></div>
+        <!-- Barre répartition (IDs conservés pour refreshStatsPatrimoine) -->
+        <div id="pat-repartition-bar" style="display:none;margin-top:.75rem">
+          <div class="pat-gl-bar-label">Répartition</div>
+          <div class="pat-gl-bar">
+            <div id="pat-bar-securise" class="pat-gl-bar-liq"></div>
+            <div id="pat-bar-invest" class="pat-gl-bar-inv"></div>
+          </div>
+          <div class="pat-gl-bar-legend">
+            <div style="display:flex;align-items:center;gap:.35rem;font-size:.65rem;color:var(--accent-primary)"><div style="width:6px;height:6px;border-radius:2px;background:var(--success)"></div>Liquidités · <strong id="pat-lbl-securise">—</strong></div>
+            <div style="display:flex;align-items:center;gap:.35rem;font-size:.65rem;color:var(--accent-primary)"><div style="width:6px;height:6px;border-radius:2px;background:var(--accent-primary)"></div>Invest. · <strong id="pat-lbl-invest">—</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="pat-gl-mini-stats">
+        <div class="pat-gl-mini">
+          <div class="pat-gl-mini-label">Épargne</div>
+          <div class="pat-gl-mini-val" id="pat-securise" style="color:var(--success)">0 €</div>
+          <div class="pat-gl-mini-sub" id="pat-securise-pct"></div>
+        </div>
+        <div class="pat-gl-mini">
+          <div class="pat-gl-mini-label">Investissements</div>
+          <div class="pat-gl-mini-val" id="pat-invest">0 €</div>
+          <div class="pat-gl-mini-sub" id="pat-invest-pct"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Droite : liste des comptes dynamique -->
+    <div>
+      <div class="pat-gl-acc-label">Comptes</div>
+      <div id="pat-gl-comptes-list" class="pat-gl-acc-list"></div>
+    </div>
   </div>
-  <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
-    <button class="btn-vault-secondary" onclick="app.toggleComptesPanel()">⚙ Comptes</button>
-    <button class="btn-vault-primary" onclick="app.openBsPatrimoine()">＋ Mettre à jour Patrimoine</button>
+
+  <!-- Graphique pleine largeur -->
+  <div class="pat-gl-chart-glass">
+    <div class="pat-gl-chart-header">
+      <div class="pat-gl-chart-title">Évolution du patrimoine</div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <div class="pat-gl-chart-legend">
+          <span class="pat-gl-leg-item"><span class="pat-gl-leg-dot" style="background:var(--accent-gradient-start)"></span>Total</span>
+          <span class="pat-gl-leg-item"><span class="pat-gl-leg-dot" style="background:var(--success)"></span>Liquidités</span>
+          <span class="pat-gl-leg-item"><span class="pat-gl-leg-dot" style="background:var(--accent-gradient-end)"></span>Invest.</span>
+        </div>
+        <button class="chart-color-btn" id="ccbtn-chart-pat-evol" onclick="app.openChartColorPicker('chart-pat-evol')" title="Couleurs">🎨</button>
+      </div>
+    </div>
+    <div style="position:relative;height:200px">
+      <canvas id="chart-pat-evol"></canvas>
+    </div>
   </div>
+
 </div>
-<!-- Formulaire original conservé (caché, utilisé par ajouterPatrimoine) -->
-<div style="display:none">
-<input type="date" class="form-input" id="pat-mois">
-<div id="pat-inputs"></div>
-</div></div>
 
-<!-- 2. Évolution graphique -->
-<div data-card-id="pat-evol" data-tab="patrimoine"><div class="card">
-<div class="card-header"><h2 class="card-title" style="font-size:1.2rem">Évolution du Patrimoine</h2></div>
-<div class="chart-container"><canvas id="chart-pat-evol"></canvas><button class="chart-color-btn" id="ccbtn-chart-pat-evol" onclick="app.openChartColorPicker('chart-pat-evol')" title="Personnaliser les couleurs">🎨</button></div>
-</div></div>
+<!-- ══ ÉLÉMENTS CACHÉS — COMPATIBILITÉ JS ══ -->
+<div style="display:none" aria-hidden="true">
+  <input type="date" class="form-input" id="pat-mois">
+  <div id="pat-inputs"></div>
+  <table><thead><tr><th id="pat-table-headers"></th></tr></thead></table>
+</div>
 
-<!-- 4. Historique Patrimoine -->
+<!-- ══ CARTES CACHÉES — pour le système layout (data-card-id requis) ══ -->
+<div data-card-id="pat-stats" data-tab="patrimoine" style="display:none"></div>
+<div data-card-id="pat-barre" data-tab="patrimoine" style="display:none"></div>
+<div data-card-id="pat-saisie" data-tab="patrimoine" style="display:none"></div>
+<div data-card-id="pat-evol" data-tab="patrimoine" style="display:none"></div>
+
+<!-- ══ HISTORIQUE ══ -->
 <div data-card-id="pat-historique" data-tab="patrimoine"><div class="card" style="padding:0;overflow:hidden">
 <div onclick="app.toggleSection('hist-pat-body','hist-pat-arrow','hist-pat-trigger')" id="hist-pat-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
   <h2 class="card-title" style="margin:0;font-size:1.2rem">📋 Historique Patrimoine</h2>
