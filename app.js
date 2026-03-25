@@ -4737,36 +4737,38 @@ const app = {
 
         const elSecPct = document.getElementById('pat-securise-pct');
         const elInvPct = document.getElementById('pat-invest-pct');
-        if (elSecPct) elSecPct.textContent = total > 0 ? pctSecurise.toFixed(1) + '%' : '';
-        if (elInvPct) elInvPct.textContent = total > 0 ? pctInvest.toFixed(1)   + '%' : '';
+        if (elSecPct) elSecPct.textContent = total > 0 ? pctSecurise.toFixed(1) + '% du total' : '';
+        if (elInvPct) elInvPct.textContent = total > 0 ? pctInvest.toFixed(1)   + '% du total' : '';
 
-        if (bar && total > 0) {
-            bar.style.display = 'block';
-            const bSec = document.getElementById('pat-bar-securise');
-            const bInv = document.getElementById('pat-bar-invest');
-            const lSec = document.getElementById('pat-lbl-securise');
-            const lInv = document.getElementById('pat-lbl-invest');
-            if (bSec) bSec.style.width = pctSecurise.toFixed(1) + '%';
-            if (bInv) bInv.style.width = pctInvest.toFixed(1)   + '%';
-            if (lSec) lSec.textContent = this.formatCurrency(securise) + ' · ' + pctSecurise.toFixed(1) + '%';
-            if (lInv) lInv.textContent = this.formatCurrency(invest)   + ' · ' + pctInvest.toFixed(1)   + '%';
-        } else if (bar) {
-            bar.style.display = 'none';
-        }
+        const bSec = document.getElementById('pat-bar-securise');
+        const bInv = document.getElementById('pat-bar-invest');
+        const lSec = document.getElementById('pat-lbl-securise');
+        const lInv = document.getElementById('pat-lbl-invest');
+        if (bSec) bSec.style.width = pctSecurise.toFixed(1) + '%';
+        if (bInv) bInv.style.width = pctInvest.toFixed(1)   + '%';
+        if (lSec) lSec.textContent = this.formatCurrency(securise) + ' · ' + pctSecurise.toFixed(1) + '%';
+        if (lInv) lInv.textContent = this.formatCurrency(invest)   + ' · ' + pctInvest.toFixed(1)   + '%';
+        if (bar) bar.style.display = total > 0 ? 'block' : 'none';
 
-        /* ── Glass UI extras ── */
+        /* ── Éléments glass ── */
         const glDate  = document.getElementById('pat-gl-date');
         const glDelta = document.getElementById('pat-gl-delta');
+        const elSecPct2 = document.getElementById('pat-securise-pct');
+        const elInvPct2 = document.getElementById('pat-invest-pct');
+        if (elSecPct2) elSecPct2.textContent = total > 0 ? pctSecurise.toFixed(1) + '%' : '';
+        if (elInvPct2) elInvPct2.textContent = total > 0 ? pctInvest.toFixed(1)   + '%' : '';
         if (glDate) {
-            const d = new Date(dernier.date || dernier.mois);
-            glDate.textContent = d.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+            try {
+                const d = new Date(dernier.date || dernier.mois);
+                glDate.textContent = d.toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'});
+            } catch(e) {}
         }
         if (glDelta) {
             const sortedAll = [...this.data.patrimoine].sort((a,b) => { const mc=b.mois.localeCompare(a.mois); return mc!==0?mc:(b.date||b.mois).localeCompare(a.date||a.mois); });
             if (sortedAll.length > 1) {
                 const prev = sortedAll[1];
                 const diff = dernier.total - prev.total;
-                const pct  = prev.total > 0 ? ((diff / prev.total) * 100).toFixed(2) : 0;
+                const pct  = prev.total > 0 ? ((diff / prev.total) * 100).toFixed(2) : '0.00';
                 glDelta.textContent = (diff >= 0 ? '▲ +' : '▼ ') + this.formatCurrency(Math.abs(diff)) + ' · ' + (diff >= 0 ? '+' : '') + pct + '% vs. saisie précédente';
                 glDelta.style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
             } else {
@@ -4774,31 +4776,18 @@ const app = {
                 glDelta.style.color = 'var(--text-tertiary)';
             }
         }
-        /* Liste des comptes glass */
+        /* Liste des comptes dynamique */
         const glList = document.getElementById('pat-gl-comptes-list');
         if (glList) {
-            const liquides = this.data.comptesLiquides || [];
-            const ICONS = { default: '🏦', pea: '📈', cto: '🌍', livret: '🏦', ldds: '💰', 'assurance': '🔐', 'vie': '🔐' };
-            const getIcon = name => {
-                const n = name.toLowerCase();
-                for (const [k, v] of Object.entries(ICONS)) if (n.includes(k)) return v;
-                return '💼';
-            };
-            glList.innerHTML = this.data.comptes
-                .filter(c => dernier[c] > 0)
-                .map(c => {
-                    const val  = dernier[c] || 0;
-                    const pctC = total > 0 ? (val / total * 100).toFixed(0) : 0;
-                    const type = liquides.includes(c) ? 'Liquidités' : 'Investissement';
-                    return \`<div class="pat-gl-acc-item">
-                        <div class="pat-gl-acc-icon">\${getIcon(c)}</div>
-                        <div class="pat-gl-acc-body">
-                            <div class="pat-gl-acc-name">\${c}</div>
-                            <div class="pat-gl-acc-type">\${type} · \${pctC}%</div>
-                        </div>
-                        <div class="pat-gl-acc-val">\${this.formatCurrency(val)}</div>
-                    </div>\`;
-                }).join('');
+            const liquides2 = this.data.comptesLiquides || [];
+            const ICONS = {'livret':'🏦','ldds':'💰','cel':'🏦','pea':'📈','cto':'🌍','assurance':'🔐','vie':'🔐','immo':'🏠','crypto':'₿'};
+            const getIcon = name => { const n = name.toLowerCase(); for (const [k,v] of Object.entries(ICONS)) if (n.includes(k)) return v; return '💼'; };
+            glList.innerHTML = this.data.comptes.filter(c => (dernier[c]||0) > 0).map(c => {
+                const val  = dernier[c] || 0;
+                const pctC = total > 0 ? (val/total*100).toFixed(0) : 0;
+                const type = liquides2.includes(c) ? 'Liquidités' : 'Investissement';
+                return '<div class="pat-gl-acc-item"><div class="pat-gl-acc-icon">' + getIcon(c) + '</div><div class="pat-gl-acc-body"><div class="pat-gl-acc-name">' + c + '</div><div class="pat-gl-acc-type">' + type + ' · ' + pctC + '%</div></div><div class="pat-gl-acc-val">' + this.formatCurrency(val) + '</div></div>';
+            }).join('');
         }
     },
 
@@ -5055,7 +5044,7 @@ const app = {
             { id: 'pea-historique', label: '📋 Historique PEA',            sub: 'Entrées historiques' },
         ],
         'patrimoine': [
-            { id: 'pat-stats',      label: 'Stats Patrimoine',         sub: 'Total, épargne, investissements' },
+            { id: 'pat-stats',      label: 'Vue Patrimoine',           sub: 'Total, comptes, graphique' },
             { id: 'pat-barre',      label: 'Répartition du patrimoine',sub: 'Liquidités vs investissements' },
             { id: 'pat-saisie',     label: 'Mise à jour',              sub: 'Saisie mensuelle' },
             { id: 'pat-evol',       label: 'Évolution du Patrimoine',  sub: 'Graphique par compte' },
@@ -5075,7 +5064,7 @@ const app = {
         'dashboard':  [['dash-hero'],['dash-widget'],['dash-recap-semaine'],['dash-acces'],['dash-alertes'],['dash-evol','dash-repart'],['dash-dep-budget'],['dash-heatmap']],
         'depenses':   [['dep-pointage'],['dep-revenus','dep-saisie'],['dep-etat-cat'],['dep-comparaison','dep-regle5030','dep-recurrentes'],['dep-analyse'],['dep-historique'],['dep-hist-revenus']],
         'pea':        [['pea-stats'],['pea-saisie'],['pea-lignes'],['pea-graphique'],['pea-retraite','pea-simulateur'],['pea-historique']],
-        'patrimoine': [['pat-stats'],['pat-barre'],['pat-saisie'],['pat-evol'],['pat-historique']],
+        'patrimoine': [['pat-stats'],['pat-historique']],
         'bilan':      [['bilan-annuel'],['bilan-rapport'],['bilan-objectifs'],['bilan-notes'],['bilan-hist-notes']],
     },
 
@@ -5958,33 +5947,33 @@ const app = {
     },
 
     chartPatEv() {
-        const data = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
-        if (!data.length) return;
-        const labels = data.map(p => new Date(p.date||p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'2-digit'}));
-        const liquides = this.data.comptesLiquides || [];
-        const totals  = data.map(p => p.total || 0);
-        const liquid  = data.map(p => this.data.comptes.filter(c => liquides.includes(c)).reduce((s,c) => s+(p[c]||0), 0));
-        const invest  = data.map(p => this.data.comptes.filter(c => !liquides.includes(c)).reduce((s,c) => s+(p[c]||0), 0));
-        const _ccEv = this.getChartCustomColors('chart-pat-evol');
-        const colTotal  = (_ccEv?.[0]) || '#3f51b5';
-        const colLiq    = (_ccEv?.[1]) || '#43a047';
-        const colInv    = (_ccEv?.[2]) || '#7c4dff';
-        if (this.charts.patEv) this.charts.patEv.destroy();
         const ctxEl = document.getElementById('chart-pat-evol');
         if (!ctxEl) return;
+        const sorted = [...this.data.patrimoine].sort((a, b) => (a.date||a.mois).localeCompare(b.date||b.mois));
+        if (!sorted.length) return;
+        const labels  = sorted.map(p => new Date(p.date||p.mois).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'2-digit'}));
+        const liquides = this.data.comptesLiquides || [];
+        const totals   = sorted.map(p => p.total || 0);
+        const liquid   = sorted.map(p => this.data.comptes.filter(c => liquides.includes(c)).reduce((s,c) => s+(p[c]||0), 0));
+        const invest   = sorted.map(p => this.data.comptes.filter(c => !liquides.includes(c)).reduce((s,c) => s+(p[c]||0), 0));
+        const _ccEv = this.getChartCustomColors('chart-pat-evol');
+        const colTotal = (_ccEv?.[0]) || '#3f51b5';
+        const colLiq   = (_ccEv?.[1]) || '#43a047';
+        const colInv   = (_ccEv?.[2]) || '#7c4dff';
+        if (this.charts.patEv) this.charts.patEv.destroy();
         const ctx = ctxEl.getContext('2d');
-        const gradTotal = ctx.createLinearGradient(0, 0, 0, 200);
-        gradTotal.addColorStop(0, colTotal + '38'); gradTotal.addColorStop(1, colTotal + '00');
-        const gradInv = ctx.createLinearGradient(0, 0, 0, 200);
-        gradInv.addColorStop(0, colInv + '28'); gradInv.addColorStop(1, colInv + '00');
+        const gradTotal = ctx.createLinearGradient(0,0,0,200);
+        gradTotal.addColorStop(0, colTotal+'38'); gradTotal.addColorStop(1, colTotal+'00');
+        const gradInv = ctx.createLinearGradient(0,0,0,200);
+        gradInv.addColorStop(0, colInv+'28'); gradInv.addColorStop(1, colInv+'00');
         this.charts.patEv = new Chart(ctx, {
             type: 'line',
             data: {
                 labels,
                 datasets: [
-                    { label: 'Total', data: totals, borderColor: colTotal, backgroundColor: gradTotal, fill: true, tension: 0.45, borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: colTotal, pointBorderColor: '#fff', pointBorderWidth: 1.5 },
-                    { label: 'Liquidités', data: liquid, borderColor: colLiq, backgroundColor: 'transparent', fill: false, tension: 0.45, borderWidth: 1.8, borderDash: [4,3], pointRadius: 2.5, pointBackgroundColor: colLiq, pointBorderColor: '#fff', pointBorderWidth: 1 },
-                    { label: 'Investissements', data: invest, borderColor: colInv, backgroundColor: gradInv, fill: true, tension: 0.45, borderWidth: 1.8, borderDash: [4,3], pointRadius: 2.5, pointBackgroundColor: colInv, pointBorderColor: '#fff', pointBorderWidth: 1 }
+                    { label: 'Total',           data: totals, borderColor: colTotal, backgroundColor: gradTotal, fill: true,  tension: 0.45, borderWidth: 2.5, pointRadius: 3,   pointBackgroundColor: colTotal, pointBorderColor: '#fff', pointBorderWidth: 1.5 },
+                    { label: 'Liquidités',       data: liquid, borderColor: colLiq,   backgroundColor: 'transparent',         fill: false, tension: 0.45, borderWidth: 1.8, borderDash: [4,3], pointRadius: 2.5, pointBackgroundColor: colLiq, pointBorderColor: '#fff', pointBorderWidth: 1 },
+                    { label: 'Investissements',  data: invest, borderColor: colInv,   backgroundColor: gradInv,   fill: true,  tension: 0.45, borderWidth: 1.8, borderDash: [4,3], pointRadius: 2.5, pointBackgroundColor: colInv, pointBorderColor: '#fff', pointBorderWidth: 1 }
                 ]
             },
             options: {
@@ -5995,8 +5984,7 @@ const app = {
                     tooltip: {
                         backgroundColor: 'rgba(255,255,255,0.92)', borderColor: 'rgba(63,81,181,0.18)', borderWidth: 1,
                         titleColor: '#1a1f3a', bodyColor: '#5c6285',
-                        titleFont: { family: 'DM Mono', size: 11 }, bodyFont: { family: 'DM Mono', size: 11 },
-                        padding: 10,
+                        titleFont: { family: 'DM Mono', size: 11 }, bodyFont: { family: 'DM Mono', size: 11 }, padding: 10,
                         callbacks: { label: c => ' ' + c.dataset.label + ' : ' + this.formatCurrency(c.parsed.y) }
                     }
                 },
