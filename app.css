@@ -1665,7 +1665,7 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .pat-tl-del:hover{color:var(--danger)}
 
 /* ── Patrimoine Glassmorphism ──────────────────────────────────────────── */
-.pat-gl-bg{background:linear-gradient(145deg,#e8eaf6 0%,#ede7f6 40%,#e3f2fd 100%);border-radius:20px;padding:1.75rem;margin-bottom:1.5rem}
+.pat-gl-bg{background:linear-gradient(145deg,#eceef8 0%,#e8ebf5 40%,#e5eaf6 100%);border-radius:20px;padding:1.75rem;margin-bottom:1.5rem}
 .pat-gl-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
 .pat-gl-topbar-title{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;letter-spacing:-.04em;color:var(--accent-primary)}
 .pat-gl-main{display:grid;grid-template-columns:1.1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
