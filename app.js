@@ -4477,7 +4477,7 @@ const app = {
                         <span class="mdc-date">${new Date(s.date).toLocaleDateString('fr-FR')}</span>
                         <div class="mdc-actions">
                             <button class="mdc-btn mdc-btn-edit" onclick="app.modifierNote('pea', '${s.id}')">✏️ Note</button>
-                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPEA(${s.id})">🗑 Suppr.</button>
+                            <button class="mdc-btn mdc-btn-del" onclick="app.supprimerPEA('${s.id}')">🗑 Suppr.</button>
                         </div>
                     </div>
                 </div>
@@ -4495,7 +4495,7 @@ const app = {
                         ${s.note || '—'}
                         <button class="btn btn-small btn-secondary" onclick="app.modifierNote('pea', '${s.id}')" style="margin-left:0.5rem" title="Modifier la note">✏️</button>
                     </td>
-                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerPEA(${s.id})">✕</button></td>
+                    <td><button class="btn btn-small btn-secondary" onclick="app.supprimerPEA('${s.id}')">✕</button></td>
                 </tr>
             `).join('');
         }
@@ -4515,7 +4515,7 @@ const app = {
             'Supprimer l\'entrée PEA',
             'Voulez-vous vraiment supprimer cette entrée PEA ?',
             () => {
-                this.data.suiviPEA = this.data.suiviPEA.filter(s => s.id !== id);
+                this.data.suiviPEA = this.data.suiviPEA.filter(s => String(s.id) !== String(id));
                 this.save();
                 this.afficherPEA();
                 this.refreshStatsPEA();
@@ -7526,7 +7526,7 @@ const app = {
     },
 
     supprimerLignePEA(id) {
-        this.data.lignesPEA = this.data.lignesPEA.filter(l => l.id !== id);
+        this.data.lignesPEA = this.data.lignesPEA.filter(l => String(l.id) !== String(id));
         this.save();
         this.refreshLignesPEA();
         this.chartPEA();
@@ -7559,7 +7559,7 @@ const app = {
                 <td style="font-family:DM Mono,monospace">${this.formatCurrency(l.valeurActuelle || l.pru)}</td>
                 <td style="font-family:DM Mono,monospace">${this.formatCurrency(investi)}</td>
                 <td class="stat-change ${pv >= 0 ? 'positive' : 'negative'}" style="font-family:DM Mono,monospace">${pv >= 0 ? '+' : ''}${pvPct}%</td>
-                <td><button class="btn btn-small btn-secondary" onclick="app.supprimerLignePEA(${l.id})">✕</button></td>
+                <td><button class="btn btn-small btn-secondary" onclick="app.supprimerLignePEA('${l.id}')">✕</button></td>
             </tr>`;
         }).join('');
         document.getElementById('pv-latente-total').textContent = (pvTotal >= 0 ? '+' : '') + this.formatCurrency(pvTotal);
