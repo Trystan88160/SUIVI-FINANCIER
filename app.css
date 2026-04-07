@@ -1700,3 +1700,40 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 .pat-gl-chart-legend{display:flex;gap:.85rem;align-items:center;flex-wrap:wrap}
 .pat-gl-leg-item{display:flex;align-items:center;gap:.35rem;font-size:.6rem;color:var(--accent-primary);opacity:.65;font-family:'DM Mono',monospace}
 @media(max-width:640px){.pat-gl-main{grid-template-columns:1fr}.pat-gl-total{font-size:2.4rem}}
+
+/* ═══════════════════════════════════════
+   PEA HERO — Glacier
+═══════════════════════════════════════ */
+.pea-hero{background:linear-gradient(140deg,rgba(20,32,130,.93) 0%,rgba(55,72,186,.89) 28%,rgba(90,52,198,.85) 60%,rgba(124,77,255,.8) 100%);border-radius:20px;padding:1.75rem 2rem 1.6rem;margin-bottom:1.5rem;position:relative;overflow:hidden;box-shadow:0 20px 56px rgba(63,81,181,.38),0 4px 16px rgba(124,77,255,.22),inset 0 1px 0 rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12)}
+.pea-hero::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:20px;pointer-events:none}
+/* Topbar */
+.pea-hero-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem;position:relative;z-index:1;flex-wrap:wrap;gap:.75rem}
+.pea-hero-eyebrow{font-family:'DM Mono',monospace;font-size:.57rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.45);margin-bottom:.3rem}
+.pea-hero-title{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:900;color:#fff;letter-spacing:-.04em}
+.pea-hero-badge{padding:.3rem .85rem;border-radius:100px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);font-family:'DM Mono',monospace;font-size:.6rem;color:#fff;white-space:nowrap}
+/* Split 2 colonnes */
+.pea-hero-split{display:grid;grid-template-columns:1.55fr 1fr;gap:1rem;position:relative;z-index:1;margin-bottom:.75rem}
+/* Grande glass gauche */
+.pea-hero-big-glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:15px;padding:1.25rem 1.4rem}
+.pea-hero-val-label{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.5);margin-bottom:.35rem}
+.pea-hero-val{font-family:'Outfit',sans-serif;font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-.06em;line-height:1}
+.pea-hero-perf{font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;color:rgba(255,255,255,.55);min-height:1.2em;transition:color .3s;margin-top:.2rem}
+.pea-hero-perf.pos{color:#a5f3c3}
+.pea-hero-perf.neg{color:#fca5a5}
+.pea-hero-bar-section{margin-top:.9rem}
+.pea-hero-bar-label{font-family:'DM Mono',monospace;font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.42);margin-bottom:.4rem}
+.pea-hero-bar{height:6px;border-radius:100px;background:rgba(255,255,255,.14);overflow:hidden}
+.pea-hero-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#a5f3c3,#34d399);transition:width .9s cubic-bezier(.34,1.1,.64,1)}
+.pea-hero-bar-fill.neg{background:linear-gradient(90deg,#fca5a5,#f87171)}
+/* KPIs droite */
+.pea-hero-right{display:flex;flex-direction:column;gap:.6rem}
+.pea-hero-kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:13px;padding:.88rem 1.05rem;flex:1}
+.pea-hero-kpi-label{font-family:'DM Mono',monospace;font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.48);margin-bottom:.28rem}
+.pea-hero-kpi-val{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.pea-hero-kpi-sub{font-family:'DM Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.38);margin-top:.1rem}
+/* 3 minis pleine largeur */
+.pea-hero-mini-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;position:relative;z-index:1}
+.pea-hero-mini{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:13px;padding:.78rem 1rem}
+.pea-hero-mini-label{font-family:'DM Mono',monospace;font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.46);margin-bottom:.22rem}
+.pea-hero-mini-val{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+@media(max-width:640px){.pea-hero-split{grid-template-columns:1fr}.pea-hero-val{font-size:2.2rem}.pea-hero-mini-row{grid-template-columns:1fr 1fr}.pea-hero-topbar{gap:.5rem}.pea-hero-badge{display:none}}

@@ -830,32 +830,75 @@
 <div id="tab-pea" class="tab-content">
 <div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓ Aide</button></div>
 
-<div data-card-id="pea-stats" data-tab="pea" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Valeur PEA</div>
-<div class="stat-value accent" id="pea-valeur">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Total Investi</div>
-<div class="stat-value" id="pea-investi">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Gain/Perte</div>
-<div class="stat-value accent" id="pea-gain">0 €</div>
-<div class="stat-change" id="pea-perf">0%</div>
-</div>
-</div></div>
+<!-- ══ PEA HERO (Glacier) ══ -->
+<div data-card-id="pea-stats" data-tab="pea" style="margin-bottom:1.5rem">
+<div class="pea-hero">
 
-<!-- 1. Mise à jour -->
-<div data-card-id="pea-saisie" data-tab="pea"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
-  <div>
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">PEA</div>
-    <div class="card-title" style="margin:0">Mise à jour PEA</div>
+  <!-- Topbar -->
+  <div class="pea-hero-topbar">
+    <div>
+      <div class="pea-hero-eyebrow">Plan d'Épargne en Actions · <span id="pea-gl-date">—</span></div>
+      <div class="pea-hero-title">Mon PEA</div>
+    </div>
+    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+      <span class="pea-hero-badge" id="pea-hero-badge">📊 0% de rendement</span>
+      <button class="btn-vault-primary" onclick="app.openBsPEA()">＋ Mettre à jour</button>
+    </div>
   </div>
-  <button class="btn-vault-primary" onclick="app.openBsPEA()">＋ Mettre à jour PEA</button>
+
+  <!-- Split : grande glass gauche + KPIs droite -->
+  <div class="pea-hero-split">
+
+    <!-- Gauche : valeur principale + delta + barre -->
+    <div class="pea-hero-big-glass">
+      <div class="pea-hero-val-label">Valeur actuelle du PEA</div>
+      <div class="pea-hero-val" id="pea-valeur">0 €</div>
+      <div class="pea-hero-perf" id="pea-perf">+0%</div>
+      <div class="pea-hero-bar-section">
+        <div class="pea-hero-bar-label">Performance globale</div>
+        <div class="pea-hero-bar">
+          <div class="pea-hero-bar-fill" id="pea-bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Droite : 2 KPIs empilés -->
+    <div class="pea-hero-right">
+      <div class="pea-hero-kpi">
+        <div class="pea-hero-kpi-label">📈 Plus-value latente</div>
+        <div class="pea-hero-kpi-val" id="pea-hero-pv">0 €</div>
+        <div class="pea-hero-kpi-sub">Sur le capital investi</div>
+      </div>
+      <div class="pea-hero-kpi">
+        <div class="pea-hero-kpi-label">🛡️ Fiscalité PEA</div>
+        <div class="pea-hero-kpi-val" style="font-size:.82rem">Exonéré IR après 5 ans</div>
+        <div class="pea-hero-kpi-sub">Prélèvements sociaux 17,2%</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 3 minis pleine largeur -->
+  <div class="pea-hero-mini-row">
+    <div class="pea-hero-mini">
+      <div class="pea-hero-mini-label">Total Investi</div>
+      <div class="pea-hero-mini-val" id="pea-investi">0 €</div>
+    </div>
+    <div class="pea-hero-mini">
+      <div class="pea-hero-mini-label">Gain / Perte</div>
+      <div class="pea-hero-mini-val" id="pea-gain">0 €</div>
+    </div>
+    <div class="pea-hero-mini">
+      <div class="pea-hero-mini-label">Plafond restant</div>
+      <div class="pea-hero-mini-val" id="pea-hero-plafond">150 000 €</div>
+    </div>
+  </div>
+
 </div>
-<!-- Inputs cachés pour compatibilité JS -->
-<div style="display:none">
+</div>
+
+<!-- 1. Mise à jour — inputs cachés pour compatibilité JS -->
+<div data-card-id="pea-saisie" data-tab="pea" style="display:none">
   <input type="date" id="pea-date">
   <input type="number" id="pea-val">
   <input type="number" id="pea-inv">
@@ -863,7 +906,7 @@
   <div id="pea-manuel"></div>
   <div id="pea-import"></div>
   <input type="file" id="pea-file" accept=".csv" onchange="app.importPEA(event)">
-</div></div> <!-- fin pea-saisie -->
+</div>
 
 <!-- 2. Lignes du portefeuille & Plus-values -->
 <div data-card-id="pea-lignes" data-tab="pea"><div class="card">
