@@ -4531,65 +4531,16 @@ const app = {
             document.getElementById('pea-investi').textContent = this.formatCurrency(0);
             document.getElementById('pea-gain').textContent = this.formatCurrency(0);
             document.getElementById('pea-perf').textContent = '0%';
-            const plafondEl = document.getElementById('pea-hero-plafond');
-            if (plafondEl) plafondEl.textContent = this.formatCurrency(150000);
-            const dateEl = document.getElementById('pea-gl-date');
-            if (dateEl) dateEl.textContent = '—';
-            const badgeEl = document.getElementById('pea-hero-badge');
-            if (badgeEl) badgeEl.textContent = '📊 Aucune donnée';
-            const pvEl = document.getElementById('pea-hero-pv');
-            if (pvEl) pvEl.textContent = this.formatCurrency(0);
-            const barFill = document.getElementById('pea-bar-fill');
-            if (barFill) { barFill.style.width = '0%'; barFill.classList.remove('neg'); }
-            const perfEl = document.getElementById('pea-perf');
-            if (perfEl) { perfEl.classList.remove('pos','neg'); }
             return;
         }
 
         const sorted = [...this.data.suiviPEA].sort((a, b) => new Date(b.date) - new Date(a.date));
         const dernier = sorted[0];
-        const gainPct = parseFloat(dernier.performance) || 0;
 
         document.getElementById('pea-valeur').textContent = this.formatCurrency(dernier.valeur);
         document.getElementById('pea-investi').textContent = this.formatCurrency(dernier.investi);
         document.getElementById('pea-gain').textContent = this.formatCurrency(dernier.gainPerte);
-        document.getElementById('pea-perf').textContent = (gainPct >= 0 ? '+' : '') + gainPct + '%';
-
-        // Hero — date
-        const dateEl = document.getElementById('pea-gl-date');
-        if (dateEl) dateEl.textContent = dernier.date
-            ? new Date(dernier.date).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'})
-            : '—';
-
-        // Hero — badge performance
-        const badgeEl = document.getElementById('pea-hero-badge');
-        if (badgeEl) badgeEl.textContent = (gainPct >= 0 ? '📈 +' : '📉 ') + gainPct + '% de rendement';
-
-        // Hero — plus-value latente
-        const pvEl = document.getElementById('pea-hero-pv');
-        if (pvEl) pvEl.textContent = (dernier.gainPerte >= 0 ? '+' : '') + this.formatCurrency(dernier.gainPerte);
-
-        // Hero — barre de performance (20% gain = 100% barre, max 100%)
-        const barFill = document.getElementById('pea-bar-fill');
-        if (barFill) {
-            const width = Math.min(Math.abs(gainPct) * 5, 100);
-            barFill.style.width = width + '%';
-            barFill.classList.toggle('neg', gainPct < 0);
-        }
-
-        // Hero — plafond restant (150 000 - investi, min 0)
-        const plafondEl = document.getElementById('pea-hero-plafond');
-        if (plafondEl) {
-            const plafond = Math.max(0, 150000 - (dernier.investi || 0));
-            plafondEl.textContent = this.formatCurrency(plafond);
-        }
-
-        // Hero — couleur perf
-        const perfEl = document.getElementById('pea-perf');
-        if (perfEl) {
-            perfEl.classList.toggle('pos', gainPct >= 0);
-            perfEl.classList.toggle('neg', gainPct < 0);
-        }
+        document.getElementById('pea-perf').textContent = dernier.performance + '%';
     },
 
     importPEA(event) {
