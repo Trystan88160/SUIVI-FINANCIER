@@ -1381,10 +1381,12 @@ const app = {
         const labels = document.getElementById('heatmap-months-labels');
         const grid = document.getElementById('heatmap-grid');
         if (!labels || !grid) return;
+        const exclus = this.data.categoriesEpargne || ['ÉPARGNE'];
         const totaux = Array(12).fill(0);
         this.data.depenses.forEach(d => {
             const date = new Date(d.date);
-            if (date.getFullYear() === annee) totaux[date.getMonth()] += d.montant;
+            if (date.getFullYear() === annee && !exclus.some(e => d.categorie.toUpperCase().includes(e.toUpperCase())))
+                totaux[date.getMonth()] += d.montant;
         });
         const max = Math.max(...totaux, 1);
         labels.innerHTML = moisLabels.map(m =>
