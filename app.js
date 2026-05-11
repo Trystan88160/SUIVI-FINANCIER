@@ -3174,7 +3174,7 @@ const app = {
 
     closeAllCatsModal() {
         document.getElementById('modal-all-cats')?.classList.remove('open');
-        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats']
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats','pea-panel']
             .some(mid => document.getElementById(mid)?.classList.contains('open'));
         if (!anyOpen) {
             document.getElementById('budget-modal-overlay')?.classList.remove('open');
@@ -4528,21 +4528,126 @@ const app = {
     },
 
     refreshStatsPEA() {
+        const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
         if (this.data.suiviPEA.length === 0) {
-            document.getElementById('pea-valeur').textContent = this.formatCurrency(0);
-            document.getElementById('pea-investi').textContent = this.formatCurrency(0);
-            document.getElementById('pea-gain').textContent = this.formatCurrency(0);
-            document.getElementById('pea-perf').textContent = '0%';
+            setEl('pea-valeur', this.formatCurrency(0));
+            setEl('pea-investi', this.formatCurrency(0));
+            const gainEl0 = document.getElementById('pea-gain');
+            if (gainEl0) { gainEl0.textContent = this.formatCurrency(0); gainEl0.className = 'pea-hs-val'; }
+            const perfEl0 = document.getElementById('pea-perf');
+            if (perfEl0) { perfEl0.textContent = '0 %'; perfEl0.className = 'pea-hs-val'; }
+            const badge0 = document.getElementById('pea-perf-badge');
+            if (badge0) { badge0.textContent = '0 %'; badge0.className = 'pea-hero-badge'; }
+            setEl('pea-plafond', '—');
+            setEl('pea-hero-sync-label', '—');
             return;
         }
 
         const sorted = [...this.data.suiviPEA].sort((a, b) => new Date(b.date) - new Date(a.date));
         const dernier = sorted[0];
+        const perf = parseFloat(dernier.performance) || 0;
+        const gain = dernier.gainPerte || 0;
 
-        document.getElementById('pea-valeur').textContent = this.formatCurrency(dernier.valeur);
-        document.getElementById('pea-investi').textContent = this.formatCurrency(dernier.investi);
-        document.getElementById('pea-gain').textContent = this.formatCurrency(dernier.gainPerte);
-        document.getElementById('pea-perf').textContent = dernier.performance + '%';
+        setEl('pea-valeur', this.formatCurrency(dernier.valeur));
+        setEl('pea-investi', this.formatCurrency(dernier.investi));
+
+        const gainEl = document.getElementById('pea-gain');
+        if (gainEl) {
+            gainEl.textContent = (gain >= 0 ? '+' : '') + this.formatCurrency(gain);
+            gainEl.className = 'pea-hs-val ' + (gain >= 0 ? 'pos' : 'neg');
+        }
+
+        const perfEl = document.getElementById('pea-perf');
+        if (perfEl) {
+            perfEl.textContent = (perf >= 0 ? '+' : '') + perf.toFixed(2) + ' %';
+            perfEl.className = 'pea-hs-val ' + (perf >= 0 ? 'pos' : 'neg');
+        }
+
+        const badge = document.getElementById('pea-perf-badge');
+        if (badge) {
+            badge.textContent = (perf >= 0 ? '▲ +' : '▼ ') + Math.abs(perf).toFixed(2) + ' %';
+            badge.className = 'pea-hero-badge ' + (perf >= 0 ? 'pos' : 'neg');
+        }
+
+        const plafondPct = dernier.investi ? ((dernier.investi / 150000) * 100).toFixed(1) + ' %' : '—';
+        setEl('pea-plafond', plafondPct);
+        setEl('pea-hero-sync-label', 'Mise à jour · ' + new Date(dernier.date).toLocaleDateString('fr-FR'));
+    },
+
+    /* ── Dropdown outils PEA (budget-style) ── */
+    togglePeaOutilsMenu() {
+        const menu = document.getElementById('pea-outils-menu');
+        const btn  = document.getElementById('pea-outils-btn');
+        if (!menu || !btn) return;
+        const open = menu.classList.toggle('open');
+        btn.classList.toggle('open-state', open);
+        if (open) {
+            const close = (e) => {
+                if (!document.getElementById('pea-outils-wrap')?.contains(e.target)) {
+                    menu.classList.remove('open');
+                    btn.classList.remove('open-state');
+                    document.removeEventListener('click', close);
+                }
+            };
+            setTimeout(() => document.addEventListener('click', close), 10);
+        }
+    },
+
+    /* ── Ouvre le panel slide-in sur un onglet donné ── */
+    openPeaPanel(tab) {
+        document.getElementById('pea-outils-menu')?.classList.remove('open');
+        document.getElementById('pea-outils-btn')?.classList.remove('open-state');
+        const overlay = document.getElementById('pea-panel-overlay');
+        const panel   = document.getElementById('pea-panel');
+        if (!panel || !overlay) return;
+        overlay.classList.add('open');
+        panel.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        this.switchPeaPanelTab(tab, document.getElementById('pea-ptab-' + tab));
+    },
+
+    closePeaPanel() {
+        document.getElementById('pea-panel-overlay')?.classList.remove('open');
+        document.getElementById('pea-panel')?.classList.remove('open');
+        document.body.style.overflow = '';
+    },
+
+    switchPeaPanelTab(name, el) {
+        ['previsions', 'calculateur', 'retraite', 'simulateur'].forEach(t => {
+            const p = document.getElementById('pea-panel-' + t);
+            if (p) p.style.display = t === name ? 'block' : 'none';
+        });
+        document.querySelectorAll('.pea-panel-tab').forEach(b => b.classList.toggle('active', b === el));
+        const titles = { previsions: '📊 Prévisions', calculateur: '🧮 Calculateur d'ordre', retraite: '👴 Projection retraite', simulateur: '🎲 Simulateur « Et si… »' };
+        const titleEl = document.getElementById('pea-panel-title');
+        if (titleEl) titleEl.textContent = titles[name] || '🧮 Outils PEA';
+        if (name === 'calculateur') this.genererLignes();
+        if (name === 'previsions' && this.data.suiviPEA.length > 0) {
+            const sorted = [...this.data.suiviPEA].sort((a,b) => new Date(b.date)-new Date(a.date));
+            const el2 = document.getElementById('prev-pea-actuel');
+            if (el2 && !el2.value) el2.value = sorted[0].valeur;
+        }
+    },
+
+    /* ── Toggle affichage carte portefeuille ── */
+    togglePeaPfCard() {
+        const wrap = document.getElementById('pea-two-col-wrap');
+        const btn  = document.getElementById('pea-toggle-pf-btn');
+        const icon = document.getElementById('pea-toggle-pf-icon');
+        if (!wrap) return;
+        const hidden = wrap.classList.toggle('pf-hidden');
+        if (btn)  btn.classList.toggle('pf-masque', hidden);
+        if (icon) icon.textContent = hidden ? '🙈' : '👁';
+    },
+
+    /* ── Filtre de période sur le graphique PEA ── */
+    switchPeaChartPeriod(el, period) {
+        document.querySelectorAll('#tab-pea .period-btn').forEach(b => {
+            b.className = b === el ? 'btn btn-small period-btn active' : 'btn btn-small btn-secondary period-btn';
+        });
+        this._peaChartPeriod = period;
+        this.chartPEA();
     },
 
     importPEA(event) {
@@ -5908,7 +6013,16 @@ const app = {
     },
 
     chartPEA() {
-        const data = [...this.data.suiviPEA].sort((a, b) => new Date(a.date) - new Date(b.date));
+        let data = [...this.data.suiviPEA].sort((a, b) => new Date(a.date) - new Date(b.date));
+        // Filtre période
+        const period = this._peaChartPeriod || 'all';
+        if (period !== 'all' && data.length > 0) {
+            const now = new Date();
+            const cutoff = new Date(now);
+            if (period === '6m') cutoff.setMonth(now.getMonth() - 6);
+            else if (period === '1a') cutoff.setFullYear(now.getFullYear() - 1);
+            data = data.filter(s => new Date(s.date) >= cutoff);
+        }
         const labels = data.map(s => new Date(s.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'}));
         const valeurs = data.map(s => s.valeur);
         const investis = data.map(s => s.investi);
@@ -8264,6 +8378,7 @@ const app = {
         document.getElementById('emojiPicker').classList.remove('open');
     },
 
+    /* Legacy compat — ancien toggle outils (remplacé par openPeaPanel) */
     togglePeaOutils() {
         const card = document.getElementById('pea-outils-card');
         const btn  = document.getElementById('btn-pea-outils-toggle');
@@ -8827,7 +8942,7 @@ const app = {
     closeBudgetHistoriqueComplet() {
         document.getElementById('budget-hist-complet-wrap')?.classList.remove('open');
         // Ferme overlay seulement si aucune autre modal ouverte
-        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse']
+        const anyOpen = ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','pea-panel']
             .some(mid => document.getElementById(mid)?.classList.contains('open'));
         if (!anyOpen) {
             document.getElementById('budget-modal-overlay')?.classList.remove('open');
