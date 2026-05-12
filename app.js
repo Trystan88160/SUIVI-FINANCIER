@@ -4619,7 +4619,7 @@ const app = {
             if (p) p.style.display = t === name ? 'block' : 'none';
         });
         document.querySelectorAll('.pea-panel-tab').forEach(b => b.classList.toggle('active', b === el));
-        const titles = { previsions: '📊 Prévisions', calculateur: '🧮 Calculateur d'ordre', retraite: '👴 Projection retraite', simulateur: '🎲 Simulateur « Et si… »' };
+        const titles = { previsions: '📊 Prévisions', calculateur: '🧮 Calculateur d\'ordre', retraite: '👴 Projection retraite', simulateur: '🎲 Simulateur « Et si… »' };
         const titleEl = document.getElementById('pea-panel-title');
         if (titleEl) titleEl.textContent = titles[name] || '🧮 Outils PEA';
         if (name === 'calculateur') this.genererLignes();
