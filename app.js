@@ -5177,7 +5177,7 @@ const app = {
     _defaultLayout: {
         'dashboard':  [['dash-hero'],['dash-widget'],['dash-recap-semaine'],['dash-acces'],['dash-alertes'],['dash-evol','dash-repart'],['dash-dep-budget'],['dash-heatmap']],
         'depenses':   [['dep-pointage'],['dep-revenus','dep-saisie'],['dep-etat-cat'],['dep-comparaison','dep-regle5030','dep-recurrentes'],['dep-analyse'],['dep-historique'],['dep-hist-revenus']],
-        'pea':        [['pea-stats'],['pea-saisie'],['pea-lignes','pea-graphique'],['pea-historique']],
+        'pea':        [['pea-stats'],['pea-saisie'],['pea-graphique'],['pea-historique']],
         'patrimoine': [['pat-stats'],['pat-historique']],
         'bilan':      [['bilan-annuel'],['bilan-rapport'],['bilan-objectifs'],['bilan-notes'],['bilan-hist-notes']],
     },

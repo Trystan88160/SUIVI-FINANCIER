@@ -916,9 +916,6 @@
         <div class="card-title" style="margin:0;font-size:1rem">Mise à jour du portefeuille</div>
       </div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
-        <button class="pea-toggle-pf-btn" id="pea-toggle-pf-btn" onclick="app.togglePeaPfCard()" title="Afficher/masquer la carte portefeuille">
-          <span id="pea-toggle-pf-icon">👁</span> Portefeuille
-        </button>
         <button class="btn-vault-secondary" onclick="app.openBsPEA()">✏️ Saisie manuelle</button>
         <button class="btn btn-small btn-secondary" id="btn-actualiser-pea" onclick="app.actualiserCoursPEA()">
           <span id="actualiser-icon">🔄</span> Actualiser cours
@@ -938,30 +935,12 @@
   </div>
 </div>
 
-<!-- LIGNES PORTEFEUILLE — enfant direct du tab -->
-<div data-card-id="pea-lignes" data-tab="pea" id="pea-col-lignes">
-  <div class="card" style="padding:0;overflow:hidden;height:100%;display:flex;flex-direction:column">
-    <div class="card-header">
-      <h2 class="card-title" style="font-size:1.1rem">📋 Portefeuille & Plus-values</h2>
-      <div style="display:flex;gap:.5rem;align-items:center">
-        <button class="btn btn-small btn-secondary" id="btn-actualiser-pea-2" onclick="app.actualiserCoursPEA()" title="Actualisation via Finnhub">
-          📡 Actualiser
-        </button>
-        <button class="btn-vault-primary" onclick="app.ouvrirAjoutLignePEA()">＋ Ligne</button>
-      </div>
-    </div>
-    <div class="table-container" style="flex:1">
-      <table class="table" id="table-lignes-pea">
-        <thead><tr><th>Titre</th><th>ISIN</th><th>Parts</th><th>PRU</th><th>Valeur act.</th><th>Investi</th><th>+/−</th><th></th></tr></thead>
-        <tbody id="tbody-lignes-pea">
-          <tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📈</div><div>Ajoute tes premières lignes PEA</div></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="padding:.75rem 1.5rem;background:var(--bg-secondary);border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
-      <span style="color:var(--text-secondary);font-size:.85rem">💹 Plus-value latente totale</span>
-      <span class="stat-value accent" id="pv-latente-total" style="font-size:1.2rem">0 €</span>
-    </div>
+<!-- pea-lignes masqué — compat JS -->
+<div data-card-id="pea-lignes" data-tab="pea" id="pea-col-lignes" style="display:none">
+  <div style="display:none">
+    <table id="table-lignes-pea"><tbody id="tbody-lignes-pea"></tbody></table>
+    <span id="pv-latente-total"></span>
+    <button id="btn-actualiser-pea-2"></button>
   </div>
 </div>
 
@@ -977,8 +956,7 @@
         </div>
       </div>
       <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-small btn-secondary" id="btn-benchmark-toggle" onclick="app.toggleBenchmark()" style="font-size:.7rem">📊 Benchmark</button>
-        <button class="btn btn-small period-btn active" onclick="app.switchPeaChartPeriod(this,'all')">Tout</button>
+<button class="btn btn-small period-btn active" onclick="app.switchPeaChartPeriod(this,'all')">Tout</button>
         <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'1a')">1 An</button>
         <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'6m')">6M</button>
       </div>
@@ -992,27 +970,13 @@
   </div>
 </div>
 
-<!-- BENCHMARK (hors layout — géré manuellement) -->
+<!-- benchmark masqué — compat JS -->
 <div id="benchmark-card" style="display:none">
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title" style="font-size:1.1rem">📊 Benchmark — Ton PEA vs Indices</h2>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-        <button class="btn btn-small period-btn active" onclick="app.switchBenchmarkPeriod(this,'1m')">1M</button>
-        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'3m')">3M</button>
-        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'6m')">6M</button>
-        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'1a')">1 An</button>
-      </div>
-    </div>
-    <div class="grid grid-3" id="benchmark-stats" style="margin-bottom:1.25rem"></div>
-    <div class="chart-container">
-      <canvas id="chart-benchmark"></canvas>
-      <button class="chart-color-btn" id="ccbtn-chart-benchmark" onclick="app.openChartColorPicker('chart-benchmark')" title="Personnaliser les couleurs">🎨</button>
-    </div>
-    <div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.75rem;padding:.6rem;background:var(--bg-secondary);border-radius:10px;line-height:1.6">
-      💡 <strong>Données Finnhub</strong> — MSCI World (IWDA) · S&P 500 (SPY) · données de clôture
-      <span id="benchmark-last-update"></span>
-    </div>
+  <div style="display:none">
+    <canvas id="chart-benchmark"></canvas>
+    <button id="ccbtn-chart-benchmark"></button>
+    <div id="benchmark-stats"></div>
+    <span id="benchmark-last-update"></span>
   </div>
 </div>
 
