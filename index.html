@@ -828,204 +828,337 @@
 
 <!-- PEA -->
 <div id="tab-pea" class="tab-content">
-<div class="tab-customize-bar"><button class="tab-customize-btn" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser l'onglet</button><button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓ Aide</button></div>
 
-<div data-card-id="pea-stats" data-tab="pea" style="margin-bottom:2rem"><div class="grid grid-3 grid-stats">
-<div class="stat-card stat-card-main">
-<div class="stat-label">Valeur PEA</div>
-<div class="stat-value accent" id="pea-valeur">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Total Investi</div>
-<div class="stat-value" id="pea-investi">0 €</div>
-</div>
-<div class="stat-card stat-card-main">
-<div class="stat-label">Gain/Perte</div>
-<div class="stat-value accent" id="pea-gain">0 €</div>
-<div class="stat-change" id="pea-perf">0%</div>
-</div>
-</div></div>
-
-<!-- 1. Mise à jour -->
-<div data-card-id="pea-saisie" data-tab="pea"><div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.25rem 1.75rem">
-  <div>
-    <div style="font-size:.62rem;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary);margin-bottom:.25rem">PEA</div>
-    <div class="card-title" style="margin:0">Mise à jour PEA</div>
+<!-- Topbar PEA : hors data-card-id, reste en place -->
+<div class="pea-topbar">
+  <div class="pea-topbar-left">
+    <span class="pea-topbar-title">PEA</span>
+    <button class="tab-customize-btn" onclick="app.openTabCustomizer('pea')">⚙️ Personnaliser</button>
+    <button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓</button>
   </div>
-  <button class="btn-vault-primary" onclick="app.openBsPEA()">＋ Mettre à jour PEA</button>
+  <div class="pea-topbar-right">
+    <div class="pea-outils-wrap" id="pea-outils-wrap">
+      <button class="pea-outils-btn" id="pea-outils-btn" onclick="app.togglePeaOutilsMenu()">
+        🧮 Outils <span class="pea-outils-chev">▾</span>
+      </button>
+      <div class="pea-outils-menu" id="pea-outils-menu">
+        <div class="pea-om-head">Choisissez un outil</div>
+        <div class="pea-om-item" onclick="app.openPeaPanel('previsions')">
+          <div class="pea-om-icon" style="background:linear-gradient(135deg,rgba(63,81,181,.1),rgba(124,77,255,.08))">📊</div>
+          <div><div class="pea-om-label">Prévisions</div><div class="pea-om-desc">Simulation de croissance</div></div>
+          <span class="pea-om-arrow">›</span>
+        </div>
+        <div class="pea-om-item" onclick="app.openPeaPanel('calculateur')">
+          <div class="pea-om-icon" style="background:linear-gradient(135deg,rgba(0,200,83,.1),rgba(0,150,60,.06))">🧮</div>
+          <div><div class="pea-om-label">Calculateur d'ordre</div><div class="pea-om-desc">Nombre de parts à acheter</div></div>
+          <span class="pea-om-arrow">›</span>
+        </div>
+        <div class="pea-om-item" onclick="app.openPeaPanel('retraite')">
+          <div class="pea-om-icon" style="background:linear-gradient(135deg,rgba(255,152,0,.1),rgba(230,115,0,.06))">👴</div>
+          <div><div class="pea-om-label">Projection retraite</div><div class="pea-om-desc">Capital & rente estimée</div></div>
+          <span class="pea-om-arrow">›</span>
+        </div>
+        <div class="pea-om-item" onclick="app.openPeaPanel('simulateur')">
+          <div class="pea-om-icon" style="background:linear-gradient(135deg,rgba(244,67,54,.1),rgba(200,50,30,.06))">🎲</div>
+          <div><div class="pea-om-label">Simulateur « Et si… »</div><div class="pea-om-desc">Scénarios alternatifs</div></div>
+          <span class="pea-om-arrow">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- Inputs cachés pour compatibilité JS -->
+
+<!-- HERO STATS -->
+<div data-card-id="pea-stats" data-tab="pea">
+  <div class="pea-hero-card">
+    <div class="pea-hero-deco1"></div>
+    <div class="pea-hero-deco2"></div>
+    <div class="pea-hero-inner">
+      <div class="pea-hero-left">
+        <div class="pea-hero-eyebrow">Plan d'Épargne en Actions</div>
+        <div class="pea-hero-value" id="pea-valeur">0 €</div>
+        <div class="pea-hero-sub">
+          <span id="pea-investi">0 €</span> investis
+          <span class="pea-hero-badge" id="pea-perf-badge">0 %</span>
+        </div>
+        <div class="pea-hero-sync">
+          <span class="pea-hero-dot"></span>
+          <span id="pea-hero-sync-label">—</span>
+        </div>
+      </div>
+      <div class="pea-hero-right">
+        <div class="pea-hero-stat">
+          <div class="pea-hs-label">Plus-value</div>
+          <div class="pea-hs-val" id="pea-gain">0 €</div>
+        </div>
+        <div class="pea-hero-sep"></div>
+        <div class="pea-hero-stat">
+          <div class="pea-hs-label">Performance</div>
+          <div class="pea-hs-val" id="pea-perf">0 %</div>
+        </div>
+        <div class="pea-hero-sep"></div>
+        <div class="pea-hero-stat">
+          <div class="pea-hs-label">Plafond utilisé</div>
+          <div class="pea-hs-val" id="pea-plafond">—</div>
+          <div class="pea-hs-sub">sur 150 000 €</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIONS + SAISIE -->
+<div data-card-id="pea-saisie" data-tab="pea">
+  <div class="card" style="padding:1rem 1.75rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+      <div>
+        <div class="pea-sec-label">PEA</div>
+        <div class="card-title" style="margin:0;font-size:1rem">Mise à jour du portefeuille</div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+        <button class="pea-toggle-pf-btn" id="pea-toggle-pf-btn" onclick="app.togglePeaPfCard()" title="Afficher/masquer la carte portefeuille">
+          <span id="pea-toggle-pf-icon">👁</span> Portefeuille
+        </button>
+        <button class="btn-vault-secondary" onclick="app.openBsPEA()">✏️ Saisie manuelle</button>
+        <button class="btn btn-small btn-secondary" id="btn-actualiser-pea" onclick="app.actualiserCoursPEA()">
+          <span id="actualiser-icon">🔄</span> Actualiser cours
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Inputs cachés compatibilité JS existant -->
+  <div style="display:none">
+    <input type="date" id="pea-date">
+    <input type="number" id="pea-val">
+    <input type="number" id="pea-inv">
+    <input type="text" id="pea-note">
+    <div id="pea-manuel"></div>
+    <div id="pea-import"></div>
+    <input type="file" id="pea-file" accept=".csv" onchange="app.importPEA(event)">
+  </div>
+</div>
+
+<!-- LIGNES PORTEFEUILLE — enfant direct du tab -->
+<div data-card-id="pea-lignes" data-tab="pea" id="pea-col-lignes">
+  <div class="card" style="padding:0;overflow:hidden;height:100%;display:flex;flex-direction:column">
+    <div class="card-header">
+      <h2 class="card-title" style="font-size:1.1rem">📋 Portefeuille & Plus-values</h2>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button class="btn btn-small btn-secondary" id="btn-actualiser-pea-2" onclick="app.actualiserCoursPEA()" title="Actualisation via Finnhub">
+          📡 Actualiser
+        </button>
+        <button class="btn-vault-primary" onclick="app.ouvrirAjoutLignePEA()">＋ Ligne</button>
+      </div>
+    </div>
+    <div class="table-container" style="flex:1">
+      <table class="table" id="table-lignes-pea">
+        <thead><tr><th>Titre</th><th>ISIN</th><th>Parts</th><th>PRU</th><th>Valeur act.</th><th>Investi</th><th>+/−</th><th></th></tr></thead>
+        <tbody id="tbody-lignes-pea">
+          <tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📈</div><div>Ajoute tes premières lignes PEA</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:.75rem 1.5rem;background:var(--bg-secondary);border-top:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center">
+      <span style="color:var(--text-secondary);font-size:.85rem">💹 Plus-value latente totale</span>
+      <span class="stat-value accent" id="pv-latente-total" style="font-size:1.2rem">0 €</span>
+    </div>
+  </div>
+</div>
+
+<!-- GRAPHIQUE — enfant direct du tab, même rangée que lignes -->
+<div data-card-id="pea-graphique" data-tab="pea">
+  <div class="card" style="display:flex;flex-direction:column;height:100%">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title" style="font-size:1.1rem">📈 Évolution du PEA</h2>
+        <div class="pea-chart-legend">
+          <span class="pea-legend-dot" style="background:var(--accent-primary)"></span>Valeur
+          <span class="pea-legend-dot" style="background:var(--border-color);border:1px solid #aaa"></span>Investi
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-small btn-secondary" id="btn-benchmark-toggle" onclick="app.toggleBenchmark()" style="font-size:.7rem">📊 Benchmark</button>
+        <button class="btn btn-small period-btn active" onclick="app.switchPeaChartPeriod(this,'all')">Tout</button>
+        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'1a')">1 An</button>
+        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'6m')">6M</button>
+      </div>
+    </div>
+    <div style="padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column">
+      <div class="chart-container" style="flex:1;min-height:240px">
+        <canvas id="chart-pea"></canvas>
+        <button class="chart-color-btn" id="ccbtn-chart-pea" onclick="app.openChartColorPicker('chart-pea')" title="Personnaliser les couleurs">🎨</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BENCHMARK (hors layout — géré manuellement) -->
+<div id="benchmark-card" style="display:none">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title" style="font-size:1.1rem">📊 Benchmark — Ton PEA vs Indices</h2>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-small period-btn active" onclick="app.switchBenchmarkPeriod(this,'1m')">1M</button>
+        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'3m')">3M</button>
+        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'6m')">6M</button>
+        <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'1a')">1 An</button>
+      </div>
+    </div>
+    <div class="grid grid-3" id="benchmark-stats" style="margin-bottom:1.25rem"></div>
+    <div class="chart-container">
+      <canvas id="chart-benchmark"></canvas>
+      <button class="chart-color-btn" id="ccbtn-chart-benchmark" onclick="app.openChartColorPicker('chart-benchmark')" title="Personnaliser les couleurs">🎨</button>
+    </div>
+    <div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.75rem;padding:.6rem;background:var(--bg-secondary);border-radius:10px;line-height:1.6">
+      💡 <strong>Données Finnhub</strong> — MSCI World (IWDA) · S&P 500 (SPY) · données de clôture
+      <span id="benchmark-last-update"></span>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORIQUE -->
+<div data-card-id="pea-historique" data-tab="pea">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div onclick="app.toggleSection('hist-pea-body','hist-pea-arrow','hist-pea-trigger')" id="hist-pea-trigger"
+         style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;">
+      <h2 class="card-title" style="margin:0;font-size:1.1rem">📋 Historique PEA</h2>
+      <span id="hist-pea-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform .25s;line-height:1">›</span>
+    </div>
+    <div id="hist-pea-body" style="display:none;padding:1.5rem 2rem">
+      <div id="pea-table-wrapper" class="table-container">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Valeur</th><th>Investi</th><th>Gain/Perte</th><th>Note</th><th></th></tr></thead>
+          <tbody id="table-pea"></tbody>
+        </table>
+      </div>
+      <div id="mobile-pea-cards" class="mobile-cards-container" style="display:none"></div>
+      <button class="show-more-btn" id="show-more-pea" onclick="app.toggleShowMore('pea')" style="display:none">Afficher plus</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stubs compat : IDs anciens référencés dans app.js -->
 <div style="display:none">
-  <input type="date" id="pea-date">
-  <input type="number" id="pea-val">
-  <input type="number" id="pea-inv">
-  <input type="text" id="pea-note">
-  <div id="pea-manuel"></div>
-  <div id="pea-import"></div>
-  <input type="file" id="pea-file" accept=".csv" onchange="app.importPEA(event)">
-</div></div> <!-- fin pea-saisie -->
-
-<!-- 2. Lignes du portefeuille & Plus-values -->
-<div data-card-id="pea-lignes" data-tab="pea"><div class="card">
-<div class="card-header">
-  <h2 class="card-title" style="font-size:1.2rem">📋 Lignes du Portefeuille & Plus-values</h2>
-  <div style="display:flex;gap:0.5rem;align-items:center">
-    <button class="btn btn-small btn-secondary" id="btn-actualiser-pea" onclick="app.actualiserCoursPEA()" title="Actualisation automatique via Google Sheets">
-      <span id="actualiser-icon">🔄</span> Actualiser les cours
-    </button>
-    <button class="btn-vault-primary" onclick="app.ouvrirAjoutLignePEA()">＋ Ligne</button>
-  </div>
+  <div id="pea-outils-card"></div>
+  <div id="pea-outil-previsions"></div>
+  <div id="pea-outil-calculateur"></div>
+  <div id="btn-pea-outils-toggle"></div>
 </div>
-<div class="table-container">
-<table class="table" id="table-lignes-pea">
-<thead><tr><th>Titre</th><th>ISIN</th><th>Parts</th><th>PRU</th><th>Valeur act.</th><th>Investi</th><th>+/−</th><th></th></tr></thead>
-<tbody id="tbody-lignes-pea"><tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📈</div><div>Ajouter vos lignes PEA</div></td></tr></tbody>
-</table>
-</div>
-<div style="margin-top:0.75rem;padding:0.75rem;background:var(--bg-secondary);border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border-color)">
-  <span style="color:var(--text-secondary);font-size:0.85rem">Plus-value latente totale</span>
-  <span class="stat-value accent" id="pv-latente-total" style="font-size:1.2rem">0 €</span>
-</div>
-</div></div>
+<div data-card-id="pea-retraite"   data-tab="pea" style="display:none"></div>
+<div data-card-id="pea-simulateur" data-tab="pea" style="display:none"></div>
 
-<!-- 4. Graphique évolution -->
-<div data-card-id="pea-graphique" data-tab="pea"><div class="card">
-<div class="card-header">
-  <h2 class="card-title" style="font-size:1.2rem">Évolution PEA : Valeur vs Investi</h2>
-  <div style="display:flex;gap:.5rem;align-items:center">
-    <button class="btn btn-small btn-secondary" id="btn-benchmark-toggle" onclick="app.toggleBenchmark()" style="font-size:.7rem">📊 Benchmark</button>
-    <button class="btn btn-small btn-secondary" id="btn-pea-outils-toggle" onclick="app.togglePeaOutils()" style="font-size:.7rem">🧮 Outils</button>
-  </div>
-</div>
-<div class="chart-container"><canvas id="chart-pea"></canvas><button class="chart-color-btn" id="ccbtn-chart-pea" onclick="app.openChartColorPicker('chart-pea')" title="Personnaliser les couleurs">🎨</button></div>
-</div></div>
+</div><!-- fin tab-pea -->
 
-<!-- 4b. Benchmark vs indices -->
-<div class="card" id="benchmark-card" style="display:none">
-<div class="card-header">
-  <h2 class="card-title" style="font-size:1.2rem">📊 Benchmark — Ton PEA vs Indices</h2>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn btn-small period-btn active" onclick="app.switchBenchmarkPeriod(this,'1m')">1M</button>
-    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'3m')">3M</button>
-    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'6m')">6M</button>
-    <button class="btn btn-small btn-secondary period-btn" onclick="app.switchBenchmarkPeriod(this,'1a')">1 An</button>
-  </div>
-</div>
-
-<!-- Stats comparatives -->
-<div class="grid grid-3" id="benchmark-stats" style="margin-bottom:1.25rem"></div>
-
-<!-- Graphique benchmark -->
-<div class="chart-container"><canvas id="chart-benchmark"></canvas><button class="chart-color-btn" id="ccbtn-chart-benchmark" onclick="app.openChartColorPicker('chart-benchmark')" title="Personnaliser les couleurs">🎨</button></div>
-
-<!-- Note données -->
-<div style="font-size:.7rem;color:var(--text-tertiary);margin-top:.75rem;padding:.6rem;background:var(--bg-secondary);border-radius:10px;line-height:1.6">
-  💡 <strong>Indices calculés depuis Finnhub</strong> (MSCI World via IWDA · S&P 500 via SPY) — données de clôture.
-  <span id="benchmark-last-update"></span>
-</div>
-</div>
-
-<!-- 5. Outils PEA (Prévisions + Calculateur) -->
-<div class="card" id="pea-outils-card" style="display:none">
-<div class="card-header">
-  <h2 class="card-title" style="font-size:1.2rem">🧮 Outils PEA</h2>
-  <div style="display:flex;gap:.5rem">
-    <button class="btn btn-small period-btn active" id="pea-outil-prev-btn" onclick="app.switchPeaOutil('previsions',this)">📊 Prévisions</button>
-    <button class="btn btn-small btn-secondary period-btn" id="pea-outil-calc-btn" onclick="app.switchPeaOutil('calculateur',this)">🧮 Calculateur</button>
-    <button class="btn btn-small btn-secondary" onclick="app.togglePeaOutils()" style="margin-left:.5rem">✕</button>
-  </div>
-</div>
-
-<!-- Panel Prévisions PEA -->
-<div id="pea-outil-previsions">
-  <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
-    <select class="form-select" id="select-scenario" style="flex:1" onchange="app.chargerScenario()"><option value="">-- Nouveau scénario --</option></select>
-    <button class="btn btn-small" onclick="app.sauvegarderScenario()">💾</button>
-    <button class="btn btn-small btn-secondary" onclick="app.supprimerScenario()">🗑</button>
-  </div>
-  <div class="grid grid-2">
-    <div class="form-group"><label class="form-label">Nom du scénario</label><input type="text" class="form-input" id="prev-scenario-nom" placeholder="Mon scénario"></div>
-    <div class="form-group"><label class="form-label">Valeur actuelle (€)</label><input type="number" class="form-input" id="prev-pea-actuel" placeholder="0" step="0.01"></div>
-    <div class="form-group"><label class="form-label">Versement mensuel (€)</label><input type="number" class="form-input" id="prev-pea-mensuel" placeholder="400" step="10"></div>
-    <div class="form-group"><label class="form-label">Rendement annuel (%)</label><input type="number" class="form-input" id="prev-pea-taux" placeholder="8" step="0.1"></div>
-    <div class="form-group"><label class="form-label">Projection (années)</label><input type="number" class="form-input" id="prev-pea-annees" placeholder="10" min="1" max="50"></div>
-  </div>
-  <button class="btn" onclick="app.calculerPrevisionsPEA()">📊 Calculer</button>
-  <div id="prev-pea-results" style="display:none;margin-top:1.25rem">
-    <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
-      <div class="stat-card stat-card-main"><div class="stat-label">Objectif final</div><div class="stat-value" id="prev-pea-final">0 €</div></div>
-      <div class="stat-card stat-card-main"><div class="stat-label">Total versé</div><div class="stat-value" id="prev-pea-verse">0 €</div></div>
-      <div class="stat-card stat-card-main"><div class="stat-label">Gains espérés</div><div class="stat-value" id="prev-pea-gains">0 €</div></div>
+<!-- Panel PEA slide-in (HORS du tab pour éviter d'être collecté par applyLayout) -->
+<div class="pea-panel-overlay" id="pea-panel-overlay" onclick="app.closePeaPanel()"></div>
+<div class="pea-panel" id="pea-panel">
+  <div class="pea-panel-head">
+    <div>
+      <div class="pea-sec-label">PEA</div>
+      <div class="pea-panel-title" id="pea-panel-title">🧮 Outils PEA</div>
     </div>
-    <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
-      <button class="btn btn-small" id="btn-vue-annee" onclick="app.switchVuePrevision('annee')">Vue Annuelle</button>
-      <button class="btn btn-small btn-secondary" id="btn-vue-mois" onclick="app.switchVuePrevision('mois')">Vue Mensuelle</button>
+    <button class="pea-panel-close" onclick="app.closePeaPanel()">✕</button>
+  </div>
+  <div class="pea-panel-tabs">
+    <button class="pea-panel-tab active" id="pea-ptab-previsions"  onclick="app.switchPeaPanelTab('previsions',this)">📊 Prévisions</button>
+    <button class="pea-panel-tab"        id="pea-ptab-calculateur" onclick="app.switchPeaPanelTab('calculateur',this)">🧮 Calculateur</button>
+    <button class="pea-panel-tab"        id="pea-ptab-retraite"    onclick="app.switchPeaPanelTab('retraite',this)">👴 Retraite</button>
+    <button class="pea-panel-tab"        id="pea-ptab-simulateur"  onclick="app.switchPeaPanelTab('simulateur',this)">🎲 Simulateur</button>
+  </div>
+  <div class="pea-panel-body">
+
+    <!-- PRÉVISIONS -->
+    <div id="pea-panel-previsions">
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
+        <select class="form-select" id="select-scenario" style="flex:1" onchange="app.chargerScenario()"><option value="">-- Nouveau scénario --</option></select>
+        <button class="btn btn-small" onclick="app.sauvegarderScenario()">💾</button>
+        <button class="btn btn-small btn-secondary" onclick="app.supprimerScenario()">🗑</button>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group"><label class="form-label">Nom du scénario</label><input type="text" class="form-input" id="prev-scenario-nom" placeholder="Mon scénario"></div>
+        <div class="form-group"><label class="form-label">Valeur actuelle (€)</label><input type="number" class="form-input" id="prev-pea-actuel" placeholder="0" step="0.01"></div>
+        <div class="form-group"><label class="form-label">Versement mensuel (€)</label><input type="number" class="form-input" id="prev-pea-mensuel" placeholder="400" step="10"></div>
+        <div class="form-group"><label class="form-label">Rendement annuel (%)</label><input type="number" class="form-input" id="prev-pea-taux" placeholder="8" step="0.1"></div>
+        <div class="form-group"><label class="form-label">Projection (années)</label><input type="number" class="form-input" id="prev-pea-annees" placeholder="10" min="1" max="50"></div>
+      </div>
+      <button class="btn" onclick="app.calculerPrevisionsPEA()">📊 Calculer</button>
+      <div id="prev-pea-results" style="display:none;margin-top:1.25rem">
+        <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
+          <div class="stat-card stat-card-main"><div class="stat-label">Objectif final</div><div class="stat-value" id="prev-pea-final">0 €</div></div>
+          <div class="stat-card stat-card-main"><div class="stat-label">Total versé</div><div class="stat-value" id="prev-pea-verse">0 €</div></div>
+          <div class="stat-card stat-card-main"><div class="stat-label">Gains espérés</div><div class="stat-value" id="prev-pea-gains">0 €</div></div>
+        </div>
+        <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+          <button class="btn btn-small" id="btn-vue-annee" onclick="app.switchVuePrevision('annee')">Vue Annuelle</button>
+          <button class="btn btn-small btn-secondary" id="btn-vue-mois" onclick="app.switchVuePrevision('mois')">Vue Mensuelle</button>
+        </div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chart-prev-compare"></canvas>
+          <button class="chart-color-btn" id="ccbtn-chart-prev-compare" onclick="app.openChartColorPicker('chart-prev-compare')" title="Personnaliser">🎨</button>
+        </div>
+        <div class="grid grid-3 grid-stats" style="margin-top:1rem">
+          <div class="stat-card stat-card-main"><div class="stat-label">Perf. moy. réelle</div><div class="stat-value" id="perf-moyenne">0 %</div></div>
+          <div class="stat-card stat-card-main"><div class="stat-label">Projection réaliste</div><div class="stat-value" id="proj-realiste">0 €</div></div>
+          <div class="stat-card stat-card-main"><div class="stat-label">Écart vs objectif</div><div class="stat-value" id="ecart-objectif">0 €</div></div>
+        </div>
+        <div class="chart-container" style="height:200px;margin-top:1rem">
+          <canvas id="chart-proj-realiste"></canvas>
+          <button class="chart-color-btn" id="ccbtn-chart-proj-realiste" onclick="app.openChartColorPicker('chart-proj-realiste')" title="Personnaliser">🎨</button>
+        </div>
+      </div>
     </div>
-    <div class="chart-container" style="height:280px"><canvas id="chart-prev-compare"></canvas><button class="chart-color-btn" id="ccbtn-chart-prev-compare" onclick="app.openChartColorPicker('chart-prev-compare')" title="Personnaliser les couleurs">🎨</button></div>
-    <div class="grid grid-3 grid-stats" style="margin-top:1rem">
-      <div class="stat-card stat-card-main"><div class="stat-label">Perf. moyenne réelle</div><div class="stat-value" id="perf-moyenne">0%</div></div>
-      <div class="stat-card stat-card-main"><div class="stat-label">Projection réaliste</div><div class="stat-value" id="proj-realiste">0 €</div></div>
-      <div class="stat-card stat-card-main"><div class="stat-label">Écart vs objectif</div><div class="stat-value" id="ecart-objectif">0 €</div></div>
+
+    <!-- CALCULATEUR -->
+    <div id="pea-panel-calculateur" style="display:none">
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
+        <select class="form-select" id="select-modele" style="flex:1" onchange="app.chargerModele()"><option value="">-- Nouveau modèle --</option></select>
+        <button class="btn btn-small" onclick="app.sauvegarderModele()">💾</button>
+        <button class="btn btn-small btn-secondary" onclick="app.supprimerModele()">🗑</button>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group"><label class="form-label">Nom du modèle</label><input type="text" class="form-input" id="calc-nom-modele" placeholder="Mon portefeuille"></div>
+        <div class="form-group"><label class="form-label">Budget (€)</label><input type="number" class="form-input" id="calc-budget" placeholder="1300" step="0.01" onchange="app.calculer()"></div>
+        <div class="form-group"><label class="form-label">Nombre de lignes</label><input type="number" class="form-input" id="calc-lignes" value="3" min="1" max="10" onchange="app.genererLignes()"></div>
+      </div>
+      <div class="table-container" style="margin-bottom:1rem">
+        <table class="table"><thead><tr><th>Action</th><th>Alloc %</th><th>Budget</th><th>Cours</th><th>Qté</th><th>Investi</th><th>Reste</th></tr></thead><tbody id="calc-body"></tbody></table>
+      </div>
+      <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
+        <div class="stat-card stat-card-main"><div class="stat-label">Budget</div><div class="stat-value" id="calc-total">0 €</div></div>
+        <div class="stat-card stat-card-main"><div class="stat-label">Investi</div><div class="stat-value" id="calc-investi">0 €</div></div>
+        <div class="stat-card stat-card-main"><div class="stat-label">Reste</div><div class="stat-value" id="calc-reste">0 €</div></div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-small" onclick="app.allocation('conservateur')">60/30/10 Conservateur</button>
+        <button class="btn btn-secondary btn-small" onclick="app.allocation('equilibre')">50/30/20 Équilibré</button>
+        <button class="btn btn-secondary btn-small" onclick="app.allocation('dynamique')">40/40/20 Dynamique</button>
+        <button class="btn btn-secondary btn-small" onclick="app.allocation('agressif')">30/30/40 Agressif</button>
+      </div>
     </div>
-    <div class="chart-container" style="height:220px;margin-top:1rem"><canvas id="chart-proj-realiste"></canvas><button class="chart-color-btn" id="ccbtn-chart-proj-realiste" onclick="app.openChartColorPicker('chart-proj-realiste')" title="Personnaliser les couleurs">🎨</button></div>
+
+    <!-- RETRAITE -->
+    <div id="pea-panel-retraite" style="display:none">
+      <div style="text-align:center;padding:2rem 1rem;color:var(--text-tertiary)">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">👴</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.5rem;color:var(--text-primary)">Projection Retraite</div>
+        <div style="font-size:.82rem;margin-bottom:1.25rem">Ouvre le simulateur pour calculer ton capital et ta rente estimée.</div>
+        <button class="btn" onclick="app.ouvrirModalRetraite()">Ouvrir le simulateur</button>
+      </div>
+    </div>
+
+    <!-- SIMULATEUR -->
+    <div id="pea-panel-simulateur" style="display:none">
+      <div style="text-align:center;padding:2rem 1rem;color:var(--text-tertiary)">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">🎲</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.5rem;color:var(--text-primary)">Simulateur « Et si… »</div>
+        <div style="font-size:.82rem;margin-bottom:1.25rem">Simule différents scénarios de performance et de versements.</div>
+        <button class="btn" onclick="app.ouvrirModalSimulateur()">Ouvrir le simulateur</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- Panel Calculateur -->
-<div id="pea-outil-calculateur" style="display:none">
-  <div style="display:flex;gap:.5rem;margin-bottom:1rem;align-items:center">
-    <select class="form-select" id="select-modele" style="flex:1" onchange="app.chargerModele()"><option value="">-- Nouveau modèle --</option></select>
-    <button class="btn btn-small" onclick="app.sauvegarderModele()">💾</button>
-    <button class="btn btn-small btn-secondary" onclick="app.supprimerModele()">🗑</button>
-  </div>
-  <div class="grid grid-2">
-    <div class="form-group"><label class="form-label">Nom du modèle</label><input type="text" class="form-input" id="calc-nom-modele" placeholder="Mon portefeuille"></div>
-    <div class="form-group"><label class="form-label">Budget (€)</label><input type="number" class="form-input" id="calc-budget" placeholder="1300" step="0.01" onchange="app.calculer()"></div>
-    <div class="form-group"><label class="form-label">Nombre de lignes</label><input type="number" class="form-input" id="calc-lignes" value="3" min="1" max="10" onchange="app.genererLignes()"></div>
-  </div>
-  <div class="table-container" style="margin-bottom:1rem">
-    <table class="table"><thead><tr><th>Action</th><th>Alloc %</th><th>Budget</th><th>Cours</th><th>Qté</th><th>Investi</th><th>Reste</th></tr></thead><tbody id="calc-body"></tbody></table>
-  </div>
-  <div class="grid grid-3 grid-stats" style="margin-bottom:1rem">
-    <div class="stat-card stat-card-main"><div class="stat-label">Budget</div><div class="stat-value" id="calc-total">0 €</div></div>
-    <div class="stat-card stat-card-main"><div class="stat-label">Investi</div><div class="stat-value" id="calc-investi">0 €</div></div>
-    <div class="stat-card stat-card-main"><div class="stat-label">Reste</div><div class="stat-value" id="calc-reste">0 €</div></div>
-  </div>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-    <button class="btn btn-secondary btn-small" onclick="app.allocation('conservateur')">Conservateur 60/30/10</button>
-    <button class="btn btn-secondary btn-small" onclick="app.allocation('equilibre')">Équilibré 50/30/20</button>
-    <button class="btn btn-secondary btn-small" onclick="app.allocation('dynamique')">Dynamique 40/40/20</button>
-    <button class="btn btn-secondary btn-small" onclick="app.allocation('agressif')">Agressif 30/30/40</button>
-  </div>
-</div>
-</div>
-
-<!-- Outils PEA -->
-<div data-card-id="pea-retraite" data-tab="pea">
-  <button class="btn-vault-secondary" onclick="app.ouvrirModalRetraite()">👴 Projection retraite</button>
-</div>
-<div data-card-id="pea-simulateur" data-tab="pea">
-  <button class="btn-vault-secondary" onclick="app.ouvrirModalSimulateur()">🎲 Simulateur «&nbsp;Et si…&nbsp;»</button>
-</div>
-
-<!-- 5. Historique PEA -->
-<div data-card-id="pea-historique" data-tab="pea"><div class="card" style="padding:0;overflow:hidden">
-<div onclick="app.toggleSection('hist-pea-body','hist-pea-arrow','hist-pea-trigger')" id="hist-pea-trigger" style="display:flex;justify-content:space-between;align-items:center;padding:1.4rem 2rem;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:border-color .2s">
-  <h2 class="card-title" style="margin:0;font-size:1.2rem">📋 Historique PEA</h2>
-  <span id="hist-pea-arrow" style="font-size:1.3rem;color:var(--text-tertiary);transition:transform 0.25s ease;line-height:1">›</span>
-</div>
-<div id="hist-pea-body" style="display:none;padding:1.5rem 2rem">
-<div id="pea-table-wrapper" class="table-container">
-<table class="table">
-<thead><tr><th>Date</th><th>Valeur</th><th>Investi</th><th>Gain/Perte</th><th>Note</th><th></th></tr></thead>
-<tbody id="table-pea"></tbody>
-</table>
-</div>
-<div id="mobile-pea-cards" class="mobile-cards-container" style="display:none"></div>
-<button class="show-more-btn" id="show-more-pea" onclick="app.toggleShowMore('pea')" style="display:none">Afficher plus</button>
-</div>
-</div></div>
-</div>
 
 <!-- Patrimoine -->
 <div id="tab-patrimoine" class="tab-content">
