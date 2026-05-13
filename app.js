@@ -2920,10 +2920,12 @@ const app = {
         document.getElementById('bs-pea-inv').value = '';
         document.getElementById('bs-pea-note').value = '';
 
+        // Valeur totale : vide (à saisir)
+        // Montant investi : dernier investi enregistré
         if (this.data.suiviPEA && this.data.suiviPEA.length > 0) {
-            const last = [...this.data.suiviPEA].sort((a,b) => b.id - a.id)[0];
-            document.getElementById('bs-pea-val').value = last.valeur || '';
+            const last = [...this.data.suiviPEA].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             document.getElementById('bs-pea-inv').value = last.investi || '';
+            // bs-pea-val reste vide
         }
         this._bsPEAUpdateGain();
         document.getElementById('bs-pea-overlay').classList.add('open');
