@@ -1786,3 +1786,21 @@ tbody tr:nth-child(n+5){animation-delay:.14s}
 
 @media(max-width:900px){.pea-two-col-wrap{grid-template-columns:1fr}}
 @media(max-width:640px){.pea-topbar{flex-direction:column;align-items:flex-start}.pea-hero-value{font-size:2.2rem}.pea-hero-right{width:100%;justify-content:space-around}}
+
+/* ═══════════════════════════════════════════════
+   PEA — Style graphique A2 (bande stats + chart)
+═══════════════════════════════════════════════ */
+.pea-a2-strip{display:flex;border-bottom:1px solid var(--border-color)}
+.pea-a2-cell{flex:1;padding:1rem 1.5rem;border-right:1px solid var(--border-color);display:flex;flex-direction:column;gap:.2rem;transition:background .15s;cursor:default}
+.pea-a2-cell:hover{background:var(--bg-secondary)}
+.pea-a2-label{font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-tertiary)}
+.pea-a2-value{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.35rem;line-height:1;color:var(--text-primary);margin:.2rem 0}
+.pea-a2-value.accent{background:linear-gradient(135deg,var(--accent-gradient-start),var(--accent-gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pea-a2-value.pos{color:var(--success)}
+.pea-a2-value.neg{color:var(--danger)}
+.pea-a2-sub{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--text-tertiary)}
+.pea-a2-pill{display:inline-flex;align-items:center;gap:.2rem;padding:.18rem .55rem;border-radius:100px;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:700;width:fit-content}
+.pea-a2-pill.pos{background:rgba(0,200,83,.12);color:var(--success)}
+.pea-a2-pill.neg{background:rgba(244,67,54,.12);color:var(--danger)}
+@media(max-width:768px){.pea-a2-strip{flex-wrap:wrap}.pea-a2-cell{min-width:50%;border-bottom:1px solid var(--border-color)}}
+@media(max-width:480px){.pea-a2-cell{min-width:100%}}

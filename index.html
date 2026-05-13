@@ -946,27 +946,58 @@
 
 <!-- GRAPHIQUE — enfant direct du tab, même rangée que lignes -->
 <div data-card-id="pea-graphique" data-tab="pea">
-  <div class="card" style="display:flex;flex-direction:column;height:100%">
+  <div class="card" style="overflow:hidden">
+
+    <!-- Header -->
     <div class="card-header">
       <div>
         <h2 class="card-title" style="font-size:1.1rem">📈 Évolution du PEA</h2>
-        <div class="pea-chart-legend">
+        <div class="pea-chart-legend" style="margin-top:.4rem">
           <span class="pea-legend-dot" style="background:var(--accent-primary)"></span>Valeur
-          <span class="pea-legend-dot" style="background:var(--border-color);border:1px solid #aaa"></span>Investi
+          <span class="pea-legend-dot" style="background:rgba(120,145,171,.7);width:14px;height:2px;border-radius:0"></span>Investi
+          <span class="pea-legend-dot" style="background:var(--success);opacity:.7"></span>Zone gain
+          <span class="pea-legend-dot" style="background:var(--danger);opacity:.55"></span>Zone perte
         </div>
       </div>
       <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-<button class="btn btn-small period-btn active" onclick="app.switchPeaChartPeriod(this,'all')">Tout</button>
+        <button class="btn btn-small period-btn active" onclick="app.switchPeaChartPeriod(this,'all')">Tout</button>
         <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'1a')">1 An</button>
         <button class="btn btn-small btn-secondary period-btn" onclick="app.switchPeaChartPeriod(this,'6m')">6M</button>
       </div>
     </div>
-    <div style="padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column">
-      <div class="chart-container" style="flex:1;min-height:240px">
+
+    <!-- Bande stats A2 -->
+    <div class="pea-a2-strip">
+      <div class="pea-a2-cell">
+        <div class="pea-a2-label">Valeur actuelle</div>
+        <div class="pea-a2-value accent" id="pea-strip-valeur">—</div>
+        <div class="pea-a2-sub" id="pea-strip-date">—</div>
+      </div>
+      <div class="pea-a2-cell">
+        <div class="pea-a2-label">Total investi</div>
+        <div class="pea-a2-value" id="pea-strip-investi">—</div>
+        <div class="pea-a2-sub">Cumul versements</div>
+      </div>
+      <div class="pea-a2-cell">
+        <div class="pea-a2-label">Plus-value latente</div>
+        <div class="pea-a2-value" id="pea-strip-gain">—</div>
+        <span class="pea-a2-pill" id="pea-strip-pct">—</span>
+      </div>
+      <div class="pea-a2-cell" style="border-right:none">
+        <div class="pea-a2-label">Perf. annualisée</div>
+        <div class="pea-a2-value" id="pea-strip-perf">—</div>
+        <div class="pea-a2-sub" id="pea-strip-recul">—</div>
+      </div>
+    </div>
+
+    <!-- Graphique -->
+    <div style="padding:1.25rem 1.5rem">
+      <div class="chart-container" style="min-height:380px">
         <canvas id="chart-pea"></canvas>
         <button class="chart-color-btn" id="ccbtn-chart-pea" onclick="app.openChartColorPicker('chart-pea')" title="Personnaliser les couleurs">🎨</button>
       </div>
     </div>
+
   </div>
 </div>
 

@@ -6021,6 +6021,7 @@ const app = {
 
     chartPEA() {
         let data = [...this.data.suiviPEA].sort((a, b) => new Date(a.date) - new Date(b.date));
+
         // Filtre période
         const period = this._peaChartPeriod || 'all';
         if (period !== 'all' && data.length > 0) {
@@ -6030,41 +6031,183 @@ const app = {
             else if (period === '1a') cutoff.setFullYear(now.getFullYear() - 1);
             data = data.filter(s => new Date(s.date) >= cutoff);
         }
-        const labels = data.map(s => new Date(s.date).toLocaleDateString('fr-FR', {month: 'short', day: 'numeric'}));
+
+        const labels  = data.map(s => new Date(s.date).toLocaleDateString('fr-FR', {month:'short', year:'2-digit'}));
         const valeurs = data.map(s => s.valeur);
         const investis = data.map(s => s.investi);
-        const c = this.getChartColors();
-        const _ccP = this.getChartCustomColors('chart-pea');
-        const _p0p = _ccP?.[0] || c.primary;
-        const _p1p = _ccP?.[1] || c.secondary;
-        const _selfP = this;
+
+        // ── Mise à jour bande stats A2 ──
+        const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        const setClass = (id, cls) => { const el = document.getElementById(id); if (el) el.className = 'pea-a2-value ' + cls; };
+        const setPillClass = (id, cls) => { const el = document.getElementById(id); if (el) el.className = 'pea-a2-pill ' + cls; };
+
+        if (data.length > 0) {
+            const dernier = data[data.length - 1];
+            const premier = data[0];
+            const gain = dernier.valeur - dernier.investi;
+            const pct  = dernier.investi > 0 ? ((gain / dernier.investi) * 100).toFixed(1) : 0;
+            const isPos = gain >= 0;
+            const dateLabel = new Date(dernier.date).toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+
+            // Perf annualisée
+            const mois = data.length;
+            const perfAnn = dernier.investi > 0 && mois > 0
+                ? (((dernier.valeur / premier.investi) ** (12 / mois) - 1) * 100).toFixed(1)
+                : '—';
+
+            setEl('pea-strip-valeur', this.formatCurrency(dernier.valeur));
+            setEl('pea-strip-date',   dateLabel);
+            setEl('pea-strip-investi', this.formatCurrency(dernier.investi));
+            setEl('pea-strip-gain',   (isPos ? '+' : '') + this.formatCurrency(gain));
+            setEl('pea-strip-pct',    (isPos ? '▲ +' : '▼ ') + Math.abs(pct) + ' %');
+            setEl('pea-strip-perf',   (perfAnn !== '—' ? (parseFloat(perfAnn) >= 0 ? '+' : '') + perfAnn + ' %' : '—'));
+            setEl('pea-strip-recul',  mois > 1 ? 'Sur ' + mois + ' mois' : '—');
+
+            setClass('pea-strip-gain', isPos ? 'pos' : 'neg');
+            setClass('pea-strip-perf', parseFloat(perfAnn) >= 0 ? 'pos' : 'neg');
+            setPillClass('pea-strip-pct', isPos ? 'pos' : 'neg');
+        } else {
+            ['pea-strip-valeur','pea-strip-date','pea-strip-investi','pea-strip-gain','pea-strip-pct','pea-strip-perf','pea-strip-recul']
+                .forEach(id => setEl(id, '—'));
+        }
+
+        // ── Couleurs personnalisables ──
+        const c    = this.getChartColors();
+        const _cc  = this.getChartCustomColors('chart-pea');
+        const col  = _cc?.[0] || c.primary;   // couleur courbe valeur
+        const _self = this;
+
         if (this.charts.pea) this.charts.pea.destroy();
         const ctx = document.getElementById('chart-pea').getContext('2d');
+        const minY = valeurs.length && investis.length
+            ? Math.min(...investis) * 0.965
+            : 0;
+
         this.charts.pea = new Chart(ctx, {
             type: 'line',
             data: {
                 labels,
                 datasets: [
+                    // Zone verte : fill entre courbe valeur et ligne investi quand valeur > investi
+                    {
+                        label: '_zone_gain',
+                        data: valeurs.map((v, i) => Math.max(v, investis[i] ?? v)),
+                        borderColor: 'transparent',
+                        backgroundColor: 'rgba(0,200,83,.13)',
+                        fill: '+1',
+                        tension: 0.42, pointRadius: 0, borderWidth: 0,
+                    },
+                    // Ligne investi haute (référence fill vert)
+                    {
+                        label: '_inv_ref_high',
+                        data: investis,
+                        borderColor: 'transparent',
+                        backgroundColor: 'transparent',
+                        fill: false, tension: 0.42, pointRadius: 0, borderWidth: 0,
+                    },
+                    // Zone rouge : fill entre investi et courbe valeur quand valeur < investi
+                    {
+                        label: '_zone_perte',
+                        data: valeurs.map((v, i) => Math.min(v, investis[i] ?? v)),
+                        borderColor: 'transparent',
+                        backgroundColor: 'rgba(244,67,54,.1)',
+                        fill: '+1',
+                        tension: 0.42, pointRadius: 0, borderWidth: 0,
+                    },
+                    // Ligne investi basse (référence fill rouge)
+                    {
+                        label: '_inv_ref_low',
+                        data: investis,
+                        borderColor: 'transparent',
+                        backgroundColor: 'transparent',
+                        fill: false, tension: 0.42, pointRadius: 0, borderWidth: 0,
+                    },
+                    // Courbe valeur principale
                     {
                         label: 'Valeur PEA',
                         data: valeurs,
-                        borderColor: _p0p,
-                        backgroundColor: (ctx2) => { const g=ctx2.chart.ctx.createLinearGradient(0,0,0,300); g.addColorStop(0,_selfP._toRgba(_p0p,0.30)); g.addColorStop(1,_selfP._toRgba(_p0p,0)); return g; },
-                        tension: 0.4, fill: true, borderWidth: 3
+                        borderColor: col,
+                        backgroundColor: (ctx2) => {
+                            const { chart } = ctx2;
+                            const { ctx: cx, chartArea: ca } = chart;
+                            if (!ca) return _self._toRgba(col, 0.1);
+                            const g = cx.createLinearGradient(0, ca.top, 0, ca.bottom);
+                            g.addColorStop(0, _self._toRgba(col, 0.22));
+                            g.addColorStop(1, _self._toRgba(col, 0));
+                            return g;
+                        },
+                        borderWidth: 2.8,
+                        fill: 'origin',
+                        tension: 0.42,
+                        pointRadius: valeurs.map((_, i) => i === valeurs.length - 1 ? 5 : 0),
+                        pointBackgroundColor: col,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1.5,
+                        pointHoverRadius: 7,
                     },
+                    // Courbe investi (pointillé)
                     {
                         label: 'Investi',
                         data: investis,
-                        borderColor: _p1p,
-                        backgroundColor: _selfP._toRgba(_p1p, 0.12),
-                        tension: 0.4, fill: true, borderWidth: 2, borderDash: [5,5]
+                        borderColor: 'rgba(120,145,171,.7)',
+                        backgroundColor: 'transparent',
+                        borderWidth: 1.5,
+                        borderDash: [5, 4],
+                        fill: false,
+                        tension: 0.42,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
                     }
                 ]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: this.getChartLegendOptions() },
-                scales: this.getChartScaleOptions()
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(30,58,95,.95)',
+                        titleFont: { family: 'DM Mono', size: 11 },
+                        bodyFont: { family: 'Outfit', size: 13, weight: 'bold' },
+                        footerFont: { family: 'DM Mono', size: 10 },
+                        padding: 14,
+                        borderColor: 'rgba(255,255,255,.15)',
+                        borderWidth: 1,
+                        filter: item => !item.dataset.label?.startsWith('_'),
+                        callbacks: {
+                            label: ctx2 => {
+                                const lbl = ctx2.dataset.label;
+                                if (!lbl || lbl.startsWith('_')) return null;
+                                return '  ' + lbl + ' : ' + ctx2.parsed.y.toLocaleString('fr-FR') + ' €';
+                            },
+                            footer: items => {
+                                const vItem = items.find(i => i.dataset.label === 'Valeur PEA');
+                                const iItem = items.find(i => i.dataset.label === 'Investi');
+                                if (!vItem || !iItem) return;
+                                const pv  = vItem.parsed.y - iItem.parsed.y;
+                                const pct = iItem.parsed.y > 0 ? ((pv / iItem.parsed.y) * 100).toFixed(1) : 0;
+                                const s   = pv >= 0 ? '+' : '';
+                                return '  Plus-value : ' + s + pv.toLocaleString('fr-FR') + ' € (' + s + pct + ' %)';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#7891ab', font: { family: 'DM Mono', size: 10 } }
+                    },
+                    y: {
+                        min: minY,
+                        grid: { color: 'rgba(212,226,237,.45)' },
+                        ticks: {
+                            color: '#7891ab',
+                            font: { family: 'DM Mono', size: 10 },
+                            callback: v => (v / 1000).toFixed(0) + 'k €'
+                        }
+                    }
+                }
             }
         });
     },
