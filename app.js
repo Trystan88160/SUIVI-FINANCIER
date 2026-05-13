@@ -518,7 +518,14 @@ const app = {
         globalOverlay.className = 'vp-overlay-bg';
         document.body.appendChild(globalOverlay);
         // Clic sur l'overlay ferme le modal actif
+        // Fix : on ignore le click si le mousedown a commencé à l'intérieur du modal
+        let _vpMouseDownInsideModal = false;
+        document.addEventListener('mousedown', e => {
+            const active = document.querySelector('.modal.active');
+            _vpMouseDownInsideModal = !!(active && active.contains(e.target));
+        });
         globalOverlay.addEventListener('click', () => {
+            if (_vpMouseDownInsideModal) return; // drag depuis l'intérieur → on ignore
             const active = document.querySelector('.modal.active');
             if (active) {
                 const closeBtn = active.querySelector('[onclick*="close"], [onclick*="Close"], [onclick*="Modal"]');
@@ -530,6 +537,19 @@ const app = {
                 }
             }
         });
+
+        // Fix drag-out : tracker le mousedown sur les modales budget
+        const budgetOverlay = document.getElementById('budget-modal-overlay');
+        if (budgetOverlay) {
+            document.addEventListener('mousedown', e => {
+                const openModal = ['modal-budget-comp','modal-budget-regle','modal-budget-rec',
+                    'modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap',
+                    'modal-all-cats','modal-emoji-cat']
+                    .map(id => document.getElementById(id))
+                    .find(el => el?.classList.contains('open'));
+                this._budgetMouseDownInside = !!(openModal && openModal.contains(e.target));
+            });
+        }
 
         // 2. Intercepter l'ouverture/fermeture des .modal via MutationObserver
         const obs = new MutationObserver(muts => {
@@ -3897,7 +3917,10 @@ const app = {
         if (vpOverlay) {
             vpOverlay.classList.add('vp-active');
             requestAnimationFrame(() => vpOverlay.classList.add('vp-visible'));
-            vpOverlay._editDepHandler = () => this._fermerEditDepense();
+            vpOverlay._editDepHandler = () => {
+                if (_vpMouseDownInsideModal) return;
+                this._fermerEditDepense();
+            };
             vpOverlay.addEventListener('click', vpOverlay._editDepHandler);
         }
     },
@@ -9155,6 +9178,8 @@ const app = {
 
     _closeBudgetModalOnOutside(e) {
         if (e.target.id !== 'budget-modal-overlay') return;
+        // Fix : ignore si le mousedown a commencé à l'intérieur d'une modal ouverte
+        if (this._budgetMouseDownInside) return;
         ['modal-budget-comp','modal-budget-regle','modal-budget-rec','modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap','modal-all-cats','modal-emoji-cat'].forEach(id => {
             document.getElementById(id)?.classList.remove('open');
         });
