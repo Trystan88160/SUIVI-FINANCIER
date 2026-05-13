@@ -835,7 +835,6 @@
     <span class="pea-topbar-title">PEA</span>
   </div>
   <div class="pea-topbar-right">
-    <button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓</button>
     <div class="pea-outils-wrap" id="pea-outils-wrap">
       <button class="pea-outils-btn" id="pea-outils-btn" onclick="app.togglePeaOutilsMenu()">
         🧮 Outils <span class="pea-outils-chev">▾</span>
@@ -864,6 +863,7 @@
         </div>
       </div>
     </div>
+    <button class="tab-customize-btn tab-help-btn" onclick="app.openHelp('pea')" title="Aide">❓</button>
   </div>
 </div>
 
@@ -916,9 +916,7 @@
       </div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
         <button class="btn-vault-secondary" onclick="app.openBsPEA()">✏️ Saisie manuelle</button>
-        <button class="btn btn-small btn-secondary" id="btn-actualiser-pea" onclick="app.actualiserCoursPEA()">
-          <span id="actualiser-icon">🔄</span> Actualiser cours
-        </button>
+        <div style="display:none" id="btn-actualiser-pea"></div>
       </div>
     </div>
   </div>
