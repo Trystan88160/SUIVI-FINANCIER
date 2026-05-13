@@ -2838,12 +2838,13 @@ const app = {
         const today = new Date().toISOString().slice(0,10);
         dateInput.value = today;
 
+        // Tri par date (les IDs sont des UUIDs, pas des nombres)
         const last = this.data.patrimoine.length > 0
-            ? this.data.patrimoine.sort((a,b) => b.id - a.id)[0]
+            ? [...this.data.patrimoine].sort((a,b) => new Date(b.date || b.mois) - new Date(a.date || a.mois))[0]
             : null;
 
         comptesDiv.innerHTML = this.data.comptes.map(compte => {
-            const prev = last ? (last[compte] || 0) : 0;
+            const prev = last ? (last[compte] ?? 0) : 0;
             return `
             <div class="bs-compte-row">
                 <span class="bs-compte-icon">💼</span>
@@ -2854,7 +2855,7 @@ const app = {
                 <div class="bs-compte-input-wrap">
                     <input type="number" class="bs-compte-input"
                         id="bs-pat-${compte.replace(/\s/g,'_')}"
-                        value="${prev || ''}"
+                        value="${prev}"
                         placeholder="0.00" step="0.01"
                         oninput="app._bsPatUpdateTotal()">
                     <span class="bs-euro">€</span>
