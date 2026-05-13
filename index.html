@@ -1466,7 +1466,7 @@
 
 <script src="app.js?v=enh30" defer></script>
 <!-- ── Bottom Sheet : Ajouter un revenu ─────────────────── -->
-<div id="bs-rev-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsRevenus()">
+<div id="bs-rev-overlay" class="bs-overlay" data-bs-close="app.closeBsRevenus()">
   <div class="bs-sheet">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1518,7 +1518,7 @@
 </div>
 
 <!-- ── Bottom Sheet : Ajout multiple dépenses ───────────── -->
-<div id="bs-dep-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsDepenses()">
+<div id="bs-dep-overlay" class="bs-overlay" data-bs-close="app.closeBsDepenses()">
   <div class="bs-sheet">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1540,7 +1540,7 @@
 </div>
 
 <!-- ── Bottom Sheet : Mise à jour Patrimoine ────────────── -->
-<div id="bs-pat-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsPatrimoine()">
+<div id="bs-pat-overlay" class="bs-overlay" data-bs-close="app.closeBsPatrimoine()">
   <div class="bs-sheet">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1574,7 +1574,7 @@
 </div>
 
 <!-- ── Bottom Sheet : Mise à jour PEA ───────────────────── -->
-<div id="bs-pea-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsPEA()">
+<div id="bs-pea-overlay" class="bs-overlay" data-bs-close="app.closeBsPEA()">
   <div class="bs-sheet" style="max-width:520px">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1637,7 +1637,7 @@
     </div>
   </div>
 </div>
-<div id="bs-import-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsImport()">
+<div id="bs-import-overlay" class="bs-overlay" data-bs-close="app.closeBsImport()">
   <div class="bs-sheet" style="max-width:780px">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1697,7 +1697,7 @@
     </div>
   </div>
 </div>
-<div id="bs-note-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeBsNote()">
+<div id="bs-note-overlay" class="bs-overlay" data-bs-close="app.closeBsNote()">
   <div class="bs-sheet" style="max-width:480px">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">
@@ -1757,7 +1757,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- ── Bottom Sheet : Ajouter/éditer compte bancaire ──── -->
-<div id="bs-pointage-overlay" class="bs-overlay" onclick="if(event.target===this)app.closeAddComptePointage()">
+<div id="bs-pointage-overlay" class="bs-overlay" data-bs-close="app.closeAddComptePointage()">
   <div class="bs-sheet">
     <div class="bs-handle"><div class="bs-handle-bar"></div></div>
     <div class="bs-header">

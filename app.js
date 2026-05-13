@@ -538,18 +538,42 @@ const app = {
             }
         });
 
-        // Fix drag-out : tracker le mousedown sur les modales budget
-        const budgetOverlay = document.getElementById('budget-modal-overlay');
-        if (budgetOverlay) {
-            document.addEventListener('mousedown', e => {
-                const openModal = ['modal-budget-comp','modal-budget-regle','modal-budget-rec',
-                    'modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap',
-                    'modal-all-cats','modal-emoji-cat']
-                    .map(id => document.getElementById(id))
-                    .find(el => el?.classList.contains('open'));
-                this._budgetMouseDownInside = !!(openModal && openModal.contains(e.target));
+        // ── Fix drag-out global : tous les .bs-overlay et budget-modal-overlay ──
+        // Principe : on enregistre si le mousedown a commencé DANS le contenu du sheet.
+        // Si oui, on bloque la fermeture même si le pointeur finit sur l'overlay.
+        let _bsMouseDownInside = false;
+
+        document.addEventListener('mousedown', e => {
+            // .bs-overlay : le contenu est le premier enfant direct (le sheet)
+            const bsOverlay = e.target.closest('.bs-overlay');
+            if (bsOverlay) {
+                const sheet = bsOverlay.querySelector(':scope > *:not([data-bs-close])') || bsOverlay.firstElementChild;
+                _bsMouseDownInside = !!(sheet && sheet.contains(e.target));
+            } else {
+                _bsMouseDownInside = false;
+            }
+
+            // budget-modal-overlay : contenu = les .budget-modal-box.open
+            const openBudgetModal = ['modal-budget-comp','modal-budget-regle','modal-budget-rec',
+                'modal-budget-cashflow','modal-budget-analyse','budget-hist-complet-wrap',
+                'modal-all-cats','modal-emoji-cat']
+                .map(id => document.getElementById(id))
+                .find(el => el?.classList.contains('open'));
+            this._budgetMouseDownInside = !!(openBudgetModal && openBudgetModal.contains(e.target));
+        });
+
+        // Attacher les handlers mouseup sur tous les .bs-overlay (remplace les onclick inline)
+        document.querySelectorAll('.bs-overlay[data-bs-close]').forEach(overlay => {
+            overlay.addEventListener('mouseup', e => {
+                // Ferme seulement si : clic directement sur l'overlay ET pas de drag depuis l'intérieur
+                if (e.target === overlay && !_bsMouseDownInside) {
+                    const fn = overlay.dataset.bsClose;
+                    if (fn) {
+                        try { eval(fn); } catch(err) { console.warn('bs-close error', err); }
+                    }
+                }
             });
-        }
+        });
 
         // 2. Intercepter l'ouverture/fermeture des .modal via MutationObserver
         const obs = new MutationObserver(muts => {
